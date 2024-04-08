@@ -2,6 +2,7 @@
 
 use Imagick as Imagick;
 use App\Http\Controllers\ImageController;
+use App\Models\Format;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,7 +13,8 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-    return view('formtest');
+    $formats = Format::all(); 
+    return view('formtest', ['formats' => $formats]);
 });
 
 Route::post('/test', [ImageController::class, 'convert'])->name('uploadImage');

@@ -12,50 +12,64 @@ class ImageConverterService
 {
     public function SingleImageConvert(Request $request)
     {
-        $image = $request->file('images');
-        $formatName = $request->input('format');
-    
+        $images = $request->file('images');
+        $formatId = $request->input('format');
+        $image = $images[0];
+        //save image to app/images
+        $image->storeAs('images', $image->getClientOriginalName());
+
         // Look up the format in the formats table
-        $format = Format::where('extension', $formatName)->first();
-        $origninalFormat = Format::where('extension', strtolower($image->getClientOriginalExtension()))->first();
-        $path = $image->storeAs('images', $image->getClientOriginalName());
-    
+        $convertedFormat = Format::where('id', $formatId)->value('extension');
+        $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
+
+        $width = $request->input('width', null);
+        $height = $request->input('height', null);
+
         $imageConversion = Imageconversion::create([
             'original_name' => $image->getClientOriginalName(),
-            'original_format' => $origninalFormat->id,
-            'converted_format' => $format->id,
-            'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $format->extension,
+            'original_format' => $originalFormatId,
+            'converted_format' => $formatId,
+            'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
-            'converted_path' => 'images/' . pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $format->extension,
+            'width' => $width,
+            'height' => $height,
         ]);
-        ConvertSingleImage::dispatch($imageConversion, $path);
-    
+
+        ConvertSingleImage::dispatch($imageConversion);
+   
         return $imageConversion;
     }
 
     public function MultipleImageConvert(Request $request)
     {
-        $guid = $this->generateGuid();
+        $guid = uniqid();
 
         $images = $request->file('images');
-        $format = Format::where('extension', $request->input('format'))->first();
+        $formatId = $request->input('format');
         mkdir(storage_path('app/images/' . $guid));
+
+        $convertedFormat = Format::where('id', $formatId)->value('extension');
+
+        $width = $request->input('width', null);
+        $height = $request->input('height', null);
+
         $imageConversions = [];
         foreach ($images as $image) {
-            $origninalFormat = Format::where('extension', strtolower($image->getClientOriginalExtension()))->first();
+            $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
             $image->storeAs('images/' . $guid, $image->getClientOriginalName());
 
             $imageConversions[] = [
                 'original_name' => $image->getClientOriginalName(),
-                'original_format' => $origninalFormat->id,
-                'converted_format' => $format->id,
-                'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $format->extension,
+                'original_format' => $originalFormatId,
+                'converted_format' => $convertedFormat,
+                'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
-                'converted_path' => 'images/' . $guid . '/' . pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $format->extension,
+                'width' => $width,
+                'height' => $height,
             ];
         }
         Imageconversion::insert($imageConversions);
-        ConvertMultipleImage::dispatch($guid, $format);
+        ConvertMultipleImage::dispatch($guid, $convertedFormat);
     }
 }

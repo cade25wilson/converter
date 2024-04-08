@@ -45,10 +45,35 @@ class ConvertMultipleImage implements ShouldQueue
                 $imagick->writeImage(storage_path('app/images/' . $this->guid . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format));
                 //if successful delete the original image
                 unlink(storage_path('app/images/' . $this->guid . '/' . $image));
+            }            
+
+            $zip = new \ZipArchive();
+
+            $zipFileName = storage_path('app/images/' . $this->guid . '.zip');
+
+            if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
+                $options = array('add_path' => 'images/', 'remove_all_path' => TRUE);
+                $zip->addGlob(storage_path('app/images/' . $this->guid . '/*'), GLOB_BRACE, $options);
+                $zip->close();
             }
+
+            $this->deleteDirectory(storage_path('app/images/' . $this->guid));
+
             Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
         } catch (\Exception $e) {
             \Log::error('Multiple Image conversion failed: ' . $e->getMessage());
         }
+    }
+
+    private function deleteDirectory($dir): void
+    {
+        if (!file_exists($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? $this->deleteDirectory("$dir/$file") : unlink("$dir/$file");
+        }
+        rmdir($dir);
     }
 }

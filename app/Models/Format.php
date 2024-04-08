@@ -20,4 +20,9 @@ class Format extends Model
     {
         return $this->hasMany(ImageConversion::class, 'original_format');
     }
+
+    public function convertedImageConversions()
+    {
+        return $this->hasMany(ImageConversion::class, 'converted_format');
+    }
 }

@@ -16,8 +16,9 @@ class Imageconversion extends Model
         'original_format',
         'converted_format',
         'converted_name',
-        'converted_path',
         'status',
+        'width',
+        'height',
         'guid',
     ];
 
@@ -36,9 +37,15 @@ class Imageconversion extends Model
         return storage_path('app/images/' . $this->converted_name . '.' . $this->convertedFormat->extension);
     }
 
-    public static function getOutputPath($id)
+    public function getOriginalFormatAttribute()
     {
-        $imageConversion = Imageconversion::find($id);
-        return $imageConversion->converted_path;
+        return $this->originalFormat->extension;
     }
+
+    public function getConvertedFormatAttribute()
+    {
+        return $this->convertedFormat->extension;
+    }
+
+
 }
