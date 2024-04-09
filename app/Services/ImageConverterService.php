@@ -12,11 +12,10 @@ class ImageConverterService
 {
     public function SingleImageConvert(Request $request)
     {
-        $images = $request->file('images');
+        $guid = uniqid();
         $formatId = $request->input('format');
-        $image = $images[0];
-        //save image to app/images
-        $image->storeAs('images', $image->getClientOriginalName());
+        $image = $request->file('images')[0];
+        $image->storeAs('images/' . $guid . '/', $image->getClientOriginalName());
 
         // Look up the format in the formats table
         $convertedFormat = Format::where('id', $formatId)->value('extension');
@@ -33,6 +32,7 @@ class ImageConverterService
             'status' => 'pending',
             'width' => $width,
             'height' => $height,
+            'guid' => $guid,
         ]);
 
         ConvertSingleImage::dispatch($imageConversion);
@@ -61,7 +61,7 @@ class ImageConverterService
             $imageConversions[] = [
                 'original_name' => $image->getClientOriginalName(),
                 'original_format' => $originalFormatId,
-                'converted_format' => $convertedFormat,
+                'converted_format' => $formatId,
                 'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
@@ -71,5 +71,29 @@ class ImageConverterService
         }
         Imageconversion::insert($imageConversions);
         ConvertMultipleImage::dispatch($guid, $convertedFormat);
+    }
+
+    public static function ZipImages($guid): void
+    {
+        $zip = new \ZipArchive();
+        $zipFileName = storage_path('app/images/' . $guid . '.zip');
+
+        if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
+            $options = array('add_path' => 'images/', 'remove_all_path' => TRUE);
+            $zip->addGlob(storage_path('app/images/' . $guid . '/*'), GLOB_BRACE, $options);
+            $zip->close();
+        }
+    }
+    
+    public static function deleteDirectory($dir): void
+    {
+        if (!file_exists($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? self::deleteDirectory("$dir/$file") : unlink("$dir/$file");
+        }
+        rmdir($dir);
     }
 }

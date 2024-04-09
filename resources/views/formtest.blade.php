@@ -9,7 +9,7 @@
     <title>Form Test</title>
 </head>
 <body>
-    <form action="{{ route('uploadImage') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('uploadImage') }}" method="post" enctype="multipart/form-data" id="myForm">
         @csrf
         <input type="file" name="images[]" multiple>
         <select name="format">
@@ -20,25 +20,39 @@
             <option value="gif">GIF</option> --}}
             @endforeach
         </select>
-        {{-- <input type="checkbox" name="resize" value="1" id="resizecheck"> Resize --}}
-        {{-- <input type="number" name="width" placeholder="Width px" class="hidden">
-        <input type="number" name="height" placeholder="Height px" class="hidden"> --}}
-        <button type="submit">Submit</button>
+        <input type="checkbox" name="resize" value="1" id="resizecheck"> Resize
     </form>
+    <button type="button" onclick="document.getElementById('myForm').submit()">Submit</button>
 </body>
 
 <script>
     let checkbox = document.getElementById('resizecheck');
-    let width = document.getElementsByName('width')[0];
-    let height = document.getElementsByName('height')[0];
     // when checkbox is checked, show the width and height input fields
     checkbox.addEventListener('change', function() {
         if (checkbox.checked) {
+            // add html <input type="number" name="width" placeholder="Width px" class="hidden"> Resize and <input type="number" name="height" placeholder="Height px" class="hidden">
+            let width = document.createElement('input');
+            width.type = 'number';
+            width.name = 'width';
+            width.placeholder = 'Width px';
+            width.classList.add('hidden');
+            let height = document.createElement('input');
+            height.type = 'number';
+            height.name = 'height';
+            height.placeholder = 'Height px';
+            height.classList.add('hidden');
+            document.querySelector('form').appendChild(width);
+            document.querySelector('form').appendChild(height);
             width.classList.remove('hidden');
             height.classList.remove('hidden');
         } else {
+            // remove the width and height input fields
+            let width = document.querySelector('input[name="width"]');
+            let height = document.querySelector('input[name="height"]');
             width.classList.add('hidden');
             height.classList.add('hidden');
+            width.remove();
+            height.remove();
         }
     });
 </script>
