@@ -78,7 +78,7 @@ class ImageConverterService
             ];
         }
         Imageconversion::insert($imageConversions);
-        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height);
+        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark);
     }
 
     private function SetNullableVariables($request)
@@ -111,5 +111,10 @@ class ImageConverterService
             (is_dir("$dir/$file")) ? self::deleteDirectory("$dir/$file") : unlink("$dir/$file");
         }
         rmdir($dir);
+    }
+
+    public static function updateStatus(string $status, string $guid): void
+    {
+        Imageconversion::where('guid', $guid)->update(['status' => $status]);
     }
 }

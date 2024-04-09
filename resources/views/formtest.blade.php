@@ -29,7 +29,6 @@
     // when checkbox is checked, show the width and height input fields
     checkbox.addEventListener('change', function() {
         if (checkbox.checked) {
-            // add html <input type="number" name="width" placeholder="Width px" class="hidden"> Resize and <input type="number" name="height" placeholder="Height px" class="hidden">
             let width = document.createElement('input');
             width.type = 'number';
             width.name = 'width';

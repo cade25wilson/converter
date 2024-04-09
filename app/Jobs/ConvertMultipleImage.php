@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Imagick as Imagick;
 
-class  ConvertMultipleImage implements ShouldQueue
+class ConvertMultipleImage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -20,15 +20,17 @@ class  ConvertMultipleImage implements ShouldQueue
     protected string $format;
     protected $width;   
     protected $height;
+    protected $watermark;
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, $width = null, $height = null)
+    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null)
     {
         $this->guid = $guid;
         $this->format = $format;
         $this->width = $width;
         $this->height = $height;
+        $this->watermark = $watermark;
     }
 
     /**
@@ -38,23 +40,23 @@ class  ConvertMultipleImage implements ShouldQueue
     {
         try {
             $imagePath = storage_path('app/images/' . $this->guid);
-            $watermark = Imageconversion::where('guid', $this->guid)->value('watermark');
             $images = array_diff(scandir($imagePath), ['.', '..']);
 
             if (empty($images)) {
                 return;
             }
 
+            ImageConverterService::updateStatus($this->guid, 'processing');
             Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
 
             foreach ($images as $image) {
-                $this->processImage($imagePath, $image, $watermark);
+                $this->processImage($imagePath, $image, $this->watermark);
             }
+            unlink($imagePath . '/' . $this->watermark);
 
             ImageConverterService::ZipImages($this->guid);
             ImageConverterService::deleteDirectory($imagePath);
-
-            Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
+            ImageConverterService::updateStatus($this->guid, 'completed');
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;
