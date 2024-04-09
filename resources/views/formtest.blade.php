@@ -18,6 +18,8 @@
             @endforeach
         </select>
         <input type="checkbox" name="resize" value="1" id="resizecheck"> Resize
+        <label for="watermark">Add watermark</label>
+        <input type="file" name="watermark" id="watermark">
     </form>
     <button type="button" onclick="document.getElementById('myForm').submit()">Submit</button>
 </body>

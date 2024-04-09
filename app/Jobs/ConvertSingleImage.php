@@ -43,6 +43,11 @@ class ConvertSingleImage implements ShouldQueue
                 $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 
+            if($this->imageConversion->watermark) {
+                $watermark = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->watermark));
+                $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
+            }
+
             $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 

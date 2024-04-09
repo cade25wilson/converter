@@ -18,12 +18,12 @@ class  ConvertMultipleImage implements ShouldQueue
 
     protected string $guid;
     protected string $format;
-    protected int $width;   
-    protected int $height;
+    protected $width;   
+    protected $height;
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, int $width, int $height)
+    public function __construct(string $guid, string $format, $width = null, $height = null)
     {
         $this->guid = $guid;
         $this->format = $format;
