@@ -3,12 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\Imageconversion;
+use App\Services\ImageConverterService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Imagick as Imagick;
 
 class ConvertSingleImage implements ShouldQueue
@@ -16,9 +17,6 @@ class ConvertSingleImage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $imageConversion;
-    protected $image;
-    protected $width;
-    protected $height;
     /**
      * Create a new job instance.
      */
@@ -26,31 +24,35 @@ class ConvertSingleImage implements ShouldQueue
     public function __construct(Imageconversion $imageConversion)       
     {
         $this->imageConversion = $imageConversion;
-        // $this->image = $image;
-        // $this->width = $width;
-        // $this->height = $height;
     }
+
     /**
      * Execute the job.
      * return a file
     */
+
     public function handle(): void
     {
         try {
             $this->imageConversion->update(['status' => 'processing']);
-            //get the file at storage/app/images/$this->imageConversion->original_name
-            $imagick = new Imagick(storage_path('app/images/' . $this->imageConversion->original_name));
+            // Load the image
+            $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
+            // Resize the image if width and height are set
             if ($this->imageConversion->width && $this->imageConversion->height) {
-                \Log::error('Resizing image to ' . $this->width . 'x' . $this->height);
-                $imagick->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
+                Log::error('Resizing image to ' . $this->imageConversion->width . 'x' . $this->imageConversion->height);
+                $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 
-            $imagick->writeImage(storage_path('app/images/' . $this->imageConversion->converted_name));
-            
+            $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
+            unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
+
+            ImageConverterService::ZipImages($this->imageConversion->guid);
+            ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
+
             $this->imageConversion->update(['status' => 'completed']);
         } catch (\Exception $e) {
-            \Log::error('Image conversion failed: ' . $e->getMessage());
+            Log::error('Image conversion failed: ' . $e->getMessage());
         }
     }
 }
