@@ -19,6 +19,7 @@ class Imageconversion extends Model
         'status',
         'width',
         'height',
+        'watermark',
         'guid',
     ];
 
@@ -46,6 +47,4 @@ class Imageconversion extends Model
     {
         return $this->convertedFormat->extension;
     }
-
-
 }

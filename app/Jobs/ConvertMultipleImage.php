@@ -37,35 +37,38 @@ class  ConvertMultipleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            $images = scandir(storage_path('app/images/' . $this->guid));
-            $images = array_diff($images, ['.', '..']);
+            $imagePath = storage_path('app/images/' . $this->guid);
+            $images = array_diff(scandir($imagePath), ['.', '..']);
 
             if (empty($images)) {
                 return;
-            } else {
-                Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
             }
+
+            Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
+
             foreach ($images as $image) {
-                if ($image === '.' || $image === '..') {
-                    continue;
-                }
-                $imagick = new Imagick(storage_path('app/images/' . $this->guid . '/' . $image));
-
-                if ($this->width && $this->height) {
-                    $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
-                }
-
-                $imagick->writeImage(storage_path('app/images/' . $this->guid . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format));
-                unlink(storage_path('app/images/' . $this->guid . '/' . $image));
-            }            
+                $this->processImage($imagePath, $image);
+            }
 
             ImageConverterService::ZipImages($this->guid);
-            ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->guid));
+            ImageConverterService::deleteDirectory($imagePath);
 
             Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function processImage($imagePath, $image): void
+    {
+        $imagick = new Imagick($imagePath . '/' . $image);
+
+        if ($this->width && $this->height) {
+            $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
+        }
+
+        $imagick->writeImage($imagePath . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format);
+        unlink($imagePath . '/' . $image);
     }
 }
