@@ -40,7 +40,6 @@ class ConvertSingleImage implements ShouldQueue
 
             // Resize the image if width and height are set
             if ($this->imageConversion->width && $this->imageConversion->height) {
-                Log::error('Resizing image to ' . $this->imageConversion->width . 'x' . $this->imageConversion->height);
                 $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 

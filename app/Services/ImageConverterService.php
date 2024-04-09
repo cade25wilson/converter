@@ -70,7 +70,7 @@ class ImageConverterService
             ];
         }
         Imageconversion::insert($imageConversions);
-        ConvertMultipleImage::dispatch($guid, $convertedFormat);
+        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height);
     }
 
     public static function ZipImages($guid): void

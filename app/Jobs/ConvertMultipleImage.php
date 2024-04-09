@@ -18,13 +18,17 @@ class  ConvertMultipleImage implements ShouldQueue
 
     protected string $guid;
     protected string $format;
+    protected int $width;   
+    protected int $height;
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format)
+    public function __construct(string $guid, string $format, int $width, int $height)
     {
         $this->guid = $guid;
         $this->format = $format;
+        $this->width = $width;
+        $this->height = $height;
     }
 
     /**
@@ -34,7 +38,7 @@ class  ConvertMultipleImage implements ShouldQueue
     {
         try {
             $images = scandir(storage_path('app/images/' . $this->guid));
-            $images = array_diff($images, ['.', '..']); // Remove '.' and '..'
+            $images = array_diff($images, ['.', '..']);
 
             if (empty($images)) {
                 return;
@@ -46,39 +50,22 @@ class  ConvertMultipleImage implements ShouldQueue
                     continue;
                 }
                 $imagick = new Imagick(storage_path('app/images/' . $this->guid . '/' . $image));
+
+                if ($this->width && $this->height) {
+                    $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
+                }
+
                 $imagick->writeImage(storage_path('app/images/' . $this->guid . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format));
-                //if successful delete the original image
                 unlink(storage_path('app/images/' . $this->guid . '/' . $image));
             }            
 
-            // $zip = new \ZipArchive();
-
-            // $zipFileName = storage_path('app/images/' . $this->guid . '.zip');
-
-            // if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
-            //     $options = array('add_path' => 'images/', 'remove_all_path' => TRUE);
-            //     $zip->addGlob(storage_path('app/images/' . $this->guid . '/*'), GLOB_BRACE, $options);
-            //     $zip->close();
-            // }
             ImageConverterService::ZipImages($this->guid);
             ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->guid));
-            // $this->deleteDirectory(storage_path('app/images/' . $this->guid));
 
             Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
+            throw $e;
         }
     }
-
-    // private function deleteDirectory($dir): void
-    // {
-    //     if (!file_exists($dir)) {
-    //         return;
-    //     }
-    //     $files = array_diff(scandir($dir), ['.', '..']);
-    //     foreach ($files as $file) {
-    //         (is_dir("$dir/$file")) ? $this->deleteDirectory("$dir/$file") : unlink("$dir/$file");
-    //     }
-    //     rmdir($dir);
-    // }
 }
