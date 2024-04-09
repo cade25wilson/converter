@@ -15,9 +15,6 @@
         <select name="format">
             @foreach($formats as $format)
                 <option value="{{ $format->id }}">{{ ($format->name) }}</option>
-            {{-- <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="gif">GIF</option> --}}
             @endforeach
         </select>
         <input type="checkbox" name="resize" value="1" id="resizecheck"> Resize
