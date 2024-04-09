@@ -38,6 +38,7 @@ class  ConvertMultipleImage implements ShouldQueue
     {
         try {
             $imagePath = storage_path('app/images/' . $this->guid);
+            $watermark = Imageconversion::where('guid', $this->guid)->value('watermark');
             $images = array_diff(scandir($imagePath), ['.', '..']);
 
             if (empty($images)) {
@@ -47,7 +48,7 @@ class  ConvertMultipleImage implements ShouldQueue
             Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
 
             foreach ($images as $image) {
-                $this->processImage($imagePath, $image);
+                $this->processImage($imagePath, $image, $watermark);
             }
 
             ImageConverterService::ZipImages($this->guid);
@@ -60,12 +61,22 @@ class  ConvertMultipleImage implements ShouldQueue
         }
     }
 
-    private function processImage($imagePath, $image): void
+    private function processImage($imagePath, $image, $watermark): void
     {
+        // Skip if the image is the watermark
+        if ($image === $watermark) {
+            return;
+        }
+
         $imagick = new Imagick($imagePath . '/' . $image);
 
         if ($this->width && $this->height) {
             $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
+        }
+        
+        if($watermark) {
+            $watermark = new Imagick($imagePath . '/' . $watermark);
+            $imagick->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
         }
 
         $imagick->writeImage($imagePath . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format);
