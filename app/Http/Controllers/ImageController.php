@@ -20,11 +20,11 @@ class ImageController extends Controller
                 'email' => 'email',
                 'width' => 'numeric|integer|required_with:height',
                 'height' => 'numeric|integer|required_with:width',
+                'watermark' => 'image'
             ]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
-
         $imageService = new ImageConverterService();
         
         if(count($request->images) > 1) {

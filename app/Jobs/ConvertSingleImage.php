@@ -34,7 +34,7 @@ class ConvertSingleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            $this->imageConversion->update(['status' => 'processing']);
+            ImageConverterService::updateStatus($this->imageConversion, 'processing');
             // Load the image
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
@@ -43,15 +43,21 @@ class ConvertSingleImage implements ShouldQueue
                 $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 
+            if($this->imageConversion->watermark) {
+                $watermark = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->watermark));
+                $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
+            }
+
             $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             ImageConverterService::ZipImages($this->imageConversion->guid);
             ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
 
-            $this->imageConversion->update(['status' => 'completed']);
+            ImageConverterService::updateStatus($this->imageConversion, 'completed');
         } catch (\Exception $e) {
             Log::error('Image conversion failed: ' . $e->getMessage());
+            throw $e;
         }
     }
 }

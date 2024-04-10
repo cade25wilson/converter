@@ -12,23 +12,25 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Imagick as Imagick;
 
-class  ConvertMultipleImage implements ShouldQueue
+class ConvertMultipleImage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected string $guid;
     protected string $format;
-    protected int $width;   
-    protected int $height;
+    protected $width;   
+    protected $height;
+    protected $watermark;
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, int $width, int $height)
+    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null)
     {
         $this->guid = $guid;
         $this->format = $format;
         $this->width = $width;
         $this->height = $height;
+        $this->watermark = $watermark;
     }
 
     /**
@@ -37,35 +39,49 @@ class  ConvertMultipleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            $images = scandir(storage_path('app/images/' . $this->guid));
-            $images = array_diff($images, ['.', '..']);
+            $imagePath = storage_path('app/images/' . $this->guid);
+            $images = array_diff(scandir($imagePath), ['.', '..']);
 
             if (empty($images)) {
                 return;
-            } else {
-                Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
             }
+
+            ImageConverterService::updateStatus($this->guid, 'processing');
+            Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
+
             foreach ($images as $image) {
-                if ($image === '.' || $image === '..') {
-                    continue;
-                }
-                $imagick = new Imagick(storage_path('app/images/' . $this->guid . '/' . $image));
-
-                if ($this->width && $this->height) {
-                    $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
-                }
-
-                $imagick->writeImage(storage_path('app/images/' . $this->guid . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format));
-                unlink(storage_path('app/images/' . $this->guid . '/' . $image));
-            }            
+                $this->processImage($imagePath, $image, $this->watermark);
+            }
+            unlink($imagePath . '/' . $this->watermark);
 
             ImageConverterService::ZipImages($this->guid);
-            ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->guid));
-
-            Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
+            ImageConverterService::deleteDirectory($imagePath);
+            ImageConverterService::updateStatus($this->guid, 'completed');
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    private function processImage($imagePath, $image, $watermark): void
+    {
+        // Skip if the image is the watermark
+        if ($image === $watermark) {
+            return;
+        }
+
+        $imagick = new Imagick($imagePath . '/' . $image);
+
+        if ($this->width && $this->height) {
+            $imagick->resizeImage($this->width, $this->height, Imagick::FILTER_LANCZOS, 1);
+        }
+        
+        if($watermark) {
+            $watermark = new Imagick($imagePath . '/' . $watermark);
+            $imagick->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
+        }
+
+        $imagick->writeImage($imagePath . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format);
+        unlink($imagePath . '/' . $image);
     }
 }

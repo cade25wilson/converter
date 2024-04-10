@@ -21,8 +21,11 @@ class ImageConverterService
         $convertedFormat = Format::where('id', $formatId)->value('extension');
         $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
 
-        $width = $request->input('width', null);
-        $height = $request->input('height', null);
+        if ($request->file('watermark')) {
+            $request->file('watermark')->storeAs('images/' . $guid, $request->file('watermark')->getClientOriginalName());
+        } 
+
+        [$width, $height, $watermark] = $this->SetNullableVariables($request);
 
         $imageConversion = Imageconversion::create([
             'original_name' => $image->getClientOriginalName(),
@@ -33,6 +36,7 @@ class ImageConverterService
             'width' => $width,
             'height' => $height,
             'guid' => $guid,
+            'watermark' => $watermark,
         ]);
 
         ConvertSingleImage::dispatch($imageConversion);
@@ -50,8 +54,11 @@ class ImageConverterService
 
         $convertedFormat = Format::where('id', $formatId)->value('extension');
 
-        $width = $request->input('width', null);
-        $height = $request->input('height', null);
+        if($request->file('watermark')) {
+            $request->file('watermark')->storeAs('images/' . $guid, $request->file('watermark')->getClientOriginalName());
+        }
+
+        [$width, $height, $watermark] = $this->SetNullableVariables($request);
 
         $imageConversions = [];
         foreach ($images as $image) {
@@ -67,10 +74,19 @@ class ImageConverterService
                 'guid' => $guid,
                 'width' => $width,
                 'height' => $height,
+                'watermark' => $watermark,
             ];
         }
         Imageconversion::insert($imageConversions);
-        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height);
+        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark);
+    }
+
+    private function SetNullableVariables($request)
+    {
+        $width = $request->input('width', null);
+        $height = $request->input('height', null);
+        $watermark = $request->file('watermark') ? $request->file('watermark')->getClientOriginalName() : null;
+        return [$width, $height, $watermark];
     }
 
     public static function ZipImages($guid): void
@@ -95,5 +111,10 @@ class ImageConverterService
             (is_dir("$dir/$file")) ? self::deleteDirectory("$dir/$file") : unlink("$dir/$file");
         }
         rmdir($dir);
+    }
+
+    public static function updateStatus(string $status, string $guid): void
+    {
+        Imageconversion::where('guid', $guid)->update(['status' => $status]);
     }
 }
