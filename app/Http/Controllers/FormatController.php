@@ -12,7 +12,7 @@ class FormatController extends Controller
      */
     public function index()
     {
-        return Format::all();
+        return Format::select('id', 'name')->get();
     }
 
     /**

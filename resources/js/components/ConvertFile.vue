@@ -13,6 +13,7 @@
         <br>
         <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
     </form>
+    {{selectedFormat}}
 </template>
 
 <script>
