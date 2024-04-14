@@ -3,6 +3,8 @@
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
@@ -12,3 +14,16 @@ Route::get('/user', function (Request $request) {
 Route::post('/convert', [ImageController::class, 'Convert']);
 
 Route::resource('formats', FormatController::class);
+
+Route::get('/images/{imagePath}', function ($imagePath) {
+    $path = public_path('images/' . $imagePath);
+
+    if (!File::exists($path)) {
+        abort(404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    return Response::make($file, 200)->header("Content-Type", $type);
+})->where('imagePath', '.*');
