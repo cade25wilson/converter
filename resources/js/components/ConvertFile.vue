@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import api from '../axios';
 export default {
     name: 'ConvertFile',
@@ -34,7 +33,7 @@ export default {
     methods: {
         getFormats() {
             console.log('onCreated');
-            axios.get('http://localhost:8000/api/formats').then(response => {
+            api.get('/formats').then(response => {
                 console.log(response.data);
                 this.formats = response.data;
             }).catch(error => {
