@@ -1,14 +1,5 @@
 <template>
-    <router-view v-slot="{ Component, route}">
-        <div :key="route.name">
-            <Component :is="Component" />
-        </div>
-    </router-view>
+    <div class="container">
+        <router-view></router-view>
+    </div>
 </template>
-  <script>
-  export default {
-    setup() {
-  
-     }
-  }
-  </script>
