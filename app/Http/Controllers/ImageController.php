@@ -28,11 +28,11 @@ class ImageController extends Controller
         $imageService = new ImageConverterService();
         
         if(count($request->images) > 1) {
-            $imageService->MultipleImageConvert($request);
+            $guid = $imageService->MultipleImageConvert($request);
         } else {
-            $imageService->SingleImageConvert($request);
+            $guid = $imageService->SingleImageConvert($request);
         }
 
-        return response()->json(['message' => 'success']);     
+        return response()->json(['message' => 'success', 'guid' => $guid]);     
     }
 }

@@ -41,7 +41,7 @@ class ImageConverterService
 
         ConvertSingleImage::dispatch($imageConversion);
    
-        return $imageConversion;
+        return $guid;
     }
 
     public function MultipleImageConvert(Request $request)
@@ -79,6 +79,7 @@ class ImageConverterService
         }
         Imageconversion::insert($imageConversions);
         ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark);
+        return $guid;
     }
 
     private function SetNullableVariables($request)
