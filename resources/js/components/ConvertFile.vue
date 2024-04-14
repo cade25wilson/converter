@@ -45,18 +45,20 @@ export default {
             console.log('files', this.files);
             console.log(this.conversionType);
             let formData = new FormData();
-            // for (let i = 0; i <= this.files.length; i++) {
-            //     formData.append('files[]', this.files[i]);
-            // }
-            // api.post('/convert-file', formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     }
-            // }).then(response => {
-            //     console.log(response.data);
-            // }).catch(error => {
-            //     console.log(error);
-            // });
+            let selectedFormat = this.selectedFormat;
+            for (let i = 0; i <= this.files.length; i++) {
+                formData.append('images[]', this.files[i]);
+            }
+            formData.append('format', selectedFormat);
+            api.post('/convert', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
         }
     }
 }
