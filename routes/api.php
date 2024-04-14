@@ -9,6 +9,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/convert', [ImageController::class, 'Convert']);
+Route::post('/convert', [ImageController::class, 'Convert']);
 
 Route::resource('formats', FormatController::class);

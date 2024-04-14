@@ -10,13 +10,23 @@
                 <option v-for="format in formats" :value="format.id">{{ format.name }}</option>
             </select>
         </div>
+        <div>
+            <input type="checkbox" @change="resize = !resize"> Resize</input>
+            <div class="form-group" v-if="resize">
+                <label for="width">Width(px)</label>
+                <input type="number" class="form-control" id="width" v-model="width">
+            </div>
+            <div class="form-group" v-if="resize">
+                <label for="height">Height(px)</label>
+                <input type="number" class="form-control" id="height" v-model="height">
+            </div>
+        </div>
         <br>
         <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
     </form>
 </template>
 
 <script>
-import axios from 'axios';
 import api from '../axios';
 export default {
     name: 'ConvertFile',
@@ -25,7 +35,10 @@ export default {
             files: [],
             conversionType: '',
             formats: '',
-            selectedFormat: ''
+            selectedFormat: '',
+            width: null,
+            height: null,
+            resize: false,
         };
     },
     created() {
@@ -34,7 +47,7 @@ export default {
     methods: {
         getFormats() {
             console.log('onCreated');
-            axios.get('http://localhost:8000/api/formats').then(response => {
+            api.get('/formats').then(response => {
                 console.log(response.data);
                 this.formats = response.data;
             }).catch(error => {
@@ -42,21 +55,25 @@ export default {
             });
         },
         convertFile() {
-            console.log('files', this.files);
-            console.log(this.conversionType);
             let formData = new FormData();
-            // for (let i = 0; i <= this.files.length; i++) {
-            //     formData.append('files[]', this.files[i]);
-            // }
-            // api.post('/convert-file', formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     }
-            // }).then(response => {
-            //     console.log(response.data);
-            // }).catch(error => {
-            //     console.log(error);
-            // });
+            let selectedFormat = this.selectedFormat;
+            for (let i = 0; i <= this.files.length; i++) {
+                formData.append('images[]', this.files[i]);
+            }
+            if (this.width && this.height){
+                formData.append('width', this.width);
+                formData.append('height', this.height);
+            }
+            formData.append('format', selectedFormat);
+            api.post('/convert', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
         }
     }
 }
