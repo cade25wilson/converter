@@ -5,12 +5,13 @@ use App\Http\Controllers\ImageController;
 use App\Models\Format;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $formats = Imagick::queryFormats();
-    // alphbetize the formats
-    sort($formats);
-    return $formats;
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/{vue_capture?}', function () {
+    return view('welcome');
+})->where('vue_capture', '[\/\w\.-]*');
 
 Route::get('/test', function () {
     $formats = Format::all(); 
