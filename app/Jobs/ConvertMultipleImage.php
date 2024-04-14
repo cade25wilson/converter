@@ -46,17 +46,19 @@ class ConvertMultipleImage implements ShouldQueue
                 return;
             }
 
-            ImageConverterService::updateStatus($this->guid, 'processing');
+            ImageConverterService::updateStatus('processing', $this->guid,);
             Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
 
             foreach ($images as $image) {
                 $this->processImage($imagePath, $image, $this->watermark);
             }
-            unlink($imagePath . '/' . $this->watermark);
+            if($this->watermark) {
+                unlink($imagePath . '/' . $this->watermark);
+            }
 
             ImageConverterService::ZipImages($this->guid);
             ImageConverterService::deleteDirectory($imagePath);
-            ImageConverterService::updateStatus($this->guid, 'completed');
+            ImageConverterService::updateStatus('completed', $this->guid);
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;
