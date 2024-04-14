@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ConvertImage;
-use App\Models\Format;
-use App\Models\Imageconversion;
 use App\Services\ImageConverterService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;

@@ -7,12 +7,13 @@ use App\Jobs\ConvertSingleImage;
 use App\Models\Format;
 use App\Models\Imageconversion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ImageConverterService
 {
     public function SingleImageConvert(Request $request)
     {
-        $guid = uniqid();
+        $guid = Str::uuid();
         $formatId = $request->input('format');
         $image = $request->file('images')[0];
         $image->storeAs('images/' . $guid . '/', $image->getClientOriginalName());
@@ -46,7 +47,7 @@ class ImageConverterService
 
     public function MultipleImageConvert(Request $request)
     {
-        $guid = uniqid();
+        $guid = str::uuid();
 
         $images = $request->file('images');
         $formatId = $request->input('format');
