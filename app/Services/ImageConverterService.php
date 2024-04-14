@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ImageConverted;
 use App\Jobs\ConvertMultipleImage;
 use App\Jobs\ConvertSingleImage;
 use App\Models\Format;
@@ -38,8 +39,7 @@ class ImageConverterService
             'height' => $height,
             'guid' => $guid,
             'watermark' => $watermark,
-        ]);
-
+        ]);        
         ConvertSingleImage::dispatch($imageConversion);
    
         return $guid;

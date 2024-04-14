@@ -71,8 +71,21 @@ export default {
                 }
             }).then(response => {
                 console.log(response.data);
+                localStorage.setItem('guid', response.data.guid);
+                console.log(localStorage.getItem('guid'));
+                this.subscribeToChannel();
             }).catch(error => {
                 console.log(error);
+            });
+        },
+        subscribeToChannel() {
+            console.log('subscribing to channel');
+            let sessionId = localStorage.getItem('guid');
+            // window.Echo.private('conversion.' + sessionId)
+            window.Echo.channel('conversion.' + sessionId)
+            .listen('ImageConverted', (event) => {
+                // Handle event, e.g., update UI
+                console.log(event);
             });
         }
     }
