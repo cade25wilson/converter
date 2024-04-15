@@ -35,6 +35,7 @@ class ConvertSingleImage implements ShouldQueue
     public function handle(): void
     {
         try {
+            ImageConverted::dispatch($this->imageConversion->guid, 'processing');
             ImageConverterService::updateStatus('processing', $this->imageConversion->guid);
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
@@ -55,10 +56,10 @@ class ConvertSingleImage implements ShouldQueue
             ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
 
             ImageConverterService::updateStatus('completed', $this->imageConversion->guid);
-            event(new ImageConverted($this->imageConversion->guid, 'completed'));
-            ImageConverted::dispatch($this->imageConversion->guid, 'completed');
-        
+
+            ImageConverted::dispatch($this->imageConversion->guid, 'completed');        
         } catch (\Exception $e) {
+            ImageConverted::dispatch($this->imageConversion->guid, 'failed');
             Log::error('Image conversion failed: ' . $e->getMessage());
             throw $e;
         }
