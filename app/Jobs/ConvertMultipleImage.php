@@ -48,7 +48,6 @@ class ConvertMultipleImage implements ShouldQueue
             }
 
             ImageConverterService::updateStatus('processing', $this->guid,);
-            ImageConverted::dispatch($this->guid, 'processing');
             Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
 
             foreach ($images as $image) {

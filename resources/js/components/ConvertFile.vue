@@ -1,12 +1,13 @@
 <template>
-    <form @submit.prevent="convertFile">
+    <form @submit.prevent="convertFile" v-if="!isConverting">
         <div class="form-group">
             <label for="file">File</label>
             <input type="file" class="form-control" id="file" v-on:change="files = $event.target.files" multiple>
         </div>
         <div class="form-group">
             <label for="format">Format</label>
-            <select name="format" id="format" class="form-control" v-model="selectedFormat" @change="conversionType = selectedFormat">
+            <select name="format" id="format" class="form-control" v-model="selectedFormat"
+                @change="conversionType = selectedFormat">
                 <option v-for="format in formats" :value="format.id">{{ format.name }}</option>
             </select>
         </div>
@@ -24,6 +25,13 @@
         <br>
         <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
     </form>
+    <div class="my-3" v-else>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <div class="spinner-border mb-3" :class="spinnerClass" role="status"></div>
+            <span class="sr-only">{{ conversionStatus.charAt(0).toUpperCase() + conversionStatus.slice(1) }}</span>
+        </div>
+        <button class="btn btn-primary" @click="resetConversion()">Convert Another</button>
+    </div>
 </template>
 
 <script>
@@ -39,12 +47,18 @@ export default {
             width: null,
             height: null,
             resize: false,
+            isConverting: false,
+            conversionStatus: '',
         };
     },
     created() {
         this.getFormats();
     },
     methods: {
+        resetConversion() {
+            this.isConverting = false;
+            this.conversionStatus = '';
+        },
         getFormats() {
             console.log('onCreated');
             api.get('/formats').then(response => {
@@ -70,22 +84,28 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-                console.log(response.data);
-                localStorage.setItem('guid', response.data.guid);
-                console.log(localStorage.getItem('guid'));
+                this.isConverting = true;
+                this.conversionStatus = 'started';
+                let guid = response.data.guid;
+                this.setLocalStorage(guid);
                 this.subscribeToChannel();
             }).catch(error => {
                 console.log(error);
             });
         },
+        setLocalStorage(guid){
+            localStorage.setItem('guid', guid);
+            let convertedGuids = JSON.parse(localStorage.getItem('convertedGuids')) || [];
+            convertedGuids.push(guid);
+            localStorage.setItem('convertedGuids', JSON.stringify(convertedGuids));
+        },
         subscribeToChannel() {
             console.log('subscribing to channel');
             let sessionId = localStorage.getItem('guid');
-            // window.Echo.private('conversion.' + sessionId)
             window.Echo.channel('conversion.' + sessionId)
             .listen('ImageConverted', (event) => {
+                this.conversionStatus = event.status;
                 if (event.status == 'completed'){
-                    // unsubscribe from the channel
                     window.Echo.leave('conversion.' + sessionId);
                     this.fetchConversion(sessionId);
                 }
@@ -104,6 +124,16 @@ export default {
                 .catch(error => {
                     console.log(error);
                 });
+        }
+    },
+    computed: {
+        spinnerClass() {
+            return {
+                'text-secondary': this.conversionStatus === 'started',
+                'text-primary': this.conversionStatus === 'processing',
+                'text-success': this.conversionStatus === 'completed',
+                'text-danger': this.conversionStatus === 'failed'
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ class ImageConverterService
     public function SingleImageConvert(Request $request)
     {
         $guid = Str::uuid();
+        ImageConverted::dispatch($guid, 'pending');
         $formatId = $request->input('format');
         $image = $request->file('images')[0];
         $image->storeAs('images/' . $guid . '/', $image->getClientOriginalName());
@@ -48,6 +49,7 @@ class ImageConverterService
     public function MultipleImageConvert(Request $request)
     {
         $guid = str::uuid();
+        ImageConverted::dispatch($guid, 'processing');
 
         $images = $request->file('images');
         $formatId = $request->input('format');

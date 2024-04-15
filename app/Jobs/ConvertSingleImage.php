@@ -35,7 +35,6 @@ class ConvertSingleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            ImageConverted::dispatch($this->imageConversion->guid, 'processing');
             ImageConverterService::updateStatus('processing', $this->imageConversion->guid);
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
