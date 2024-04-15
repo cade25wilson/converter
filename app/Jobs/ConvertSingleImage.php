@@ -36,7 +36,6 @@ class ConvertSingleImage implements ShouldQueue
     {
         try {
             ImageConverterService::updateStatus('processing', $this->imageConversion->guid);
-            // Load the image
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             // Resize the image if width and height are set
@@ -57,6 +56,8 @@ class ConvertSingleImage implements ShouldQueue
 
             ImageConverterService::updateStatus('completed', $this->imageConversion->guid);
             event(new ImageConverted($this->imageConversion->guid, 'completed'));
+            ImageConverted::dispatch($this->imageConversion->guid, 'completed');
+        
         } catch (\Exception $e) {
             Log::error('Image conversion failed: ' . $e->getMessage());
             throw $e;

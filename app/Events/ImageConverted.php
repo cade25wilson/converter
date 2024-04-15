@@ -7,10 +7,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ImageConverted implements ShouldBroadcast
+class ImageConverted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,7 +22,6 @@ class ImageConverted implements ShouldBroadcast
      */
     public function __construct(string $sessionId, string $status)
     {
-        //
         $this->sessionId = $sessionId;
         $this->status = $status;
     }
@@ -31,10 +31,9 @@ class ImageConverted implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): Channel
     {
-        return [
-            new Channel('conversion.'.$this->sessionId),
-        ];
+        return new Channel('conversion.'.$this->sessionId);
     }
+
 }

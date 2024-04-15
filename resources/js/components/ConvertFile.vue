@@ -84,9 +84,26 @@ export default {
             // window.Echo.private('conversion.' + sessionId)
             window.Echo.channel('conversion.' + sessionId)
             .listen('ImageConverted', (event) => {
-                // Handle event, e.g., update UI
-                console.log(event);
+                if (event.status == 'completed'){
+                    // unsubscribe from the channel
+                    window.Echo.leave('conversion.' + sessionId);
+                    this.fetchConversion(sessionId);
+                }
             });
+        },
+        fetchConversion(sessionId) {
+            api.get('/images/' + sessionId + '.zip', { responseType: 'blob' })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'file.zip'); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
     }
 }
