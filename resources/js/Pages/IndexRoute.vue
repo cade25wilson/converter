@@ -1,8 +1,7 @@
 <template>
     <div class="mx-auto text-center">
-        <h1>Index</h1>
+        <h1>Image Converter</h1>
         <ConvertFile />
-        <router-link to="/test">Take me to the test page</router-link>
     </div>
 </template>
 
