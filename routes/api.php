@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -27,3 +28,6 @@ Route::get('/images/{imagePath}', function ($imagePath) {
 
     return Response::make($file, 200)->header("Content-Type", $type);
 })->where('imagePath', '.*');
+
+Route::post('/messages', [MessagesController::class, 'store']);
+Route::get('/messages', [MessagesController::class, 'show']);

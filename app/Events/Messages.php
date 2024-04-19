@@ -4,26 +4,23 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ImageConverted implements ShouldBroadcastNow
+class Messages implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $sessionId;
-    public $status;
+    public string $message;
+    public string $user;
     /**
      * Create a new event instance.
      */
-    public function __construct(string $sessionId, string $status)
+    public function __construct(string $message, string $user)
     {
-        $this->sessionId = $sessionId;
-        $this->status = $status;
+        $this->message = $message;
+        $this->user = $user;
     }
 
     /**
@@ -33,7 +30,6 @@ class ImageConverted implements ShouldBroadcastNow
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('conversion.'.$this->sessionId);
+        return new Channel('messages');
     }
-
 }
