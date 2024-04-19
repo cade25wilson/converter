@@ -37,6 +37,17 @@ class MessagesController extends Controller
         $message = $request->input('message');
         $username = $request->input('username');
 
+        $issafe = $this->checknotimposter($username);
+        if(!$issafe){
+            $message = "THIS MESSAGE WAS CREATED BY A PIMPOSTER!";
+            $username = "PIMPOSTER!";
+        }
+
+        // if($username == 'asdffdsa') {
+        if($username == env('PIM_PASSWORD')) {
+            $username = 'Posh Pim';
+        }
+
         $sanitizedMessage = DB::connection('pimpostgres')->getPdo()->quote($message);
         $sanitizedUsername = DB::connection('pimpostgres')->getPdo()->quote($username);
 
@@ -45,6 +56,39 @@ class MessagesController extends Controller
         Messages::dispatch($message, $username);
 
         return response()->json(['message' => $message, 'username' => $username]);
+    }
+
+    private function checknotimposter($username): bool
+    {
+        if (stripos($username, 'pim') !== false) {
+            return false;
+        }
+
+        if (stripos($username, 'plm') !== false) {
+            return false;
+        }
+
+        if (stripos($username, 'p|m') !== false) {
+            return false;
+        }
+
+        if (stripos($username, 'p1m') !== false) {
+            return false;
+        }
+
+        if (stripos($username, 'p!m') !== false) {
+            return false;
+        }
+
+        if (preg_match('/pim/i', $username)) {
+            return false;
+        }
+
+        if (preg_match('/p.*i.*m/i', $username)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
