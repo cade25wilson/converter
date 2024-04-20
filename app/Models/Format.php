@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Format extends Model
 {
     use HasFactory;
-
+    protected $table = 'image_formats';
     protected $fillable = [
         'id',
         'name',
