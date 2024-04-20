@@ -21,7 +21,7 @@ export default defineConfig({
     plugins: [
         vue(),
         laravel({
-            input: ["resources/css/app.css", "resources/js/app.js"],
+            input: ["resources/js/app.js", "resources/css/app.css"],
             refresh: true,
             server: 'http://localhost:5173',
         }),
@@ -31,4 +31,13 @@ export default defineConfig({
             vue: "vue/dist/vue.esm-bundler.js",
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                entryFileNames: `[name].builds.js`,
+                chunkFileNames: `[name].build.js`,
+                assetFileNames: `[name].build.[ext]`
+            }
+        }
+    }
 });
