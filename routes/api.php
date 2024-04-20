@@ -15,6 +15,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/convert', [ImageController::class, 'Convert']);
 
 Route::resource('formats', FormatController::class);
+Route::resouce('audio', FormatController::class);
 
 Route::get('/images/{imagePath}', function ($imagePath) {
     $path = public_path('images/' . $imagePath);
