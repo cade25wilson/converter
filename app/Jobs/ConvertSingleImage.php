@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ImageConverted;
 use App\Models\Imageconversion;
+use App\Services\ConversionService;
 use App\Services\ImageConverterService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,7 +32,6 @@ class ConvertSingleImage implements ShouldQueue
      * Execute the job.
      * return a file
     */
-
     public function handle(): void
     {
         try {
@@ -52,8 +52,10 @@ class ConvertSingleImage implements ShouldQueue
             $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
-            ImageConverterService::ZipImages($this->imageConversion->guid);
-            ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
+            // ImageConverterService::ZipImages($this->imageConversion->guid);
+            ConversionService::ZipFiles($this->imageConversion->guid, 'images');
+            // ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
+            ConversionService::DeleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
 
             ImageConverterService::updateStatus('completed', $this->imageConversion->guid);
 
