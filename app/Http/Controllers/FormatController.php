@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AudioFormats;
 use App\Models\Format;
 use App\Models\VideoFormat;
-use FFMpeg\Media\Video;
 
 class FormatController extends Controller
 {
