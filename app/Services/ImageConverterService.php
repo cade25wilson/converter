@@ -92,31 +92,7 @@ class ImageConverterService
         $watermark = $request->file('watermark') ? $request->file('watermark')->getClientOriginalName() : null;
         return [$width, $height, $watermark];
     }
-
-    public static function ZipImages($guid): void
-    {
-        $zip = new \ZipArchive();
-        $zipFileName = storage_path('app/images/' . $guid . '.zip');
-
-        if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
-            $options = array('add_path' => 'images/', 'remove_all_path' => TRUE);
-            $zip->addGlob(storage_path('app/images/' . $guid . '/*'), GLOB_BRACE, $options);
-            $zip->close();
-        }
-    }
     
-    public static function deleteDirectory($dir): void
-    {
-        if (!file_exists($dir)) {
-            return;
-        }
-        $files = array_diff(scandir($dir), ['.', '..']);
-        foreach ($files as $file) {
-            (is_dir("$dir/$file")) ? self::deleteDirectory("$dir/$file") : unlink("$dir/$file");
-        }
-        rmdir($dir);
-    }
-
     public static function updateStatus(string $status, string $guid): void
     {
         Imageconversion::where('guid', $guid)->update(['status' => $status]);

@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Events\ImageConverted;
-use App\Models\Imageconversion;
 use App\Services\ImageConverterService;
 use App\Services\ConversionService;
 use Illuminate\Bus\Queueable;
@@ -58,9 +57,7 @@ class ConvertMultipleImage implements ShouldQueue
                 unlink($imagePath . '/' . $this->watermark);
             }
 
-            // ImageConverterService::ZipImages($this->guid);
             ConversionService::ZipFiles($this->guid, 'images');
-            // ImageConverterService::deleteDirectory($imagePath);
             ConversionService::DeleteDirectory($imagePath);
             ImageConverterService::updateStatus('completed', $this->guid);
             ImageConverted::dispatch($this->guid, 'completed');
