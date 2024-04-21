@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\FormatController;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\MessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -12,10 +12,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/convert', [ImageController::class, 'Convert']);
+Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
+Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 
-Route::resource('formats', FormatController::class);
-Route::resouce('audio', FormatController::class);
+Route::get('/formats/image', [FormatController::class, 'index']);
+Route::get('/formats/audio', [FormatController::class, 'audio']);
 
 Route::get('/images/{imagePath}', function ($imagePath) {
     $path = public_path('images/' . $imagePath);

@@ -13,6 +13,7 @@ class Audioconversion extends Model
         'original_name',
         'original_format',
         'converted_format',
+        'converted_name',
         'status',
         'guid'
     ];

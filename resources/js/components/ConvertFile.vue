@@ -61,7 +61,7 @@ export default {
         },
         getFormats() {
             console.log('onCreated');
-            api.get('/formats').then(response => {
+            api.get('/formats/image').then(response => {
                 console.log(response.data);
                 this.formats = response.data;
             }).catch(error => {
@@ -79,7 +79,7 @@ export default {
                 formData.append('height', this.height);
             }
             formData.append('format', selectedFormat);
-            api.post('/convert', formData, {
+            api.post('/conversions/image', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

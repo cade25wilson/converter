@@ -14,5 +14,6 @@ class AudioFormats extends Model
         'id',
         'name',
         'extension',
+        'encoding'
     ];
 }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AudioConverterService;
 use App\Services\ImageConverterService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
-class ImageController extends Controller
+class ConversionController extends Controller
 {
-    public function Convert(Request $request)
+    public function imageconvert(Request $request)
     {
         try {
             $request->validate([
@@ -30,6 +31,27 @@ class ImageController extends Controller
             $guid = $imageService->SingleImageConvert($request);
         }
 
-        return response()->json(['message' => 'success', 'guid' => $guid]);     
+        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);     
+    }
+
+    public function audioconvert(Request $request)
+    {
+        try {
+            $request->validate([
+                'audio.*' => 'required|file',
+                'format' => 'required|exists:audio_formats,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+        $audioService = new AudioConverterService();
+        if(count($request->audio) > 1) {
+            $guid = $audioService->MultipleAudioConvert($request);
+        } else {
+            $guid = $audioService->SingleAudioConvert($request);
+        }
+
+        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
+
     }
 }
