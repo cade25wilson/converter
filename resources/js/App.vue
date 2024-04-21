@@ -11,7 +11,7 @@
                         <router-link to="/image" class="nav-link active" aria-current="page">Images</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/audio" class="nav-link">Audio</router-link>
+                        <router-link to="/audios" class="nav-link">Audio</router-link>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Pricing</a>

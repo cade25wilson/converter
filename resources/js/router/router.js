@@ -10,7 +10,7 @@ const routes = [
         component: () => import("../Pages/TestRoute.vue"),
     },
     {
-        path: "/audio",
+        path: "/audios",
         component: () => import("../Pages/AudioRoute.vue"),
     },
 ];
