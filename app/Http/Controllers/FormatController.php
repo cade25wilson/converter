@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AudioFormats;
 use App\Models\Format;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,11 @@ class FormatController extends Controller
     public function index()
     {
         return Format::select('id', 'name')->get();
+    }
+
+    public function audio()
+    {
+        return AudioFormats::select('id', 'name')->get();
     }
 
     /**

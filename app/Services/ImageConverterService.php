@@ -2,17 +2,20 @@
 
 namespace App\Services;
 
+use App\Events\ImageConverted;
 use App\Jobs\ConvertMultipleImage;
 use App\Jobs\ConvertSingleImage;
 use App\Models\Format;
 use App\Models\Imageconversion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ImageConverterService
 {
     public function SingleImageConvert(Request $request)
     {
-        $guid = uniqid();
+        $guid = Str::uuid();
+        ImageConverted::dispatch($guid, 'pending');
         $formatId = $request->input('format');
         $image = $request->file('images')[0];
         $image->storeAs('images/' . $guid . '/', $image->getClientOriginalName());
@@ -37,16 +40,16 @@ class ImageConverterService
             'height' => $height,
             'guid' => $guid,
             'watermark' => $watermark,
-        ]);
-
+        ]);        
         ConvertSingleImage::dispatch($imageConversion);
    
-        return $imageConversion;
+        return $guid;
     }
 
     public function MultipleImageConvert(Request $request)
     {
-        $guid = uniqid();
+        $guid = str::uuid();
+        ImageConverted::dispatch($guid, 'processing');
 
         $images = $request->file('images');
         $formatId = $request->input('format');
@@ -79,6 +82,7 @@ class ImageConverterService
         }
         Imageconversion::insert($imageConversions);
         ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark);
+        return $guid;
     }
 
     private function SetNullableVariables($request)

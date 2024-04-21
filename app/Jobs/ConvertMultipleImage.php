@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ImageConverted;
 use App\Models\Imageconversion;
 use App\Services\ImageConverterService;
 use Illuminate\Bus\Queueable;
@@ -47,7 +48,7 @@ class ConvertMultipleImage implements ShouldQueue
             }
 
             ImageConverterService::updateStatus('processing', $this->guid,);
-            Imageconversion::where('guid', $this->guid)->update(['status' => 'processing']);
+            ImageConverted::dispatch($this->guid, 'processing');
 
             foreach ($images as $image) {
                 $this->processImage($imagePath, $image, $this->watermark);
@@ -59,6 +60,7 @@ class ConvertMultipleImage implements ShouldQueue
             ImageConverterService::ZipImages($this->guid);
             ImageConverterService::deleteDirectory($imagePath);
             ImageConverterService::updateStatus('completed', $this->guid);
+            ImageConverted::dispatch($this->guid, 'completed');
         } catch (\Exception $e) {
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;

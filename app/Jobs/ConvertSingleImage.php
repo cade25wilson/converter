@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ImageConverted;
 use App\Models\Imageconversion;
 use App\Services\ImageConverterService;
 use Illuminate\Bus\Queueable;
@@ -35,7 +36,7 @@ class ConvertSingleImage implements ShouldQueue
     {
         try {
             ImageConverterService::updateStatus('processing', $this->imageConversion->guid);
-            // Load the image
+            ImageConverted::dispatch($this->imageConversion->guid, 'processing');
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             // Resize the image if width and height are set
@@ -55,7 +56,10 @@ class ConvertSingleImage implements ShouldQueue
             ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
 
             ImageConverterService::updateStatus('completed', $this->imageConversion->guid);
+
+            ImageConverted::dispatch($this->imageConversion->guid, 'completed');        
         } catch (\Exception $e) {
+            ImageConverted::dispatch($this->imageConversion->guid, 'failed');
             Log::error('Image conversion failed: ' . $e->getMessage());
             throw $e;
         }

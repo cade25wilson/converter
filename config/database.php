@@ -94,6 +94,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pimpostgres' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_URL2'),
+            'host' => env('DB_HOST2', '127.0.0.1'),
+            'port' => env('DB_PORT2', '5432'),
+            'database' => env('DB_DATABASE2', 'laravel'),
+            'username' => env('DB_USERNAME2', 'root'),
+            'password' => env('DB_PASSWORD2', ''),
+            'charset' => env('DB_CHARSET2', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),

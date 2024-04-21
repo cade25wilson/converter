@@ -9,8 +9,14 @@
         "intervention/image": "^3.5",
         "intervention/image-laravel": "^1.2",
         "laravel/framework": "^11.0",
+        "laravel/octane": "^2.3",
+        "laravel/pulse": "^1.0@beta",
+        "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "pbmedia/laravel-ffmpeg": "^8.5",
+        "spiral/roadrunner-cli": "^2.6.0",
+        "spiral/roadrunner-http": "^3.3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -65,6 +71,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "beta",
     "prefer-stable": true
 }
