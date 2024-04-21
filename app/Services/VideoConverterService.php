@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\ConvertSingleVideo;
+use App\Jobs\ConvertMultipleVideo;
 use App\Models\VideoConversion;
 use App\Models\VideoFormat;
 use Illuminate\Http\Request;
@@ -40,6 +41,32 @@ class VideoConverterService
 
     public function MultipleVideoConvert(Request $request)
     {
+        $guid = Str::uuid();
+        $videoFiles = $request->file('video');
+        $videoConversion = [];
 
+        foreach ($videoFiles as $video) {
+            $originalName = $video->getClientOriginalName();
+            $video->storeAs('video/' . $guid . '/', $originalName);
+            
+
+            $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
+            
+            $format = VideoFormat::where('id', $request->input('format'))->first();
+            $convertedFormat = $format->extension;
+
+            $videoConversion[] = VideoConversion::create([
+                'original_name' => $video->getClientOriginalName(),
+                'original_format' => $originalFormat,
+                'converted_format' => $format->id,
+                'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
+                'status' => 'pending',
+                'guid' => $guid,
+            ]);
+        }
+
+        ConvertMultipleVideo::dispatch($guid, $convertedFormat);
+
+        return $guid;
     }
 }
