@@ -42,11 +42,12 @@ class ConvertSingleAudio implements ShouldQueue
 
             exec($command . " 2>&1", $output, $return_var);
             unlink(storage_path('app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->original_name));
-            ConversionService::ZipFiles($this->audioConversion->guid);
+            ConversionService::ZipFiles($this->audioConversion->guid, 'audio');
             ConversionService::DeleteDirectory(storage_path('app/audio/' . $this->audioConversion->guid));
             $this->audioConversion->update(['status' => 'completed']);
             ImageConverted::dispatch($this->audioConversion->guid, 'completed');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             $this->audioConversion->update(['status' => 'failed']);
         }
     }

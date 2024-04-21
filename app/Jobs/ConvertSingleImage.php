@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ImageConverted;
 use App\Models\Imageconversion;
-use App\Services\ImageConverterService;
+use App\Services\ConversionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +21,6 @@ class ConvertSingleImage implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    // public function __construct(Imageconversion $imageConversion, $image, int $width, int $height)
     public function __construct(Imageconversion $imageConversion)       
     {
         $this->imageConversion = $imageConversion;
@@ -31,11 +30,10 @@ class ConvertSingleImage implements ShouldQueue
      * Execute the job.
      * return a file
     */
-
     public function handle(): void
     {
         try {
-            ImageConverterService::updateStatus('processing', $this->imageConversion->guid);
+            Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'processing']);
             ImageConverted::dispatch($this->imageConversion->guid, 'processing');
             $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
@@ -52,11 +50,9 @@ class ConvertSingleImage implements ShouldQueue
             $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
-            ImageConverterService::ZipImages($this->imageConversion->guid);
-            ImageConverterService::deleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
-
-            ImageConverterService::updateStatus('completed', $this->imageConversion->guid);
-
+            ConversionService::ZipFiles($this->imageConversion->guid, 'images');
+            ConversionService::DeleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
+            Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'completed']);
             ImageConverted::dispatch($this->imageConversion->guid, 'completed');        
         } catch (\Exception $e) {
             ImageConverted::dispatch($this->imageConversion->guid, 'failed');

@@ -4,27 +4,14 @@ namespace App\Services;
 
 class ConversionService 
 {
-
-    public static function ZipImages($guid): void
+    public static function ZipFiles($guid, $type): void
     {
         $zip = new \ZipArchive();
-        $zipFileName = storage_path('app/images/' . $guid . '.zip');
+        $zipFileName = storage_path('app/' . $type . '/' . $guid . '.zip');
 
         if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
-            $options = array('add_path' => 'images/', 'remove_all_path' => TRUE);
-            $zip->addGlob(storage_path('app/images/' . $guid . '/*'), GLOB_BRACE, $options);
-            $zip->close();
-        }
-    }
-
-    public static function ZipFiles($guid): void
-    {
-        $zip = new \ZipArchive();
-        $zipFileName = storage_path('app/audio/' . $guid . '.zip');
-
-        if ($zip->open($zipFileName, \ZipArchive::CREATE) === TRUE) {
-            $options = array('add_path' => 'audio/', 'remove_all_path' => TRUE);
-            $zip->addGlob(storage_path('app/audio/' . $guid . '/*'), GLOB_BRACE, $options);
+            $options = array('add_path' => $type . '/', 'remove_all_path' => TRUE);
+            $zip->addGlob(storage_path('app/' . $type . '/' . $guid . '/*'), GLOB_BRACE, $options);
             $zip->close();
         }
     }

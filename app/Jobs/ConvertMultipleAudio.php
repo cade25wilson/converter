@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class ConvertMultipleAudio implements ShouldQueue
 {
@@ -47,12 +48,12 @@ class ConvertMultipleAudio implements ShouldQueue
                 $this->processAudio($audioPath, $audio);
             }
 
-            ConversionService::ZipFiles($this->guid);
+            ConversionService::ZipFiles($this->guid, 'audio');
             ConversionService::DeleteDirectory($audioPath);
             AudioConversion::where('guid', $this->guid)->update(['status' => 'completed']);
             ImageConverted::dispatch($this->guid, 'completed');
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             AudioConversion::where('guid', $this->guid)->update(['status' => 'failed']);
             ImageConverted::dispatch($this->guid, 'failed');
         }
