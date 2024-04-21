@@ -13,6 +13,10 @@ const routes = [
         path: "/audios",
         component: () => import("../Pages/AudioRoute.vue"),
     },
+    {
+        path: "/videos",
+        component: () => import("../Pages/VideoRoute.vue"),
+    },
 ];
 
 export default createRouter({
