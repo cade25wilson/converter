@@ -92,9 +92,4 @@ class ImageConverterService
         $watermark = $request->file('watermark') ? $request->file('watermark')->getClientOriginalName() : null;
         return [$width, $height, $watermark];
     }
-    
-    public static function updateStatus(string $status, string $guid): void
-    {
-        Imageconversion::where('guid', $guid)->update(['status' => $status]);
-    }
 }
