@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
@@ -30,6 +30,19 @@ Route::get('/images/{imagePath}', function ($imagePath) {
 
     return Response::make($file, 200)->header("Content-Type", $type);
 })->where('imagePath', '.*');
+
+Route::get('/audio/{audioPath}', function ($audioPath) {
+    $path = public_path('audio/' . $audioPath);
+
+    if (!File::exists($path)) {
+        abort(404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    return Response::make($file, 200)->header("Content-Type", $type);
+})->where('audioPath', '.*');
 
 Route::post('/messages', [MessagesController::class, 'store']);
 Route::get('/messages', [MessagesController::class, 'show']);

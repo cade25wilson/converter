@@ -67,48 +67,48 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-                // this.isConverting = true;
-                // this.conversionStatus = 'started';
-                // let guid = response.data.guid;
-                // this.setLocalStorage(guid);
-                // this.subscribeToChannel();
+                this.isConverting = true;
+                this.conversionStatus = 'started';
+                let guid = response.data.guid;
+                this.setLocalStorage(guid);
+                this.subscribeToChannel();
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
-        // setLocalStorage(guid){
-        //     localStorage.setItem('guid', guid);
-        //     let convertedGuids = JSON.parse(localStorage.getItem('convertedGuids')) || [];
-        //     convertedGuids.push(guid);
-        //     localStorage.setItem('convertedGuids', JSON.stringify(convertedGuids));
-        // },
-        // subscribeToChannel() {
-        //     console.log('subscribing to channel');
-        //     let sessionId = localStorage.getItem('guid');
-        //     window.Echo.channel('conversion.' + sessionId)
-        //     .listen('ImageConverted', (event) => {
-        //         this.conversionStatus = event.status;
-        //         if (event.status == 'completed'){
-        //             window.Echo.leave('conversion.' + sessionId);
-        //             this.fetchConversion(sessionId);
-        //         }
-        //     });
-        // },
-        // fetchConversion(sessionId) {
-        //     api.get('/images/' + sessionId + '.zip', { responseType: 'blob' })
-        //         .then(response => {
-        //             const url = window.URL.createObjectURL(new Blob([response.data]));
-        //             const link = document.createElement('a');
-        //             link.href = url;
-        //             link.setAttribute('download', 'file.zip'); //or any other extension
-        //             document.body.appendChild(link);
-        //             link.click();
-        //         })
-        //         .catch(error => {
-        //             console.log(error);
-        //         });
-        // }
+        setLocalStorage(guid){
+            localStorage.setItem('guid', guid);
+            let convertedGuids = JSON.parse(localStorage.getItem('convertedGuids')) || [];
+            convertedGuids.push(guid);
+            localStorage.setItem('convertedGuids', JSON.stringify(convertedGuids));
+        },
+        subscribeToChannel() {
+            console.log('subscribing to channel');
+            let sessionId = localStorage.getItem('guid');
+            window.Echo.channel('conversion.' + sessionId)
+            .listen('ImageConverted', (event) => {
+                this.conversionStatus = event.status;
+                if (event.status == 'completed'){
+                    window.Echo.leave('conversion.' + sessionId);
+                    this.fetchConversion(sessionId);
+                }
+            });
+        },
+        fetchConversion(sessionId) {
+            api.get('/audio/' + sessionId + '.zip', { responseType: 'blob' })
+                .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'file.zip'); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     },
     computed: {
         spinnerClass() {

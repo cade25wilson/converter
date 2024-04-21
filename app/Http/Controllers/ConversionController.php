@@ -14,7 +14,7 @@ class ConversionController extends Controller
         try {
             $request->validate([
                 'images.*' => 'required',
-                'format' => 'required|exists:formats,id',
+                'format' => 'required|exists:image_formats,id',
                 'email' => 'email',
                 'width' => 'numeric|integer|required_with:height',
                 'height' => 'numeric|integer|required_with:width',

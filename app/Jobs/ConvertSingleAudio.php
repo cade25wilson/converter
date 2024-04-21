@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ImageConverted;
 use App\Models\Audioconversion;
 use App\Services\ConversionService;
 use Illuminate\Bus\Queueable;
@@ -31,11 +32,11 @@ class ConvertSingleAudio implements ShouldQueue
     {
         try {
             $this->audioConversion->update(['status' => 'processing']);
+            ImageConverted::dispatch($this->audioConversion->guid, 'processing');
             $sourceFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->original_name;
             $destinationFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->converted_name;
 
             $command = "ffmpeg -i $sourceFile $destinationFile";
-            Log::info($command);
             $output = array();
             $return_var = null;
 
@@ -44,6 +45,7 @@ class ConvertSingleAudio implements ShouldQueue
             ConversionService::ZipFiles($this->audioConversion->guid);
             ConversionService::DeleteDirectory(storage_path('app/audio/' . $this->audioConversion->guid));
             $this->audioConversion->update(['status' => 'completed']);
+            ImageConverted::dispatch($this->audioConversion->guid, 'completed');
         } catch (\Exception $e) {
             $this->audioConversion->update(['status' => 'failed']);
         }

@@ -32,6 +32,8 @@ class AudioConverterService
         ]);
 
         ConvertSingleAudio::dispatch($audioConversion);
+
+        return $guid;
     }
 
     public function MultipleAudioConvert(Request $request)
