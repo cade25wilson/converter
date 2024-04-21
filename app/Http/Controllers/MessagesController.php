@@ -43,7 +43,6 @@ class MessagesController extends Controller
             $username = "PIMPOSTER!";
         }
 
-        // if($username == 'asdffdsa') {
         if($username == env('PIM_PASSWORD')) {
             $username = 'Posh Pim';
         }

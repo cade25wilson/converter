@@ -3,7 +3,6 @@
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\MessagesController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 
-Route::get('/formats/image', [FormatController::class, 'index']);
+Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
 
 Route::get('/images/{imagePath}', function ($imagePath) {
