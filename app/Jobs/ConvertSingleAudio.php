@@ -33,6 +33,7 @@ class ConvertSingleAudio implements ShouldQueue
         try {
             $this->audioConversion->update(['status' => 'processing']);
             ImageConverted::dispatch($this->audioConversion->guid, 'processing');
+            // add this to service as well(redundant code)
             $sourceFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->original_name;
             $destinationFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->converted_name;
 

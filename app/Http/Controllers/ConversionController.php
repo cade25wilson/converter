@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AudioConverterService;
 use App\Services\ImageConverterService;
+use App\Services\VideoConverterService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
@@ -52,6 +53,26 @@ class ConversionController extends Controller
         }
 
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
+    }
 
+    public function videoconvert(Request $request)
+    {
+        try {
+            $request->validate([
+                'video.*' => 'required|file',
+                'format'
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        $videoService = new VideoConverterService();
+        if(count($request->video) > 1) {
+            $guid = $videoService->MultipleVideoConvert($request);
+        } else {
+            $guid = $videoService->SingleVideoConvert($request);
+        }
+
+        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 }
