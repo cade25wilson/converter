@@ -2,7 +2,7 @@
     <form @submit.prevent="convertFile" v-if="!isConverting">
         <div class="form-group">
             <label for="file">File</label>
-            <input type="file" class="form-control" id="file" v-on:change="files = $event.target.files" multiple>
+            <input type="file" class="form-control" id="audio" v-on:change="files = $event.target.files" multiple>
         </div>
         <div class="form-group">
             <label for="format">Format</label>
@@ -11,17 +11,7 @@
                 <option v-for="format in formats" :value="format.id">{{ format.name }}</option>
             </select>
         </div>
-        <div>
-            <input type="checkbox" @change="resize = !resize"> Resize</input>
-            <div class="form-group" v-if="resize">
-                <label for="width">Width(px)</label>
-                <input type="number" class="form-control" id="width" v-model="width">
-            </div>
-            <div class="form-group" v-if="resize">
-                <label for="height">Height(px)</label>
-                <input type="number" class="form-control" id="height" v-model="height">
-            </div>
-        </div>
+
         <br>
         <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
     </form>
@@ -37,16 +27,13 @@
 <script>
 import api from '../axios';
 export default {
-    name: 'ConvertFile',
+    name: 'ConvertAudio',
     data() {
         return {
             files: [],
             conversionType: '',
             formats: '',
             selectedFormat: '',
-            width: null,
-            height: null,
-            resize: false,
             isConverting: false,
             conversionStatus: '',
         };
@@ -61,7 +48,7 @@ export default {
         },
         getFormats() {
             console.log('onCreated');
-            api.get('/formats/image').then(response => {
+            api.get('/formats/audio').then(response => {
                 console.log(response.data);
                 this.formats = response.data;
             }).catch(error => {
@@ -72,14 +59,10 @@ export default {
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
             for (let i = 0; i <= this.files.length; i++) {
-                formData.append('images[]', this.files[i]);
-            }
-            if (this.width && this.height){
-                formData.append('width', this.width);
-                formData.append('height', this.height);
+                formData.append('audio[]', this.files[i]);
             }
             formData.append('format', selectedFormat);
-            api.post('/conversions/image', formData, {
+            api.post('/conversions/audio', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -89,6 +72,7 @@ export default {
                 let guid = response.data.guid;
                 this.setLocalStorage(guid);
                 this.subscribeToChannel();
+                console.log(response.data);
             }).catch(error => {
                 console.log(error);
             });
@@ -112,7 +96,7 @@ export default {
             });
         },
         fetchConversion(sessionId) {
-            api.get('/images/' + sessionId + '.zip', { responseType: 'blob' })
+            api.get('/audio/' + sessionId + '.zip', { responseType: 'blob' })
                 .then(response => {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');

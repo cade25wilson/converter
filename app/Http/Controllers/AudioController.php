@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AudioFormats;
-use App\Models\Format;
+use App\Models\Audioconversion;
 use Illuminate\Http\Request;
 
-class FormatController extends Controller
+class AudioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Format::select('id', 'name')->get();
-    }
-
-    public function audio()
-    {
-        return AudioFormats::select('id', 'name')->get();
+        //
     }
 
     /**
