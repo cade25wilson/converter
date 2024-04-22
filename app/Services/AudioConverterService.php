@@ -13,29 +13,26 @@ class AudioConverterService
 {
     public function SingleAudioConvert(Request $request)
     {
-        // convert to function in conversionservice
-        $guid = Str::uuid();
-        $audio = $request->file('audio')[0];
-        $originalName = $audio->getClientOriginalName();
-        $audio->storeAs('audio/' . $guid . '/', $originalName);
+        $conversionService = new ConversionService();
+        $data = $conversionService->SetVariables($request, 'audio');
 
-        $originalFormat = AudioFormats::where('extension', $audio->getClientOriginalExtension())->value('id');
+        $originalFormat = AudioFormats::where('extension', $data['originalFormat'])->value('id');
 
         $format = AudioFormats::where('id', $request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $audioConversion = Audioconversion::create([
-            'original_name' => $audio->getClientOriginalName(),
+            'original_name' => $data['originalName'],
             'original_format' => $originalFormat,
             'converted_format' => $format->id,
-            'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
+            'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
-            'guid' => $guid,
+            'guid' => $data['guid'],
         ]);
 
         ConvertSingleAudio::dispatch($audioConversion);
 
-        return $guid;
+        return $data['guid'];
     }
 
     public function MultipleAudioConvert(Request $request)
