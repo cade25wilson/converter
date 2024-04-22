@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AudioFormats;
 use App\Models\Format;
+use App\Models\SpreadsheetFormat;
 use App\Models\VideoFormat;
 
 class FormatController extends Controller
@@ -24,5 +25,10 @@ class FormatController extends Controller
     public function video()
     {
         return VideoFormat::select('id', 'name')->get();
+    }
+
+    public function spreadsheet()
+    {
+        return SpreadsheetFormat::select('id', 'name')->get();
     }
 }

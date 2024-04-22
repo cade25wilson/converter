@@ -15,8 +15,9 @@ Route::post('/conversions/image', [ConversionController::class, 'imageconvert'])
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
 
-Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
+Route::get('/formats/image', [FormatController::class, 'image']);
+Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
 Route::get('/formats/video', [FormatController::class, 'video']);
 
 Route::get('/images/{imagePath}', function ($imagePath) {
