@@ -14,29 +14,26 @@ class VideoConverterService
 
     public function SingleVideoConvert(Request $request)
     {
-        // convert to function in conversionservice
-        $guid = Str::uuid();
-        $video = $request->file('video')[0];
-        $originalName = $video->getClientOriginalName();
-        $video->storeas('video/' . $guid . '/', $originalName);
+        $conversionService = new ConversionService();
+        $data = $conversionService->SetVariables($request, 'video');
 
-        $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
+        $originalFormat = VideoFormat::where('extension', $data['originalFormat'])->value('id');
 
         $format = VideoFormat::where('id', $request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $videoConversion = VideoConversion::create([
-            'original_name' => $video->getClientOriginalName(),
+            'original_name' => $data['originalName'],
             'original_format' => $originalFormat,
             'converted_format' => $format->id,
-            'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
+            'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
-            'guid' => $guid,
+            'guid' => $data['guid'],
         ]);
 
         ConvertSingleVideo::dispatch($videoConversion);
 
-        return $guid;
+        return $data['guid'];
     }
 
     public function MultipleVideoConvert(Request $request)

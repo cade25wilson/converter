@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 class ConversionService 
 {
     public static function ZipFiles($guid, $type): void
@@ -28,4 +31,22 @@ class ConversionService
         rmdir($dir);
     }
 
+    public function SetVariables(Request $request, string $type)
+    {
+        $guid = Str::uuid();
+        $file = $request->file($type)[0];
+        $originalName = $file->getClientOriginalName();
+        $this->StoreFile($file, $guid, $type);
+        return [
+            'guid' => $guid,
+            'originalName' => $originalName,
+            'originalFormat' => $file->getClientOriginalExtension(),
+            'format' => $request->input('format'),
+        ];
+    }
+
+    private function StoreFile($file, $guid, $type): void
+    {
+        $file->storeAs($type . '/' . $guid . '/', $file->getClientOriginalName());
+    }
 }
