@@ -14,7 +14,7 @@
                         <router-link to="/audios" class="nav-link">Audio</router-link>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        <router-link to='/videos' class="nav-link" href="#">Video</router-link>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
