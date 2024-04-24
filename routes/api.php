@@ -21,57 +21,18 @@ Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
 Route::get('/formats/video', [FormatController::class, 'video']);
 
-Route::get('/audio/{audioPath}', function ($audioPath) {
-    $path = public_path('audio/' . $audioPath);
-
-    if (!File::exists($path)) {
-        abort(404);
-    }
-
-    $file = File::get($path);
-    $type = File::mimeType($path);
-
-    return Response::make($file, 200)->header("Content-Type", $type);
-})->where('audioPath', '.*');
-
-Route::get('/image/{imagePath}', function ($imagePath) {
-    $path = public_path('image/' . $imagePath);
-
-    if (!File::exists($path)) {
-        abort(404);
-    }
-
-    $file = File::get($path);
-    $type = File::mimeType($path);
-
-    return Response::make($file, 200)->header("Content-Type", $type);
-})->where('imagePath', '.*');
-
-Route::get('/video/{videoPath}', function ($videoPath) {
-    $path = public_path('video/' . $videoPath);
-
-    if (!File::exists($path)) {
-        abort(404);
-    }
-
-    $file = File::get($path);
-    $type = File::mimeType($path);
-
-    return Response::make($file, 200)->header("Content-Type", $type);
-})->where('videoPath', '.*');
-
-Route::get('/spreadsheet/{spreadsheetPath}', function ($spreadsheetPath) {
-    $path = public_path('spreadsheet/' . $spreadsheetPath);
-
-    if (!File::exists($path)) {
-        abort(404);
-    }
-
-    $file = File::get($path);
-    $type = File::mimeType($path);
-
-    return Response::make($file, 200)->header("Content-Type", $type);
-})->where('spreadsheetPath', '.*');
-
 Route::get('/messages', [MessagesController::class, 'show']);
 Route::post('/messages', [MessagesController::class, 'store']);
+
+$directories = ['audio', 'image', 'spreadsheet', 'video'];
+foreach($directories as $directory){
+    Route::get('/' . $directory . '/{filename}', function ($filename) use ($directory) {
+        $path = storage_path('app/' . $directory . '/' . $filename);
+        if (!File::exists($path)) {
+            abort(404);
+        }
+        $file = File::get($path);
+        $type = File::mimeType($path);
+        return Response::make($file, 200)->header("Content-Type", $type);
+    })->where('filename', '.*');
+}
