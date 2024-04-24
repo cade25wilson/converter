@@ -8,21 +8,16 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Artisan::command('clearoldfiles', function() {
-    $files = glob(storage_path('app/audio/*'));
+    $directories = ['audio', 'images', 'spreadsheet', 'video'];
     $now = time();
-    foreach ($files as $file) {
-        if (is_file($file)) {
-            if ($now - filemtime($file) >= 60 * 60 * 24) {
-                unlink($file);
-            }
-        }
-    }
 
-    $files = glob(storage_path('app/images/*'));
-    foreach ($files as $file) {
-        if (is_file($file)) {
-            if ($now - filemtime($file) >= 60 * 60 * 24) {
-                unlink($file);
+    foreach($directories as $directory){
+        $files = glob(storage_path('app/' . $directory . '/*'));
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                if ($now - filemtime($file) >= 60 * 60 * 24) {
+                    unlink($file);
+                }
             }
         }
     }

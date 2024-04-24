@@ -16,7 +16,6 @@ class SpreadsheetSeeder extends Seeder
         $formats = [
             'XLS',
             'XLSX',
-            'XLSM',
             'ODS',
             'CSV',
             'HTML',
