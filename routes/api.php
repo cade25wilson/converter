@@ -35,7 +35,7 @@ Route::get('/audio/{audioPath}', function ($audioPath) {
 })->where('audioPath', '.*');
 
 Route::get('/image/{imagePath}', function ($imagePath) {
-    $path = public_path('images/' . $imagePath);
+    $path = public_path('image/' . $imagePath);
 
     if (!File::exists($path)) {
         abort(404);
