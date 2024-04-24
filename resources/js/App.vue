@@ -17,7 +17,7 @@
                         <router-link to='/videos' class="nav-link" href="#">Video</router-link>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                        <router-link to="/spreadsheets" class="nav-link" aria-disabled="true">Spreadsheet</router-link>
                     </li>
                 </ul>
             </div>

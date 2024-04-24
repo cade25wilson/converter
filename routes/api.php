@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
+Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);
 Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
 
 Route::get('/formats/audio', [FormatController::class, 'audio']);
@@ -58,6 +59,19 @@ Route::get('/video/{videoPath}', function ($videoPath) {
 
     return Response::make($file, 200)->header("Content-Type", $type);
 })->where('videoPath', '.*');
+
+Route::get('/spreadsheet/{spreadsheetPath}', function ($spreadsheetPath) {
+    $path = public_path('spreadsheet/' . $spreadsheetPath);
+
+    if (!File::exists($path)) {
+        abort(404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    return Response::make($file, 200)->header("Content-Type", $type);
+})->where('spreadsheetPath', '.*');
 
 Route::get('/messages', [MessagesController::class, 'show']);
 Route::post('/messages', [MessagesController::class, 'store']);
