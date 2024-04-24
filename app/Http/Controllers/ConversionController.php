@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AudioConverterService;
 use App\Services\ImageConverterService;
+use App\Services\SpreadsheetConverterService;
 use App\Services\VideoConverterService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -60,7 +61,7 @@ class ConversionController extends Controller
         try {
             $request->validate([
                 'video.*' => 'required|file',
-                'format'
+                'format' => 'required|exists:video_formats,id',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
@@ -71,6 +72,27 @@ class ConversionController extends Controller
             $guid = $videoService->MultipleVideoConvert($request);
         } else {
             $guid = $videoService->SingleVideoConvert($request);
+        }
+
+        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
+    }
+
+    public function spreadsheetconvert(Request $request)
+    {
+        try {
+            $request->validate([
+                'spreadsheet.*' => 'required|file',
+                'format' => 'required|exists:spreadsheet_formats,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        $spreadsheetService = new SpreadsheetConverterService($request);
+        if(count($request->spreadsheet) > 1) {
+            $guid = $spreadsheetService->MultipleSpreadsheetConvert();
+        } else {
+            $guid = $spreadsheetService->SingleSpreadsheetConvert();
         }
 
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);

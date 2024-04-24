@@ -17,6 +17,10 @@ const routes = [
         path: "/videos",
         component: () => import("../Pages/VideoRoute.vue"),
     },
+    {
+        path: "/spreadsheets",
+        component: () => import("../Pages/SpreadsheetRoute.vue"),
+    }
 ];
 
 export default createRouter({
