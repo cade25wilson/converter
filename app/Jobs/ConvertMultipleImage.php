@@ -41,7 +41,7 @@ class ConvertMultipleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            $imagePath = storage_path('app/images/' . $this->guid);
+            $imagePath = storage_path('app/image/' . $this->guid);
             $images = array_diff(scandir($imagePath), ['.', '..']);
 
             if (empty($images)) {
@@ -58,7 +58,7 @@ class ConvertMultipleImage implements ShouldQueue
                 unlink($imagePath . '/' . $this->watermark);
             }
 
-            ConversionService::ZipFiles($this->guid, 'images');
+            ConversionService::ZipFiles($this->guid, 'image');
             ConversionService::DeleteDirectory($imagePath);
             Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
             ImageConverted::dispatch($this->guid, 'completed');

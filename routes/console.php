@@ -8,7 +8,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Artisan::command('clearoldfiles', function() {
-    $directories = ['audio', 'images', 'spreadsheet', 'video'];
+    $directories = ['audio', 'image', 'spreadsheet', 'video'];
     $now = time();
 
     foreach($directories as $directory){

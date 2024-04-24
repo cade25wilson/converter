@@ -35,7 +35,7 @@ class ConvertSingleImage implements ShouldQueue
         try {
             Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'processing']);
             ImageConverted::dispatch($this->imageConversion->guid, 'processing');
-            $image = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
+            $image = new Imagick(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             // Resize the image if width and height are set
             if ($this->imageConversion->width && $this->imageConversion->height) {
@@ -43,15 +43,15 @@ class ConvertSingleImage implements ShouldQueue
             }
 
             if($this->imageConversion->watermark) {
-                $watermark = new Imagick(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->watermark));
+                $watermark = new Imagick(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->watermark));
                 $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
             }
 
-            $image->writeImage(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
-            unlink(storage_path('app/images/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
+            $image->writeImage(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
+            unlink(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
-            ConversionService::ZipFiles($this->imageConversion->guid, 'images');
-            ConversionService::DeleteDirectory(storage_path('app/images/' . $this->imageConversion->guid));
+            ConversionService::ZipFiles($this->imageConversion->guid, 'image');
+            ConversionService::DeleteDirectory(storage_path('app/image/' . $this->imageConversion->guid));
             Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'completed']);
             ImageConverted::dispatch($this->imageConversion->guid, 'completed');        
         } catch (\Exception $e) {
