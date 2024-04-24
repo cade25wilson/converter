@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Jobs\ConvertSingleSpreadsheet;
+use App\Jobs\ConvertMultipleSpreadsheet;
 use App\Models\SpreadsheetConversion;
 use App\Models\SpreadsheetFormat;
 use App\Services\ConversionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SpreadsheetConverterService
 {
@@ -43,6 +45,31 @@ class SpreadsheetConverterService
 
     public function MultipleSpreadsheetConvert() 
     {
+        $guid = Str::uuid();
+        $spreadsheetFiles = $this->request->file('spreadsheet');
+        $spreadsheetConversion = [];
 
+        foreach($spreadsheetFiles as $spreadsheet){
+            $originalName = $spreadsheet->getClientOriginalName();
+            $spreadsheet->storeAs('spreadsheet/' . $guid . '/', $originalName);
+
+            $originalFormat = SpreadsheetFormat::where('extension', $spreadsheet->getClientOriginalExtension())->value('id');
+
+            $format = SpreadsheetFormat::where('id', $this->request->input('format'))->first();
+            $convertedFormat = $format->extension;
+
+            $spreadsheetConversion[] = SpreadsheetConversion::create([
+                'original_name' => $spreadsheet->getClientOriginalName(),
+                'original_format' => $originalFormat,
+                'converted_format' => $format->id,
+                'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
+                'status' => 'pending',
+                'guid' => $guid,
+            ]);
+        }
+
+        ConvertMultipleSpreadsheet::dispatch($guid, $convertedFormat);
+
+        return $guid;   
     }
 }
