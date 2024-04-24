@@ -1,16 +1,16 @@
 <template>
     <div class="mx-auto text-center">
         <h1>Image Converter</h1>
-        <ConvertFile />
+        <ConversionForm page="image" />
     </div>
 </template>
 
 <script>
-import ConvertFile from '../components/ConvertFile.vue';
+import ConversionForm from '../components/ConversionForm.vue';
 
 export default {
     components: {
-        ConvertFile
+        ConversionForm
     }
 }
 </script>

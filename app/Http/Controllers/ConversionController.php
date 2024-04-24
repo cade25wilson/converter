@@ -15,7 +15,7 @@ class ConversionController extends Controller
     {
         try {
             $request->validate([
-                'images.*' => 'required',
+                'image.*' => 'required',
                 'format' => 'required|exists:image_formats,id',
                 'email' => 'email',
                 'width' => 'numeric|integer|required_with:height',
@@ -27,7 +27,7 @@ class ConversionController extends Controller
         }
         $imageService = new ImageConverterService();
         
-        if(count($request->images) > 1) {
+        if(count($request->image) > 1) {
             $guid = $imageService->MultipleImageConvert($request);
         } else {
             $guid = $imageService->SingleImageConvert($request);

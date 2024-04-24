@@ -1,16 +1,16 @@
 <template>
     <div class="mx-auto text-center">
         <h1>Spreadsheet Converter</h1>
-        <ConvertSpreadsheet />
+        <ConversionForm page="spreadsheet" />
     </div>
 </template>
 
 <script>
-import ConvertSpreadsheet from '../components/ConvertSpreadsheet.vue';
+import ConversionForm from '../components/ConversionForm.vue';
 
 export default {
     components: {
-        ConvertSpreadsheet
+        ConversionForm
     }
 }
 </script>

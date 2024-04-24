@@ -34,7 +34,7 @@ Route::get('/audio/{audioPath}', function ($audioPath) {
     return Response::make($file, 200)->header("Content-Type", $type);
 })->where('audioPath', '.*');
 
-Route::get('/images/{imagePath}', function ($imagePath) {
+Route::get('/image/{imagePath}', function ($imagePath) {
     $path = public_path('images/' . $imagePath);
 
     if (!File::exists($path)) {
