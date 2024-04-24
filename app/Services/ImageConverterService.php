@@ -17,7 +17,7 @@ class ImageConverterService
         $guid = Str::uuid();
         ImageConverted::dispatch($guid, 'pending');
         $formatId = $request->input('format');
-        $image = $request->file('images')[0];
+        $image = $request->file('image')[0];
         $image->storeAs('images/' . $guid . '/', $image->getClientOriginalName());
 
         // Look up the format in the formats table
@@ -51,7 +51,7 @@ class ImageConverterService
         $guid = str::uuid();
         ImageConverted::dispatch($guid, 'processing');
 
-        $images = $request->file('images');
+        $images = $request->file('image');
         $formatId = $request->input('format');
         mkdir(storage_path('app/images/' . $guid));
 

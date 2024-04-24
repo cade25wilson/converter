@@ -2,7 +2,7 @@
     <form @submit.prevent="convertFile" v-if="!isConverting">
         <div class="form-group">
             <label for="file">File</label>
-            <input type="file" class="form-control" id="spreadsheet" v-on:change="files = $event.target.files" multiple>
+            <input type="file" class="form-control" :id="this.page" v-on:change="files = $event.target.files" multiple>
         </div>
         <div class="form-group">
             <label for="format">Format</label>
@@ -11,7 +11,17 @@
                 <option v-for="format in formats" :value="format.id">{{ format.name }}</option>
             </select>
         </div>
-
+        <div v-if="this.page === 'image'">
+            <input type="checkbox" @change="resize = !resize"> Resize</input>
+            <div class="form-group" v-if="resize">
+                <label for="width">Width(px)</label>
+                <input type="number" class="form-control" id="width" v-model="width">
+            </div>
+            <div class="form-group" v-if="resize">
+                <label for="height">Height(px)</label>
+                <input type="number" class="form-control" id="height" v-model="height">
+            </div>
+        </div>
         <br>
         <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
     </form>
@@ -25,9 +35,15 @@
 </template>
 
 <script>
-import api from '../axios';
+import api from '../axios'
 export default {
-    name: 'ConvertSpreadsheet',
+    name: 'ConversionForm',
+    props: {
+        page: {
+            type: String,
+            required: true
+        }
+    },
     data() {
         return {
             files: [],
@@ -36,7 +52,8 @@ export default {
             selectedFormat: '',
             isConverting: false,
             conversionStatus: '',
-        };
+            resize: false,
+        }
     },
     created() {
         this.getFormats();
@@ -48,7 +65,7 @@ export default {
         },
         getFormats() {
             console.log('onCreated');
-            api.get('/formats/spreadsheet').then(response => {
+            api.get(`/formats/${this.page}`).then(response => {
                 console.log(response.data);
                 this.formats = response.data;
             }).catch(error => {
@@ -59,10 +76,14 @@ export default {
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
             for (let i = 0; i <= this.files.length; i++) {
-                formData.append('spreadsheet[]', this.files[i]);
+                formData.append(`${this.page}[]`, this.files[i]);
+            }
+            if (this.width && this.height){
+                formData.append('width', this.width);
+                formData.append('height', this.height);
             }
             formData.append('format', selectedFormat);
-            api.post('/conversions/spreadsheet', formData, {
+            api.post(`/conversions/${this.page}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -96,7 +117,7 @@ export default {
             });
         },
         fetchConversion(sessionId) {
-            api.get('/spreadsheet/' + sessionId + '.zip', { responseType: 'blob' })
+            api.get(`/${this.page}/` + sessionId + '.zip', { responseType: 'blob' })
                 .then(response => {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');

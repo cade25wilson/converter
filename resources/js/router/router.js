@@ -6,10 +6,6 @@ const routes = [
         component: () => import("../Pages/IndexRoute.vue"),
     },
     {
-        path: "/test",
-        component: () => import("../Pages/TestRoute.vue"),
-    },
-    {
         path: "/audios",
         component: () => import("../Pages/AudioRoute.vue"),
     },

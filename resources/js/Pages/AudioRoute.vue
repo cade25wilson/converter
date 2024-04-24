@@ -1,14 +1,16 @@
 <template>
-<div class="container">
-    <ConvertAudio />
-</div>    
+    <div class="mx-auto text-center">
+        <h1>Audio Converter</h1>
+        <ConversionForm page="audio" />
+    </div>    
 </template>
+
 <script>
-import ConvertAudio from '../components/ConvertAudio.vue';
+import ConversionForm from '../components/ConversionForm.vue';
 
 export default {
     components: {
-        ConvertAudio
+        ConversionForm
     }
 }
 </script>
