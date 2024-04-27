@@ -57,8 +57,19 @@ export default {
     },
     created() {
         this.getFormats();
+        this.setLocalStorage();
     },
     methods: {
+        setLocalStorage() {
+            if(!localStorage.getItem('pastConversions')){
+                localStorage.setItem('pastConversions', JSON.stringify({
+                    'video': [],
+                    'audio': [],
+                    'image': [],
+                    'spreadsheet': []
+                }));
+            }
+        },
         resetConversion() {
             this.isConverting = false;
             this.conversionStatus = '';
@@ -91,30 +102,30 @@ export default {
                 this.isConverting = true;
                 this.conversionStatus = 'started';
                 let guid = response.data.guid;
-                this.setLocalStorage(guid);
-                this.subscribeToChannel();
+                this.subscribeToChannel(guid);
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
-        setLocalStorage(guid){
-            localStorage.setItem('guid', guid);
-            let convertedGuids = JSON.parse(localStorage.getItem('convertedGuids')) || [];
-            convertedGuids.push(guid);
-            localStorage.setItem('convertedGuids', JSON.stringify(convertedGuids));
-        },
-        subscribeToChannel() {
+        subscribeToChannel(guid) {
             console.log('subscribing to channel');
-            let sessionId = localStorage.getItem('guid');
-            window.Echo.channel('conversion.' + sessionId)
+            window.Echo.channel('conversion.' + guid)
             .listen('ImageConverted', (event) => {
                 this.conversionStatus = event.status;
                 if (event.status == 'completed'){
-                    window.Echo.leave('conversion.' + sessionId);
-                    this.fetchConversion(sessionId);
+                    window.Echo.leave('conversion.' + guid);
+                    this.addPastConversion(guid, this.page);
+                    this.fetchConversion(guid);
                 }
             });
+        },
+        addPastConversion(sessionId, type) {
+            let pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
+            if(pastConversions[type]) {
+                pastConversions[type].push(sessionId);
+                localStorage.setItem('pastConversions', JSON.stringify(pastConversions));
+            }
         },
         fetchConversion(sessionId) {
             api.get(`/${this.page}/` + sessionId + '.zip', { responseType: 'blob' })

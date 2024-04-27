@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
 Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);

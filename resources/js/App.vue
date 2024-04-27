@@ -8,7 +8,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <router-link to="/image" class="nav-link active" aria-current="page">Images</router-link>
+                        <router-link to="/images" class="nav-link active" aria-current="page">Images</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/audios" class="nav-link">Audio</router-link>

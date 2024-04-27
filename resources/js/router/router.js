@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
     {
-        path: "/image",
+        path: "/images",
         component: () => import("../Pages/IndexRoute.vue"),
     },
     {
