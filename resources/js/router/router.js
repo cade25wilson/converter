@@ -16,7 +16,11 @@ const routes = [
     {
         path: "/spreadsheets",
         component: () => import("../Pages/SpreadsheetRoute.vue"),
-    }
+    },
+    {
+        path: "/previousconversions",
+        component: () => import("../Pages/PastRoute.vue"),
+    },
 ];
 
 export default createRouter({

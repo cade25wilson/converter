@@ -56,7 +56,11 @@ export default {
         }
     },
     created() {
-        this.getFormats();
+        if(!localStorage.getItem(`${this.page}Formats`)){
+            this.getFormats();
+        } else {
+            this.formats = JSON.parse(localStorage.getItem(`${this.page}Formats`));
+        }
         this.setLocalStorage();
     },
     methods: {
@@ -79,13 +83,20 @@ export default {
             api.get(`/formats/${this.page}`).then(response => {
                 console.log(response.data);
                 this.formats = response.data;
+                this.storeFormats(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
+        storeFormats(formatData) {
+            if(!localStorage.getItem(`${this.page}Formats`)){
+                localStorage.setItem(`${this.page}Formats`, JSON.stringify(formatData));
+            }
+        },
         convertFile() {
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
+            let firstFileName = this.files[0].name;
             for (let i = 0; i <= this.files.length; i++) {
                 formData.append(`${this.page}[]`, this.files[i]);
             }
@@ -102,28 +113,28 @@ export default {
                 this.isConverting = true;
                 this.conversionStatus = 'started';
                 let guid = response.data.guid;
-                this.subscribeToChannel(guid);
+                this.subscribeToChannel(guid, firstFileName);
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
-        subscribeToChannel(guid) {
+        subscribeToChannel(guid, firstFileName) {
             console.log('subscribing to channel');
             window.Echo.channel('conversion.' + guid)
             .listen('ImageConverted', (event) => {
                 this.conversionStatus = event.status;
                 if (event.status == 'completed'){
                     window.Echo.leave('conversion.' + guid);
-                    this.addPastConversion(guid, this.page);
+                    this.addPastConversion(guid, this.page, firstFileName);
                     this.fetchConversion(guid);
                 }
             });
         },
-        addPastConversion(sessionId, type) {
+        addPastConversion(sessionId, type, firstFileName) {
             let pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
             if(pastConversions[type]) {
-                pastConversions[type].push(sessionId);
+                pastConversions[type].push({ guid: sessionId, filename: firstFileName });
                 localStorage.setItem('pastConversions', JSON.stringify(pastConversions));
             }
         },
@@ -133,7 +144,7 @@ export default {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'file.zip'); //or any other extension
+                    link.setAttribute('download', 'file.zip');
                     document.body.appendChild(link);
                     link.click();
                 })

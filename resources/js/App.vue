@@ -19,6 +19,9 @@
                     <li class="nav-item">
                         <router-link to="/spreadsheets" class="nav-link" aria-disabled="true">Spreadsheet</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link to="/previousconversions" class="nav-link" aria-disabled="true">Previous Conversions</router-link>
+                    </li>
                 </ul>
             </div>
         </div>
