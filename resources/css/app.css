@@ -1,1 +1,24 @@
 @import 'bootstrap/dist/css/bootstrap.css';
+
+body{
+    background-color: #171717;
+}
+
+.text-default, p, h1, h2, h3, h4, h5, h6, a, span, label, button, input, select, textarea, th, td, table {
+    color: #e5e7eb;
+    font-weight: 700;
+}
+
+option {
+    color: #171717;
+}
+
+select {
+    color: #171717;
+    background-color: #e5e7eb;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: #e5e7eb;
+    text-decoration: underline;
+}

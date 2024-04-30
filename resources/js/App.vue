@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,19 +8,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <router-link to="/images" class="nav-link active" aria-current="page">Images</router-link>
+                        <router-link to="/images" class="nav-link text-default" aria-current="page">Images</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/audios" class="nav-link">Audio</router-link>
+                        <router-link to="/audios" class="nav-link text-default">Audio</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to='/videos' class="nav-link" href="#">Video</router-link>
+                        <router-link to='/videos' class="nav-link text-default" href="#">Video</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/spreadsheets" class="nav-link" aria-disabled="true">Spreadsheet</router-link>
+                        <router-link to="/spreadsheets" class="nav-link text-default" aria-disabled="true">Spreadsheet</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/previousconversions" class="nav-link" aria-disabled="true">Previous Conversions</router-link>
+                        <router-link to="/previousconversions" class="nav-link text-default" aria-disabled="true">Previous Conversions</router-link>
                     </li>
                 </ul>
             </div>
