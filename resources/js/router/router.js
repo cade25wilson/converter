@@ -28,7 +28,11 @@ const routes = [
     {
         path: "/privacy",
         component: () => import("../Pages/PrivacyRoute.vue"),
-    }
+    },
+    {
+        path: "/signup",
+        component: () => import("../Pages/SignupRoute.vue"),
+    },
 ];
 
 export default createRouter({

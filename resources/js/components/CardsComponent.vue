@@ -30,16 +30,18 @@
                 </div>
             </div>
             <div class="col-md-3 col-lg-3 col-sm-12">
-                <div class="package">
-                    <div class="package2">
-                      <div class="typewriter">
-                        <div class="slide"><i></i></div>
-                        <div class="paper"></div>
-                        <div class="keyboard"></div>
+                <router-link to="/signup">
+                  <div class="package">
+                      <div class="package2">
+                        <div class="typewriter">
+                          <div class="slide"><i></i></div>
+                          <div class="paper"></div>
+                          <div class="keyboard"></div>
+                        </div>
+                        <p class="text-light pt-1">Sign up to our newsletter to get the latest updates on new features and updates</p>
                       </div>
-                      <p class="text-light pt-1">Sign up to our newsletter to get the latest updates on new features and updates</p>
-                    </div>
-                </div>
+                  </div>
+                </router-link>
             </div>
         </div>
 </template>
