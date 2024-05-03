@@ -1,30 +1,118 @@
 <template>
-    <form @submit.prevent="convertFile" v-if="!isConverting">
-        <div class="form-group">
-            <label for="file">File</label>
-            <input type="file" class="form-control" :id="this.page" v-on:change="files = $event.target.files" multiple>
-        </div>
-        <div class="form-group">
-            <label for="format">Format</label>
-            <select name="format" id="format" class="form-control" v-model="selectedFormat"
-                @change="conversionType = selectedFormat">
-                <option v-for="format in formats" :value="format.id">{{ format.name }}</option>
-            </select>
-        </div>
-        <div v-if="this.page === 'image'">
-            <input type="checkbox" @change="resize = !resize"> Resize</input>
-            <div class="form-group" v-if="resize">
-                <label for="width">Width(px)</label>
-                <input type="number" class="form-control" id="width" v-model="width">
+    <div v-if="!isConverting" class="p-3">
+        <div class="row">
+            <div class="col-4 offset-2">
+                <label for="file" class="custum-file-upload mr-3" v-if="files.length === 0">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
+                                    fill=""></path>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="text">
+                        <span class="text-default">Click to upload image</span>
+                    </div>
+                    <input type="file" id="file" v-on:change="files = Array.from($event.target.files)" multiple>
+                </label>
+                <table v-else>
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th></th>
+                            <!-- Add more columns as needed -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(file, index) in files" :key="index">
+                            <td>{{ file.name }}</td>
+                            <td class="ms-2">
+                                <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(index)" 
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+                                    <title>cancel</title>
+                                    <desc>Created with Sketch.</desc>
+                                    <defs>
+                                        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+                                            <stop stop-color="#FC4343" offset="0%">
+
+                                            </stop>
+                                            <stop stop-color="#F82020" offset="100%">
+
+                                            </stop>
+                                        </linearGradient>
+                                    </defs>
+                                    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <g id="ui-gambling-website-lined-icnos-casinoshunter"
+                                            transform="translate(-868.000000, -1910.000000)"
+                                            fill="url(#linearGradient-1)" fill-rule="nonzero">
+                                            <g id="4" transform="translate(50.000000, 1871.000000)">
+                                                <path
+                                                    d="M821.426657,39.5856848 L830.000001,48.1592624 L838.573343,39.5856848 C839.288374,38.8706535 840.421422,38.8040611 841.267835,39.4653242 L841.414315,39.5987208 C842.195228,40.3796338 842.195228,41.645744 841.414306,42.4266667 L832.840738,51 L841.414315,59.5733429 C842.129347,60.2883742 842.195939,61.4214224 841.534676,62.2678347 L841.401279,62.4143152 C840.620366,63.1952283 839.354256,63.1952283 838.573333,62.4143055 L830.000001,53.8407376 L821.426657,62.4143152 C820.711626,63.1293465 819.578578,63.1959389 818.732165,62.5346758 L818.585685,62.4012792 C817.804772,61.6203662 817.804772,60.354256 818.585694,59.5733333 L827.159262,51 L818.585685,42.4266571 C817.870653,41.7116258 817.804061,40.5785776 818.465324,39.7321653 L818.598721,39.5856848 C819.379634,38.8047717 820.645744,38.8047717 821.426657,39.5856848 Z M820.028674,61.999873 C820.023346,61.9999577 820.018018,62 820.012689,62 Z M820.161408,61.9889406 L820.117602,61.9945129 L820.117602,61.9945129 C820.132128,61.9929912 820.146788,61.9911282 820.161408,61.9889406 Z M819.865274,61.9891349 L819.883098,61.9916147 C819.877051,61.9908286 819.87101,61.9899872 819.864975,61.9890905 L819.865274,61.9891349 Z M819.739652,61.9621771 L819.755271,61.9664589 C819.749879,61.9650278 819.744498,61.9635509 819.739126,61.9620283 L819.739652,61.9621771 Z M820.288411,61.9614133 L820.234515,61.9752112 L820.234515,61.9752112 C820.252527,61.971132 820.270527,61.9665268 820.288411,61.9614133 Z M820.401572,61.921544 L820.359957,61.9380009 L820.359957,61.9380009 C820.373809,61.9328834 820.387743,61.9273763 820.401572,61.921544 Z M819.623655,61.9214803 C819.628579,61.923546 819.626191,61.9225499 819.623806,61.921544 L819.623655,61.9214803 Z M819.506361,61.8625673 L819.400002,61.7903682 C819.444408,61.8248958 819.491056,61.8551582 819.539393,61.8811554 L819.506361,61.8625673 L819.506361,61.8625673 Z M820.51858,61.8628242 L820.486378,61.8809439 L820.486378,61.8809439 C820.496939,61.8752641 820.507806,61.8691536 820.51858,61.8628242 Z M840.881155,61.4606074 L840.862567,61.4936392 L840.862567,61.4936392 L840.790368,61.5999978 C840.824896,61.555592 840.855158,61.5089438 840.881155,61.4606074 Z M840.936494,61.3386283 L840.92148,61.3763453 L840.92148,61.3763453 C840.926791,61.3637541 840.931774,61.3512293 840.936494,61.3386283 Z M840.974777,61.2110466 L840.962177,61.2603479 L840.962177,61.2603479 C840.966711,61.2443555 840.97096,61.2277405 840.974777,61.2110466 Z M840.994445,61.0928727 L840.989135,61.1347261 L840.989135,61.1347261 C840.991174,61.1210064 840.992958,61.1069523 840.994445,61.0928727 Z M839.987311,40.9996529 L830,50.9872374 L820.012689,40.9996529 L819.999653,41.0126889 L829.987237,51 L819.999653,60.9873111 L820.012689,61.0003471 L830,51.0127626 L839.987311,61.0003471 L840.000347,60.9873111 L830.012763,51 L840.000347,41.0126889 L839.987311,40.9996529 Z M840.999873,60.9713258 L840.999916,61.0003193 L840.999916,61.0003193 C841.000041,60.9907089 841.000027,60.9810165 840.999873,60.9713258 Z M840.988941,60.8385918 L840.994513,60.8823981 L840.994513,60.8823981 C840.992991,60.8678719 840.991128,60.8532122 840.988941,60.8385918 Z M840.961413,60.7115886 L840.975211,60.7654853 L840.975211,60.7654853 C840.971132,60.7474727 840.966527,60.7294733 840.961413,60.7115886 Z M840.921544,60.5984278 L840.938001,60.6400431 L840.938001,60.6400431 C840.932883,60.6261908 840.927376,60.612257 840.921544,60.5984278 Z M840.862824,60.4814199 L840.880944,60.5136217 L840.880944,60.5136217 C840.875264,60.503061 840.869154,60.4921939 840.862824,60.4814199 Z M819.119056,41.4863783 L819.134164,41.5134185 C819.128903,41.5043379 819.123796,41.4951922 819.118845,41.4859852 L819.119056,41.4863783 Z M819.061999,41.3599569 L819.075467,41.3944079 C819.070734,41.3829341 819.066223,41.3713901 819.061935,41.3597825 L819.061999,41.3599569 Z M819.024789,41.2345147 L819.033541,41.2701072 C819.030397,41.2582611 819.027473,41.2463686 819.024771,41.234436 L819.024789,41.2345147 Z M819.005077,41.1136164 L819.008385,41.1422797 C819.007138,41.1326872 819.00603,41.12308 819.005061,41.1134615 L819.005077,41.1136164 Z M819.000419,40.9836733 L819,41.0126889 C819,41.002956 819.000141,40.993223 819.000424,40.9834934 L819.000419,40.9836733 Z M819.010865,40.8652739 L819.008385,40.8830981 C819.009171,40.8770511 819.010013,40.8710099 819.010909,40.8649753 L819.010865,40.8652739 Z M819.037823,40.7396521 L819.033541,40.7552707 C819.034972,40.7498794 819.036449,40.7444978 819.037972,40.7391264 L819.037823,40.7396521 Z M819.07852,40.6236547 C819.076454,40.6285788 819.07745,40.6261907 819.078456,40.6238057 L819.07852,40.6236547 Z M819.137433,40.5063608 L819.209632,40.4000022 C819.175104,40.444408 819.144842,40.4910562 819.118845,40.5393926 L819.137433,40.5063608 L819.137433,40.5063608 Z M820.485985,40.1188446 L820.519017,40.1374327 L820.519017,40.1374327 L820.625376,40.2096318 C820.58097,40.1751042 820.534322,40.1448418 820.485985,40.1188446 Z M839.513622,40.1190561 L839.486582,40.1341644 C839.495662,40.128903 839.504808,40.1237964 839.514015,40.1188446 L839.513622,40.1190561 Z M819.539,40.1190561 L819.511959,40.1341644 C819.52104,40.128903 819.530186,40.1237964 819.539393,40.1188446 L819.539,40.1190561 Z M840.460607,40.1188446 L840.493639,40.1374327 L840.493639,40.1374327 L840.599998,40.2096318 C840.555592,40.1751042 840.508944,40.1448418 840.460607,40.1188446 Z M819.661418,40.0634885 L819.63097,40.0754675 C819.641051,40.0713084 819.651187,40.0673212 819.661372,40.0635059 L819.661418,40.0634885 Z M820.359783,40.0619346 L820.401723,40.0785197 L820.401723,40.0785197 C820.387743,40.0726237 820.373809,40.0671166 820.359783,40.0619346 Z M839.640043,40.0619991 L839.605592,40.0754675 C839.617066,40.0707338 839.62861,40.0662229 839.640217,40.0619346 L839.640043,40.0619991 Z M840.338628,40.0635059 L840.376345,40.0785197 L840.376345,40.0785197 C840.363754,40.0732095 840.351229,40.0682261 840.338628,40.0635059 Z M819.789259,40.0251536 L819.755271,40.0335411 C819.766459,40.0305713 819.777688,40.0277987 819.788953,40.0252234 L819.789259,40.0251536 Z M820.234436,40.0247709 L820.288548,40.0386257 L820.288548,40.0386257 C820.270527,40.0334732 820.252527,40.028868 820.234436,40.0247709 Z M839.765485,40.0247888 L839.729893,40.0335411 C839.741739,40.0303966 839.753631,40.0274732 839.765564,40.0247709 L839.765485,40.0247888 Z M840.211047,40.0252234 L840.260348,40.0378229 L840.260348,40.0378229 C840.244356,40.0332892 840.227741,40.0290398 840.211047,40.0252234 Z M819.911404,40.0051132 L819.883098,40.0083853 C819.892432,40.0071719 819.901779,40.0060902 819.911137,40.0051402 L819.911404,40.0051132 Z M820.113462,40.0050614 L820.161342,40.0110494 L820.161342,40.0110494 C820.145468,40.0086743 820.12948,40.006675 820.113462,40.0050614 Z M839.886384,40.005077 L839.85772,40.0083853 C839.867313,40.0071382 839.87692,40.0060303 839.886538,40.0050614 L839.886384,40.005077 Z M840.088863,40.0051402 L840.134726,40.0108651 L840.134726,40.0108651 C840.119676,40.0086288 840.104284,40.0067057 840.088863,40.0051402 Z M839.95834,40.0004173 L840.016507,40.0004238 C839.997122,39.9998609 839.977725,39.9998588 839.95834,40.0004173 Z M819.983493,40.0004238 L820.04166,40.0004173 C820.022275,39.9998588 820.002878,39.9998609 819.983493,40.0004238 Z"
+                                                    id="cancel">
+
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <!-- <button @click="removeFile(index)" class="button">
+                                    <div class="button-overlay"></div>
+                                    <span>Remove</span>
+                                </button>    -->
+                            </td>
+                            <!-- Add more cells as needed -->
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group" v-if="resize">
-                <label for="height">Height(px)</label>
-                <input type="number" class="form-control" id="height" v-model="height">
+            <div class="col-3">
+                <div class="d-flex align-items-center mb-3">
+                    <label for="format" class="me-3">Format</label>
+                    <button class="button" @click.stop="showFormats = !showFormats">
+                        <div class="button-overlay"></div>
+                        <input type="hidden" v-model="selectedFormat" name="format">
+                        <span>{{ selectedFormatName }}</span>
+                    </button>
+                </div>
+                <div class="card position-absolute" v-if="showFormats" v-click-outside="hideFormats">
+                    <div class="row">
+                        <div v-for="format in formats" :key="format.id" class="card-body col-4">
+                            <button class="button p-2"
+                                @click.stop="selectedFormat = format.id, selectedFormatName = format.name, showFormats=false">{{
+                                format.name }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="this.page === 'image'">
+                    <div class="d-flex align-items-center mb-3">
+                        <p class="mb-0">Resize</p>
+                        <label class="checkBox ms-4">
+                            <input id="ch1" type="checkbox" @change="resize = !resize">
+                            <div class="transition"></div>
+                        </label>
+                    </div>
+                    <div v-if="resize" class="container1 mt-5 mb-3">
+                        <input type="number" class="input" v-model="width">
+                        <label class="label">Width(px)</label>
+                    </div>
+                    <div v-if="resize" class="container1 mt-4">
+                        <input type="number" class="input" v-model="height">
+                        <label class="label">Height(px)</label>
+                    </div>
+                </div>
             </div>
         </div>
         <br>
-        <button type="submit" class="btn btn-primary" :disabled="files.length === 0">Convert</button>
-    </form>
+        <button class="button" @click="convertFile" :disabled="files.length === 0">
+            <div class="button-overlay"></div>
+            <span>Convert</span>
+        </button>
+    </div>
     <div class="my-3" v-else>
         <div style="display: flex; align-items: center; justify-content: center;">
             <div class="spinner-border mb-3" :class="spinnerClass" role="status"></div>
@@ -36,6 +124,8 @@
 
 <script>
 import api from '../axios'
+import vClickOutside from 'v-click-outside'
+
 export default {
     name: 'ConversionForm',
     props: {
@@ -50,17 +140,44 @@ export default {
             conversionType: '',
             formats: '',
             selectedFormat: '',
+            selectedFormatName: '',
             isConverting: false,
             conversionStatus: '',
             resize: false,
+            showFormats: false,
         }
     },
     created() {
-        this.getFormats();
+        if(!localStorage.getItem(`${this.page}Formats`)){
+            this.getFormats();
+        } else {
+            this.formats = JSON.parse(localStorage.getItem(`${this.page}Formats`));
+        }
+        this.setLocalStorage();
+        if (this.formats && this.formats.length > 0) {
+        this.selectedFormatName = this.formats[0].name;
+    }
     },
     methods: {
+        setLocalStorage() {
+            if(!localStorage.getItem('pastConversions')){
+                localStorage.setItem('pastConversions', JSON.stringify({
+                    'video': [],
+                    'audio': [],
+                    'image': [],
+                    'spreadsheet': []
+                }));
+            }
+        },
+        removeFile(index){
+            this.files.splice(index, 1);
+        },
+        hideFormats() {
+            this.showFormats = false;
+        },
         resetConversion() {
             this.isConverting = false;
+            this.files = [];
             this.conversionStatus = '';
         },
         getFormats() {
@@ -68,13 +185,20 @@ export default {
             api.get(`/formats/${this.page}`).then(response => {
                 console.log(response.data);
                 this.formats = response.data;
+                this.storeFormats(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
+        storeFormats(formatData) {
+            if(!localStorage.getItem(`${this.page}Formats`)){
+                localStorage.setItem(`${this.page}Formats`, JSON.stringify(formatData));
+            }
+        },
         convertFile() {
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
+            let firstFileName = this.files[0].name;
             for (let i = 0; i <= this.files.length; i++) {
                 formData.append(`${this.page}[]`, this.files[i]);
             }
@@ -91,30 +215,31 @@ export default {
                 this.isConverting = true;
                 this.conversionStatus = 'started';
                 let guid = response.data.guid;
-                this.setLocalStorage(guid);
-                this.subscribeToChannel();
+                this.subscribeToChannel(guid, firstFileName);
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);
             });
         },
-        setLocalStorage(guid){
-            localStorage.setItem('guid', guid);
-            let convertedGuids = JSON.parse(localStorage.getItem('convertedGuids')) || [];
-            convertedGuids.push(guid);
-            localStorage.setItem('convertedGuids', JSON.stringify(convertedGuids));
-        },
-        subscribeToChannel() {
+        subscribeToChannel(guid, firstFileName) {
             console.log('subscribing to channel');
-            let sessionId = localStorage.getItem('guid');
-            window.Echo.channel('conversion.' + sessionId)
+            window.Echo.channel('conversion.' + guid)
             .listen('ImageConverted', (event) => {
                 this.conversionStatus = event.status;
                 if (event.status == 'completed'){
-                    window.Echo.leave('conversion.' + sessionId);
-                    this.fetchConversion(sessionId);
+                    window.Echo.leave('conversion.' + guid);
+                    this.addPastConversion(guid, this.page, firstFileName);
+                    this.fetchConversion(guid);
                 }
             });
+        },
+        addPastConversion(sessionId, type, firstFileName) {
+            let pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
+            const dateTime = new Date().toLocaleString();
+            if(pastConversions[type]) {
+                pastConversions[type].push({ guid: sessionId, filename: firstFileName, time: dateTime});
+                localStorage.setItem('pastConversions', JSON.stringify(pastConversions));
+            }
         },
         fetchConversion(sessionId) {
             api.get(`/${this.page}/` + sessionId + '.zip', { responseType: 'blob' })
@@ -122,7 +247,7 @@ export default {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'file.zip'); //or any other extension
+                    link.setAttribute('download', 'file.zip');
                     document.body.appendChild(link);
                     link.click();
                 })
@@ -143,3 +268,240 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.custum-file-upload {
+  height: 267px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #e8e8e8;
+  background-color: #212121;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 48px 35px -48px #e8e8e8;
+}
+
+.custum-file-upload .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custum-file-upload .icon svg {
+  height: 80px;
+  fill: #e8e8e8;
+}
+
+.custum-file-upload .text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custum-file-upload .text span {
+  font-weight: 400;
+  color: #e8e8e8;
+}
+
+.custum-file-upload input {
+  display: none;
+}
+
+.clear {
+  clear: both;
+}
+
+.checkBox {
+  display: block;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 2px #fff;
+}
+
+.checkBox div {
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  top: -52px;
+  left: -52px;
+  position: absolute;
+  transform: rotateZ(45deg);
+  z-index: 100;
+}
+
+.checkBox input[type=checkbox]:checked + div {
+  left: -10px;
+  top: -10px;
+}
+
+.checkBox input[type=checkbox] {
+  position: absolute;
+  left: 50px;
+  visibility: hidden;
+}
+
+.transition {
+  transition: 300ms ease;
+}
+
+/* Inspired by twitter.com/marina_uiux */
+
+.button {
+  font-size: 17px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgb(56, 56, 56) 0%, rgb(36, 36, 36) 66%, rgb(41, 41, 41) 100%);
+  color: rgb(218, 218, 218);
+  border: none;
+  padding: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.button span {
+  border-radius: 10px;
+  padding: 0.8em 1.3em;
+  padding-right: 1.2em;
+  text-shadow: 0px 0px 20px #4b4b4b;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  transition: all 0.3s;
+  background-color: rgb(29, 29, 29);
+  background-image: radial-gradient(at 95% 89%, rgb(15, 15, 15) 0px, transparent 50%), radial-gradient(at 0% 100%, rgb(17, 17, 17) 0px, transparent 50%), radial-gradient(at 0% 0%, rgb(29, 29, 29) 0px, transparent 50%);
+}
+
+.button:hover span {
+  background-color: rgb(26, 25, 25);
+}
+
+.button-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(rgb(48, 47, 47) 0.0000001%, rgb(51, 51, 51) 0.000104%) 60% 60%/600% 600%;
+  filter: opacity(10%) contrast(105%);
+  -webkit-filter: opacity(10%) contrast(105%);
+}
+
+.button svg {
+  width: 15px;
+  height: 15px;
+}
+.container1 {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+  color: white;
+}
+
+.container1 .label {
+  font-size: 15px;
+  padding-left: 10px;
+  position: absolute;
+  top: 13px;
+  transition: 0.3s;
+  pointer-events: none;
+}
+
+.input {
+  width: 200px;
+  height: 45px;
+  border: none;
+  outline: none;
+  padding: 0px 7px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 15px;
+  background-color: transparent;
+  box-shadow: 3px 3px 10px rgba(0,0,0,1),
+  -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+
+.input:focus {
+  border: 2px solid transparent;
+  color: #fff;
+  box-shadow: 3px 3px 10px rgba(0,0,0,1),
+  -1px -1px 6px rgba(255, 255, 255, 0.4),
+  inset 3px 3px 10px rgba(0,0,0,1),
+  inset -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+
+.container1 .input:valid ~ .label,
+.container1 .input:focus ~ .label {
+  transition: 0.3s;
+  padding-left: 2px;
+  transform: translateY(-35px);
+}
+
+.container1 .input:valid,
+.container1 .input:focus {
+  box-shadow: 3px 3px 10px rgba(0,0,0,1),
+  -1px -1px 6px rgba(255, 255, 255, 0.4),
+  inset 3px 3px 10px rgba(0,0,0,1),
+  inset -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.card {
+    width: 25%;
+    height: 35%;
+    border-radius: 30px;
+    background: #212121;
+    box-shadow: 15px 15px 30px rgb(25, 25, 25),
+                -15px -15px 30px rgb(60, 60, 60);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Style scrollbar for Chrome, Safari and Opera */
+.card::-webkit-scrollbar {
+    width: 1em;
+}
+
+.card::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.card::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+/* Style scrollbar for IE and Edge */
+.card {
+    scrollbar-width: thin;
+    scrollbar-color: darkgrey slategrey;
+}
+
+.position-absolute {
+    position: absolute;
+    z-index: 1;
+}
+</style>

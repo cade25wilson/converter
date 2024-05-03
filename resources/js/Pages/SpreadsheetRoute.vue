@@ -2,15 +2,18 @@
     <div class="mx-auto text-center">
         <h1>Spreadsheet Converter</h1>
         <ConversionForm page="spreadsheet" />
+        <CardsComponent />
     </div>
 </template>
 
 <script>
 import ConversionForm from '../components/ConversionForm.vue';
+import CardsComponent from '../components/CardsComponent.vue';
 
 export default {
     components: {
-        ConversionForm
+        ConversionForm,
+        CardsComponent
     }
 }
 </script>

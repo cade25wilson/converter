@@ -2,7 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
     {
-        path: "/image",
+        path: "/",
+        component: () => import("../Pages/IndexRoute.vue"),
+    },
+    {
+        path: "/images",
         component: () => import("../Pages/IndexRoute.vue"),
     },
     {
@@ -16,7 +20,19 @@ const routes = [
     {
         path: "/spreadsheets",
         component: () => import("../Pages/SpreadsheetRoute.vue"),
-    }
+    },
+    {
+        path: "/previousconversions",
+        component: () => import("../Pages/PastRoute.vue"),
+    },
+    {
+        path: "/privacy",
+        component: () => import("../Pages/PrivacyRoute.vue"),
+    },
+    {
+        path: "/signup",
+        component: () => import("../Pages/SignupRoute.vue"),
+    },
 ];
 
 export default createRouter({
