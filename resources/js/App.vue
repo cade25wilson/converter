@@ -29,4 +29,12 @@
     <div class="container">
         <router-view></router-view>
     </div>
+    <footer class="footer">
+        <div class="container">
+            <router-link to="/privacy" class="text-default">Privacy</router-link>
+            <router-link to="/faq" class="text-default">FAQ</router-link>
+            <router-link to="/contact" class="text-default">Contact</router-link>
+            
+        </div>
+    </footer>
 </template>
