@@ -51,7 +51,7 @@
             <ul class="footer-links">
               <li><router-link to="/about">About</router-link></li>
               <li><router-link to="/contact">Contact Us</router-link></li>
-              <li><router-link to="/donate">Contribute</router-link></li>
+              <li><a href="https://buy.stripe.com/cN22bo61Dfhk5i04gg">Contribute</a></li>
               <li><router-link to="/privacy">Privacy Policy</router-link></li>
               <li><a href="/sitemap.xml">Sitemap</a></li>
             </ul>
