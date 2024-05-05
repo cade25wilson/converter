@@ -46,4 +46,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function mailingList()
+    {
+        return $this->hasOne(MailingList::class);
+    }
 }
