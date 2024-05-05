@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-            <div class="col-md-3 col-lg-3 col-sm-12 offset-1">
+            <div class="col-md-3 col-lg-3 col-sm-12 offset-1 mt-5">
                 <div class="package">
                     <div class="package2">
                         <div class="honeycomb">
@@ -16,7 +16,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-lg-3 col-sm-12">
+            <div class="col-md-3 col-lg-3 col-sm-12 mt-5">
                 <div class="package">
                     <div class="package2">
                       <div class="container1">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-lg-3 col-sm-12">
+            <div class="col-md-3 col-lg-3 col-sm-12 mt-5">
                 <router-link to="/signup">
                   <div class="package">
                       <div class="package2">

@@ -31,13 +31,12 @@
     </div>
       <!-- Site footer -->
       <footer class="site-footer">
-      <div class="container">
+      <div class="container footer-container">
         <div class="row">
           <div class="col-sm-12 col-md-6">
             <h6>About</h6>
             <p class="text-justify">Transforming multimedia and data effortlessly, our website serves as a versatile hub for converting audio, video, image, and spreadsheet file formats with seamless precision. Whether it's refining audio clips, enhancing video quality, optimizing images, or streamlining data in spreadsheets, our platform offers a user-friendly experience, ensuring efficiency and accuracy in every conversion. Embracing cutting-edge technology, we empower users to effortlessly adapt their digital content to meet diverse needs, facilitating smooth transitions across formats with just a few clicks.</p>
           </div>
-
           <div class="col-xs-6 col-md-3">
             <h6>Converters</h6>
             <ul class="footer-links">
@@ -54,7 +53,7 @@
               <li><router-link to="/contact">Contact Us</router-link></li>
               <li><router-link to="/donate">Contribute</router-link></li>
               <li><router-link to="/privacy">Privacy Policy</router-link></li>
-              <li><router-link to="/sitemap.xml">Sitemap</router-link></li>
+              <li><a href="/sitemap.xml">Sitemap</a></li>
             </ul>
           </div>
         </div>
@@ -64,7 +63,7 @@
         <div class="row">
           <div class="col-md-8 col-sm-6 col-xs-12">
             <p class="copyright-text">Copyright &copy; 2024 All Rights Reserved by 
-            <a href="#">File Converter Services</a>.
+                <a href="#">File Converter Services</a>.
             </p>
           </div>
         </div>
