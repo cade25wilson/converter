@@ -33,6 +33,14 @@ const routes = [
         path: "/signup",
         component: () => import("../Pages/SignupRoute.vue"),
     },
+    {
+        path: "/signin",
+        component: () => import("../Pages/SigninRoute.vue"),
+    },
+    {
+        path: "/contact",
+        component: () => import("../Pages/ContactRoute.vue"),
+    }
 ];
 
 export default createRouter({

@@ -63,6 +63,7 @@ class ConvertMultipleImage implements ShouldQueue
             Imageconversion::where('guid', $this->guid)->update(['status' => 'completed']);
             ImageConverted::dispatch($this->guid, 'completed');
         } catch (\Exception $e) {
+            ImageConverted::dispatch($this->guid, 'failed');
             Log::error('Multiple Image conversion failed: ' . $e->getMessage());
             throw $e;
         }
