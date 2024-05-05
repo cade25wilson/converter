@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-lg-3 col-sm-12 mt-5">
-                <router-link to="/signup">
+                <router-link to="/signup?mailinglist">
                   <div class="package">
                       <div class="package2">
                         <div class="typewriter">

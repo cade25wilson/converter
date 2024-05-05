@@ -50,11 +50,16 @@
             if (this.password !== this.password_confirmation) {
               return
             }
+            let mailinglist = false;
+            if (this.$route.query.mailinglist) {
+              mailinglist = true;
+            }
             api.post('/auth/signup', {
               name: this.name,
               email: this.email,
               password: this.password,
-              password_confirmation: this.password_confirmation
+              password_confirmation: this.password_confirmation,
+              mailinglist: mailinglist
             }).then(response => {
               Cookies.set('token', response.data.token, { secure: true, sameSite: 'strict' });
             }).catch(error => {

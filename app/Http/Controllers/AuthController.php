@@ -33,6 +33,10 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password)
             ]);
 
+            if($request->has('mailinglist')){
+                $user->mailingList()->create([]);
+            }
+
             $token = $user->createToken('auth_token')->plainTextToken;
             
             $response = [
