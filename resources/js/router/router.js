@@ -40,6 +40,10 @@ const routes = [
     {
         path: "/contact",
         component: () => import("../Pages/ContactRoute.vue"),
+    },
+    {
+        path: '/donate',
+        component: () => import("../Pages/DonateRoute.vue"),
     }
 ];
 
