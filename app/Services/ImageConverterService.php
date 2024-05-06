@@ -22,7 +22,7 @@ class ImageConverterService
 
         // Look up the format in the formats table
         $convertedFormat = Format::where('id', $formatId)->value('extension');
-        $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
+        // $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
 
         if ($request->file('watermark')) {
             $request->file('watermark')->storeAs('image/' . $guid, $request->file('watermark')->getClientOriginalName());
@@ -32,7 +32,7 @@ class ImageConverterService
 
         $imageConversion = Imageconversion::create([
             'original_name' => $image->getClientOriginalName(),
-            'original_format' => $originalFormatId,
+            // 'original_format' => $originalFormatId,
             'converted_format' => $formatId,
             'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
@@ -65,12 +65,12 @@ class ImageConverterService
 
         $imageConversions = [];
         foreach ($images as $image) {
-            $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
+            // $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
             $image->storeAs('image/' . $guid, $image->getClientOriginalName());
 
             $imageConversions[] = [
                 'original_name' => $image->getClientOriginalName(),
-                'original_format' => $originalFormatId,
+                // 'original_format' => $originalFormatId,
                 'converted_format' => $formatId,
                 'converted_name' => pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',

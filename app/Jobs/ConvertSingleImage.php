@@ -18,6 +18,13 @@ class ConvertSingleImage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $imageConversion;
+
+     /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 300; // 5 minutes
     /**
      * Create a new job instance.
      */

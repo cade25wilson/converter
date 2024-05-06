@@ -17,14 +17,14 @@ class VideoConverterService
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($request, 'video');
 
-        $originalFormat = VideoFormat::where('extension', $data['originalFormat'])->value('id');
+        // $originalFormat = VideoFormat::where('extension', $data['originalFormat'])->value('id');
 
         $format = VideoFormat::where('id', $request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $videoConversion = VideoConversion::create([
             'original_name' => $data['originalName'],
-            'original_format' => $originalFormat,
+            // 'original_format' => $originalFormat,
             'converted_format' => $format->id,
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
@@ -46,15 +46,14 @@ class VideoConverterService
             $originalName = $video->getClientOriginalName();
             $video->storeAs('video/' . $guid . '/', $originalName);
             
-
-            $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
+            // $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
             
             $format = VideoFormat::where('id', $request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $videoConversion[] = VideoConversion::create([
                 'original_name' => $video->getClientOriginalName(),
-                'original_format' => $originalFormat,
+                // 'original_format' => $originalFormat,
                 'converted_format' => $format->id,
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',

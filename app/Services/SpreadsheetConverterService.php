@@ -24,14 +24,14 @@ class SpreadsheetConverterService
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'spreadsheet');
 
-        $originalFormat = SpreadsheetFormat::where('extension', $data['originalFormat'])->value('id');
+        // $originalFormat = SpreadsheetFormat::where('extension', $data['originalFormat'])->value('id');
 
         $format = SpreadsheetFormat::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;  
 
         $spreadsheetConversion = SpreadsheetConversion::create([
             'original_name' => $data['originalName'],
-            'original_format' => $originalFormat,
+            // 'original_format' => $originalFormat,
             'converted_format' => $format->id,
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
@@ -53,14 +53,14 @@ class SpreadsheetConverterService
             $originalName = $spreadsheet->getClientOriginalName();
             $spreadsheet->storeAs('spreadsheet/' . $guid . '/', $originalName);
 
-            $originalFormat = SpreadsheetFormat::where('extension', $spreadsheet->getClientOriginalExtension())->value('id');
+            // $originalFormat = SpreadsheetFormat::where('extension', $spreadsheet->getClientOriginalExtension())->value('id');
 
             $format = SpreadsheetFormat::where('id', $this->request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $spreadsheetConversion[] = SpreadsheetConversion::create([
                 'original_name' => $spreadsheet->getClientOriginalName(),
-                'original_format' => $originalFormat,
+                // 'original_format' => $originalFormat,
                 'converted_format' => $format->id,
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
