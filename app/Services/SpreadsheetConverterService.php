@@ -36,6 +36,7 @@ class SpreadsheetConverterService
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
             'guid' => $data['guid'],
+            'file_size' => $data['file_size'],
         ]);
 
         ConvertSingleSpreadsheet::dispatch($spreadsheetConversion);
@@ -52,7 +53,7 @@ class SpreadsheetConverterService
         foreach($spreadsheetFiles as $spreadsheet){
             $originalName = $spreadsheet->getClientOriginalName();
             $spreadsheet->storeAs('spreadsheet/' . $guid . '/', $originalName);
-
+            $fileSize = $spreadsheet->getSize();
             // $originalFormat = SpreadsheetFormat::where('extension', $spreadsheet->getClientOriginalExtension())->value('id');
 
             $format = SpreadsheetFormat::where('id', $this->request->input('format'))->first();
@@ -65,6 +66,7 @@ class SpreadsheetConverterService
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
+                'file_size' => $fileSize,
             ]);
         }
 

@@ -29,6 +29,7 @@ class VideoConverterService
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
             'guid' => $data['guid'],
+            'file_size' => $data['file_size'],
         ]);
 
         ConvertSingleVideo::dispatch($videoConversion);
@@ -45,7 +46,7 @@ class VideoConverterService
         foreach ($videoFiles as $video) {
             $originalName = $video->getClientOriginalName();
             $video->storeAs('video/' . $guid . '/', $originalName);
-            
+            $fileSize = $video->getSize();
             // $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
             
             $format = VideoFormat::where('id', $request->input('format'))->first();
@@ -58,6 +59,7 @@ class VideoConverterService
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
+                'file_size' => $fileSize,
             ]);
         }
 

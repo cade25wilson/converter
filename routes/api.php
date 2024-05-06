@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversionController;
+use App\Http\Controllers\FileSizeController;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\MessagesController;
 use Illuminate\Support\Facades\File;
@@ -14,6 +15,11 @@ Route::post('/conversions/image', [ConversionController::class, 'imageconvert'])
 Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);
 Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
 
+Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
+Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
+Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
+Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
+Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
 Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);

@@ -15,8 +15,10 @@ class Audioconversion extends Model
         'converted_format',
         'converted_name',
         'status',
-        'guid'
+        'guid',
+        'file_size',
     ];
+   
 
     public function originalFormat()
     {

@@ -42,6 +42,7 @@ class ConversionService
             'originalName' => $originalName,
             'originalFormat' => $file->getClientOriginalExtension(),
             'format' => $request->input('format'),
+            'file_size' => $file->getSize()
         ];
     }
 

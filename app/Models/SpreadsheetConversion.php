@@ -16,6 +16,7 @@ class SpreadsheetConversion extends Model
         'status',
         'guid',
         'converted_name',
+        'file_size',
     ];
 
     public function originalFormat()

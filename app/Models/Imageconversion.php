@@ -20,6 +20,7 @@ class Imageconversion extends Model
         'height',
         'watermark',
         'guid',
+        'file_size',
     ];
 
 }

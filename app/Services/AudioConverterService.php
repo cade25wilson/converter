@@ -28,6 +28,7 @@ class AudioConverterService
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
             'guid' => $data['guid'],
+            'file_size' => $data['file_size'],
         ]);
 
         ConvertSingleAudio::dispatch($audioConversion);
@@ -44,7 +45,7 @@ class AudioConverterService
         foreach ($audioFiles as $audio) {
             $originalName = $audio->getClientOriginalName();
             $audio->storeAs('audio/' . $guid . '/', $originalName);
-
+            $fileSize = $audio->getSize();
             // $originalFormat = AudioFormats::where('extension', $audio->getClientOriginalExtension())->value('id');
 
             $format = AudioFormats::where('id', $request->input('format'))->first();
@@ -57,6 +58,7 @@ class AudioConverterService
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
+                'file_size' => $fileSize,
             ]);
         }
 

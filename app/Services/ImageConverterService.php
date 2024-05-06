@@ -18,6 +18,7 @@ class ImageConverterService
         ImageConverted::dispatch($guid, 'pending');
         $formatId = $request->input('format');
         $image = $request->file('image')[0];
+        $sizeInBytes = $image->getSize();
         $image->storeAs('image/' . $guid . '/', $image->getClientOriginalName());
 
         // Look up the format in the formats table
@@ -40,6 +41,7 @@ class ImageConverterService
             'height' => $height,
             'guid' => $guid,
             'watermark' => $watermark,
+            'file_size' => $sizeInBytes,
         ]);        
         ConvertSingleImage::dispatch($imageConversion);
    
@@ -67,7 +69,7 @@ class ImageConverterService
         foreach ($images as $image) {
             // $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
             $image->storeAs('image/' . $guid, $image->getClientOriginalName());
-
+            $sizeInBytes = $image->getSize();
             $imageConversions[] = [
                 'original_name' => $image->getClientOriginalName(),
                 // 'original_format' => $originalFormatId,
@@ -78,6 +80,7 @@ class ImageConverterService
                 'width' => $width,
                 'height' => $height,
                 'watermark' => $watermark,
+                'file_size' => $sizeInBytes,
             ];
         }
         Imageconversion::insert($imageConversions);
