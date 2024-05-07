@@ -35,11 +35,27 @@ export default {
         }
     },
     computed: {
+        // hasPastConversions() {
+        //     return this.pastConversions.video.length > 0 || 
+        //            this.pastConversions.audio.length > 0 || 
+        //            this.pastConversions.image.length > 0 || 
+        //            this.pastConversions.spreadsheet.length > 0;
+        // }
+
         hasPastConversions() {
-            return this.pastConversions.video.length > 0 || 
-                   this.pastConversions.audio.length > 0 || 
-                   this.pastConversions.image.length > 0 || 
-                   this.pastConversions.spreadsheet.length > 0;
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 3);
+
+            const hasRecentConversion = (conversions) => {
+                return conversions.some(conversion => 
+                    new Date(conversion.conversion_time) >= oneWeekAgo
+                );
+            };
+
+            return hasRecentConversion(this.pastConversions.video) || 
+                hasRecentConversion(this.pastConversions.audio) || 
+                hasRecentConversion(this.pastConversions.image) || 
+                hasRecentConversion(this.pastConversions.spreadsheet);
         }
     },
 }

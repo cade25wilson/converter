@@ -4,6 +4,7 @@
         @vite(['resources/js/app.js', 'resources/css/app.css'])
         <title>File Converter</title>
         <meta name="description" content="Welcome to our file converter website. We provide fast, reliable and easy-to-use solutions for converting files between various formats.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script type="text/javascript">
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};

@@ -23,6 +23,14 @@ class ConvertMultipleImage implements ShouldQueue
     protected $width;   
     protected $height;
     protected $watermark;
+
+         /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600; // 5 minutes
+
     /**
      * Create a new job instance.
      */

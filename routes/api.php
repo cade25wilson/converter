@@ -20,6 +20,7 @@ Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudio
 Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
 Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
 Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
+
 Route::get('/formats/audio', [FormatController::class, 'audio']);
 Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);

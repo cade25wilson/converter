@@ -60,12 +60,6 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https:/fileconverter.services/donate</loc>
-        <lastmod>2024-05-04</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
         <loc>https:/fileconverter.services/privacy</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>

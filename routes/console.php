@@ -15,10 +15,10 @@ Artisan::command('clearoldfiles', function() {
         $files = glob(storage_path('app/' . $directory . '/*'));
         foreach ($files as $file) {
             if (is_file($file)) {
-                if ($now - filemtime($file) >= 60 * 60 * 24) {
+                if ($now - filemtime($file) >= 60 * 60 * 24 * 3) {
                     unlink($file);
                 }
             }
         }
     }
-})->purpose('Clear files older than 24 hours')->everyThirtyMinutes();
+})->purpose('Clear files older than 72 hours')->everyThirtyMinutes();
