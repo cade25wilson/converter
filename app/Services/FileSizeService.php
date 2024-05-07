@@ -21,44 +21,49 @@ class FileSizeService
 
     private function totalInGB(int $totalSize): float
     {
-        return $totalSize / 1073741824;
+        return round($totalSize / 1073741824, 2);
     }
 
-    public function totalAudioSize(): int
+    public function totalAudioSize(): array
     {
         return $this->getTotalSize(self::CACHE_KEYS['audio'], Audioconversion::class);
     }
 
-    public function totalImageSize(): int
+    public function totalImageSize(): array
     {
         return $this->getTotalSize(self::CACHE_KEYS['image'], Imageconversion::class);
     }
 
-    public function totalSpreadsheetSize(): int
+    public function totalSpreadsheetSize(): array
     {
         return $this->getTotalSize(self::CACHE_KEYS['spreadsheet'], SpreadsheetConversion::class);
     }
 
-    public function totalVideoSize(): int
+    public function totalVideoSize(): array
     {
         return $this->getTotalSize(self::CACHE_KEYS['video'], VideoConversion::class);
     }
     
-    private function getTotalSize(string $key, string $modelClass): int
+    private function getTotalSize(string $key, string $modelClass): array
     {
         if ($this->checkCache($key)) {
             return $this->getCache($key);
         } 
 
-        $totalSize = $modelClass::sum('file_size');
-        $this->setCache($key, $totalSize);
+        $totalFiles = $modelClass::count();
+        $totalSize = $modelClass::where('status', 'completed')->sum('file_size');
+        $data = [
+            'total_files' => $totalFiles,
+            'total_size' => $totalSize,
+        ];
+        $this->setCache($key, $data);
 
-        return $totalSize;
+        return $data;
     }
 
-    public function createResponse(int $totalSize): JsonResponse
+    public function createResponse(array $totalSize): JsonResponse
     {
-        return response()->json(['total_size' => $this->totalInGB($totalSize)]);
+        return response()->json(['total_size' => $this->totalInGB($totalSize['total_size']), 'total_files' => $totalSize['total_files']]);
     }
 
     private function checkCache(string $key): bool
@@ -66,12 +71,12 @@ class FileSizeService
         return cache()->has($key);
     }
 
-    private function getCache(string $key): int
+    private function getCache(string $key): array
     {
         return cache()->get($key);
     }
 
-    private function setCache(string $key, int $value): void
+    private function setCache(string $key, array $value): void
     {
         cache()->put($key, $value, 30);
     }

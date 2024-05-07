@@ -62,6 +62,9 @@ class ConvertMultipleAudio implements ShouldQueue
     private function processAudio(string $guid, string $audio)
     {
         $sourceFile =  $guid . '/' . $audio;
+        if ($audio === pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format) {
+            return;
+        }
         $destinationFile = $guid . '/' . pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format;
 
         $command = "ffmpeg -i $sourceFile $destinationFile";

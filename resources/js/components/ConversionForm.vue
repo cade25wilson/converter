@@ -60,12 +60,7 @@
                                         </g>
                                     </g>
                                 </svg>
-                                <!-- <button @click="removeFile(index)" class="button">
-                                    <div class="button-overlay"></div>
-                                    <span>Remove</span>
-                                </button>    -->
                             </td>
-                            <!-- Add more cells as needed -->
                         </tr>
                     </tbody>
                 </table>
