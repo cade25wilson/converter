@@ -34,7 +34,7 @@
       
       <div class="footer-container">
         <div class="container">
-        <div class="row">
+        <div class="row pt-3">
           <div class="col-sm-12 col-md-6">
             <h6>About</h6>
             <p class="text-justify">Transforming multimedia and data effortlessly, our website serves as a versatile hub for converting audio, video, image, and spreadsheet file formats with seamless precision. Whether it's refining audio clips, enhancing video quality, optimizing images, or streamlining data in spreadsheets, our platform offers a user-friendly experience, ensuring efficiency and accuracy in every conversion. Embracing cutting-edge technology, we empower users to effortlessly adapt their digital content to meet diverse needs, facilitating smooth transitions across formats with just a few clicks.</p>

@@ -34,29 +34,45 @@ export default {
             pastConversions: JSON.parse(localStorage.getItem('pastConversions'))
         }
     },
-    computed: {
-        // hasPastConversions() {
-        //     return this.pastConversions.video.length > 0 || 
-        //            this.pastConversions.audio.length > 0 || 
-        //            this.pastConversions.image.length > 0 || 
-        //            this.pastConversions.spreadsheet.length > 0;
-        // }
+    created() {
+        this.removeOldConversions();
+    },
+    methods: {
+        removeOldConversions() {
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-        hasPastConversions() {
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 3);
+            // Get past conversions from localStorage
+            const pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
 
-            const hasRecentConversion = (conversions) => {
-                return conversions.some(conversion => 
-                    new Date(conversion.conversion_time) >= oneWeekAgo
-                );
+            // Filter out conversions that are older than three days
+            const recentConversions = {
+                video: pastConversions.video ? pastConversions.video.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                audio: pastConversions.audio ? pastConversions.audio.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                image: pastConversions.image ? pastConversions.image.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                spreadsheet: pastConversions.spreadsheet ? pastConversions.spreadsheet.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : []
             };
 
-            return hasRecentConversion(this.pastConversions.video) || 
-                hasRecentConversion(this.pastConversions.audio) || 
-                hasRecentConversion(this.pastConversions.image) || 
-                hasRecentConversion(this.pastConversions.spreadsheet);
+            // Update localStorage with recent conversions
+            localStorage.setItem('pastConversions', JSON.stringify(recentConversions));
         }
+    },
+    computed: {
+hasPastConversions() {
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+    const hasRecentConversion = (conversions) => {
+        return Array.isArray(conversions) && conversions.some(conversion => 
+            new Date(conversion.time) >= threeDaysAgo
+        );
+    };
+
+    return hasRecentConversion(this.pastConversions) || 
+        hasRecentConversion(this.pastConversions && this.pastConversions.audio) || 
+        hasRecentConversion(this.pastConversions && this.pastConversions.image) || 
+        hasRecentConversion(this.pastConversions && this.pastConversions.spreadsheet);
+}
     },
 }
 </script>
