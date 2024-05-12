@@ -19,7 +19,8 @@
                     </div>
                     <input type="file" id="file" v-on:change="files = Array.from($event.target.files)" multiple>
                 </label>
-                <table v-else>
+                <div style="height: 300px; overflow-y: auto;" v-else>
+                <table >
                     <thead>
                         <tr>
                             <th>File Name</th>
@@ -65,7 +66,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-3">
+            </div>
+            <div class="col-5">
                 <div class="d-flex align-items-center mb-3">
                     <label for="format" class="me-3">Format</label>
                     <button class="button" @click.stop="showFormats = !showFormats">
@@ -147,11 +149,13 @@ export default {
             this.getFormats();
         } else {
             this.formats = JSON.parse(localStorage.getItem(`${this.page}Formats`));
+            this.selectedFormat = this.formats[0].id;
         }
         this.setLocalStorage();
         if (this.formats && this.formats.length > 0) {
-        this.selectedFormatName = this.formats[0].name;
-    }
+            this.selectedFormatName = this.formats[0].name;
+            this.selectedFormat = this.formats[0].id;
+        }
     },
     methods: {
         setLocalStorage() {
@@ -498,5 +502,35 @@ input[type=number] {
 .position-absolute {
     position: absolute;
     z-index: 1;
+}
+
+@media only screen and (max-width: 767px) {
+  .custum-file-upload {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .checkBox {
+    width: 20px;
+    height: 20px;
+  }
+
+  .button {
+    font-size: 14px;
+  }
+
+  .button span {
+    padding: 0.5em 1em;
+  }
+
+  .input {
+    width: 100%;
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+  }
 }
 </style>
