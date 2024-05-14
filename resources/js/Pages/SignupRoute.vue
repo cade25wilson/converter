@@ -1,7 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-4 offset-4">
-            <div class="form">
+            <div class="col-lg-4 col-md-4 col-sm-12 offset-md-4 offset-lg-4">
+              <div class="form">
                 <h1 id="heading">Sign Up</h1>
                 <div class="field">
 

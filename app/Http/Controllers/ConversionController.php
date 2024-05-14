@@ -97,4 +97,26 @@ class ConversionController extends Controller
 
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
+
+    public function delete(Request $request)
+    {
+        $request->validate([
+            'guid' => 'required',
+            'type' => 'required|in:audio,image,spreadsheet,video'
+        ]);
+        
+        $guid = $request->guid;
+        $type = $request->type;
+
+        $file = storage_path('app/' . $type . '/' . $guid . '.zip');
+
+        if (!file_exists($file)) {
+            return http_response_code(200);
+        }
+
+        // Delete the file
+        unlink($file);
+
+        return response()->json(['success' => 'File deleted'], 200);
+    }
 }

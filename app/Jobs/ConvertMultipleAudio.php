@@ -19,6 +19,15 @@ class ConvertMultipleAudio implements ShouldQueue
 
     protected string $guid;
     protected string $format;
+
+             /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600; // 5 minutes
+
+    
     /**
      * Create a new job instance.
      */
@@ -62,9 +71,14 @@ class ConvertMultipleAudio implements ShouldQueue
     private function processAudio(string $guid, string $audio)
     {
         $sourceFile =  $guid . '/' . $audio;
+        if ($audio === pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format) {
+            return;
+        }
         $destinationFile = $guid . '/' . pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format;
 
-        $command = "ffmpeg -i $sourceFile $destinationFile";
+        $sourceFileEscaped = escapeshellarg($sourceFile);
+        $destinationFileEscaped = escapeshellarg($destinationFile);
+        $command = "ffmpeg -i $sourceFileEscaped $destinationFileEscaped";
         $output = array();
         $return_var = null;
 

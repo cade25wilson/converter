@@ -37,7 +37,9 @@ class ConvertSingleAudio implements ShouldQueue
             $sourceFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->original_name;
             $destinationFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->converted_name;
 
-            $command = "ffmpeg -i $sourceFile $destinationFile";
+            $sourceFileEscaped = escapeshellarg($sourceFile);
+            $destinationFileEscaped = escapeshellarg($destinationFile);
+            $command = "ffmpeg -i $sourceFileEscaped $destinationFileEscaped";
             $output = array();
             $return_var = null;
 

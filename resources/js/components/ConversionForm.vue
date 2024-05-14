@@ -2,7 +2,13 @@
     <div v-if="!isConverting" class="p-3">
         <div class="row">
             <div class="col-4 offset-2">
-                <label for="file" class="custum-file-upload mr-3" v-if="files.length === 0">
+                <div 
+                    id="dropzone" 
+                    @dragover.prevent 
+                    @drop="dropFiles"
+                    v-if="files.length === 0"
+                >
+                <label for="file" class="custum-file-upload mr-3" >
                     <div class="icon">
                         <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -19,7 +25,9 @@
                     </div>
                     <input type="file" id="file" v-on:change="files = Array.from($event.target.files)" multiple>
                 </label>
-                <table v-else>
+                </div>
+                <div style="height: 300px; overflow-y: auto;" v-else>
+                <table >
                     <thead>
                         <tr>
                             <th>File Name</th>
@@ -60,17 +68,13 @@
                                         </g>
                                     </g>
                                 </svg>
-                                <!-- <button @click="removeFile(index)" class="button">
-                                    <div class="button-overlay"></div>
-                                    <span>Remove</span>
-                                </button>    -->
                             </td>
-                            <!-- Add more cells as needed -->
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-3">
+            </div>
+            <div class="col-5">
                 <div class="d-flex align-items-center mb-3">
                     <label for="format" class="me-3">Format</label>
                     <button class="button" @click.stop="showFormats = !showFormats">
@@ -152,11 +156,13 @@ export default {
             this.getFormats();
         } else {
             this.formats = JSON.parse(localStorage.getItem(`${this.page}Formats`));
+            this.selectedFormat = this.formats[0].id;
         }
         this.setLocalStorage();
         if (this.formats && this.formats.length > 0) {
-        this.selectedFormatName = this.formats[0].name;
-    }
+            this.selectedFormatName = this.formats[0].name;
+            this.selectedFormat = this.formats[0].id;
+        }
     },
     methods: {
         setLocalStorage() {
@@ -254,7 +260,11 @@ export default {
                 .catch(error => {
                     console.log(error);
                 });
-        }
+        },
+        dropFiles(event) {
+            event.preventDefault();
+            this.files = Array.from(event.dataTransfer.files);
+        },
     },
     computed: {
         spinnerClass() {
@@ -270,6 +280,10 @@ export default {
 </script>
 
 <style scoped>
+#dropzone {
+    width:200px;
+    height: 200px;
+}
 .custum-file-upload {
   height: 267px;
   width: 300px;
@@ -503,5 +517,35 @@ input[type=number] {
 .position-absolute {
     position: absolute;
     z-index: 1;
+}
+
+@media only screen and (max-width: 767px) {
+  .custum-file-upload {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .checkBox {
+    width: 20px;
+    height: 20px;
+  }
+
+  .button {
+    font-size: 14px;
+  }
+
+  .button span {
+    padding: 0.5em 1em;
+  }
+
+  .input {
+    width: 100%;
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+  }
 }
 </style>
