@@ -6,7 +6,6 @@
                     id="dropzone" 
                     @dragover.prevent 
                     @drop="dropFiles"
-                    style="width: 100%; height: 100%; border: 1px solid black"
                     v-if="files.length === 0"
                 >
                 <label for="file" class="custum-file-upload mr-3" >
