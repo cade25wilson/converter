@@ -2,7 +2,14 @@
     <div v-if="!isConverting" class="p-3">
         <div class="row">
             <div class="col-4 offset-2">
-                <label for="file" class="custum-file-upload mr-3" v-if="files.length === 0">
+                <div 
+                    id="dropzone" 
+                    @dragover.prevent 
+                    @drop="dropFiles"
+                    style="width: 100%; height: 100%; border: 1px solid black"
+                    v-if="files.length === 0"
+                >
+                <label for="file" class="custum-file-upload mr-3" >
                     <div class="icon">
                         <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -19,6 +26,7 @@
                     </div>
                     <input type="file" id="file" v-on:change="files = Array.from($event.target.files)" multiple>
                 </label>
+                </div>
                 <div style="height: 300px; overflow-y: auto;" v-else>
                 <table >
                     <thead>
@@ -253,7 +261,11 @@ export default {
                 .catch(error => {
                     console.log(error);
                 });
-        }
+        },
+        dropFiles(event) {
+            event.preventDefault();
+            this.files = Array.from(event.dataTransfer.files);
+        },
     },
     computed: {
         spinnerClass() {
@@ -269,6 +281,10 @@ export default {
 </script>
 
 <style scoped>
+#dropzone {
+    width:200px;
+    height: 200px;
+}
 .custum-file-upload {
   height: 267px;
   width: 300px;

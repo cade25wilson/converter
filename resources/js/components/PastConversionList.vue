@@ -2,7 +2,7 @@
     <h2>{{ capitalizedName }} Conversions</h2>
     <div v-for="conversions in pastConversions" :key="conversions.guid">
         <a @click="downloadConversion(conversions.guid)" class="text-left me-3">{{ conversions.filename }}</a>
-        <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(conversions.guid)"
+        <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(conversions.guid, this.name)"
                                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
                                     <title>cancel</title>
@@ -65,8 +65,23 @@ export default {
                     console.log(error);
                 });
         },
-        removeFile(conversion) {
-            localStorage.setItem('pastConversions', JSON.stringify(this.pastConversions.filter(conversion => conversion.guid !== conversion)));
+        removeFile(guid, type) {
+            api.delete(`/conversions/delete`, {data: {guid: guid, type: this.name}})
+            .then(() => {
+                this.removeFromLocalStorage(guid, type);
+            })
+            .catch(error => {
+                this.removeFromLocalStorage(guid, type);
+                console.log(error);
+            });
+        },
+        removeFromLocalStorage(guid, type){
+            let pastConversions = JSON.parse(localStorage.getItem('pastConversions')) || {};
+            let conversions = pastConversions[type] || [];
+            const updatedConversions = conversions.filter(conversion => conversion.guid !== guid);
+            pastConversions[type] = updatedConversions;
+            localStorage.setItem('pastConversions', JSON.stringify(pastConversions));
+            this.$emit('update');
         }
     }, 
     computed: {

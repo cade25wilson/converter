@@ -35,6 +35,10 @@ select {
     color:#737373;
 }
 
+footer {
+  flex-shrink: 0;
+}
+
 .footer-container {
     background-color:#26272b;
 }

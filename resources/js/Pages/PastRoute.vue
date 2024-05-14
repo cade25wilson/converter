@@ -3,17 +3,18 @@
         <h1 clas="mb-3">Previous Conversions</h1>
         <div v-if="hasPastConversions" class="mt-4">
             <div v-if="pastConversions.video.length > 0">
-                <PastConversionList :pastConversions="pastConversions.video" name="video"/>
+                <PastConversionList :pastConversions="pastConversions.video" name="video" @update="handleUpdate()"/>
             </div>
             <div v-if="pastConversions.audio.length > 0">
-                <PastConversionList :pastConversions="pastConversions.audio" name="audio"/>
+                <PastConversionList :pastConversions="pastConversions.audio" name="audio" @update="handleUpdate()" />
             </div>
             <div v-if="pastConversions.image.length > 0">
-                <PastConversionList :pastConversions="pastConversions.image" name="image"/>
+                <PastConversionList :pastConversions="pastConversions.image" name="image" @update="handleUpdate()"/>
             </div>
             <div v-if="pastConversions.spreadsheet.length > 0">
-                <PastConversionList :pastConversions="pastConversions.spreadsheet" name="spreadsheet"/>
+                <PastConversionList :pastConversions="pastConversions.spreadsheet" name="spreadsheet" @update="handleUpdate()"/>
             </div>
+
         </div>
         <div v-else class="mt-4">
             <p>No previous conversions</p>
@@ -55,6 +56,11 @@ export default {
 
             // Update localStorage with recent conversions
             localStorage.setItem('pastConversions', JSON.stringify(recentConversions));
+        },
+        handleUpdate() {
+            console.log('udposaujfoiads');
+            this.pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
+
         }
     },
     computed: {

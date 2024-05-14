@@ -42,19 +42,19 @@
           <div class="col-xs-6 col-md-3">
             <h6>Converters</h6>
             <ul class="footer-links">
-              <li><router-link to="/images">Images</router-link></li>
-              <li><router-link to="/audios">Audio</router-link></li>
-              <li><router-link to="/videos">Video</router-link></li>
-              <li><router-link to="/spreadsheets">Spreadsheets</router-link></li>
+              <li><router-link to="/images" @click="scrollToTop">Images</router-link></li>
+              <li><router-link to="/audios" @click="scrollToTop">Audio</router-link></li>
+              <li><router-link to="/videos" @click="scrollToTop">Video</router-link></li>
+              <li><router-link to="/spreadsheets" @click="scrollToTop">Spreadsheets</router-link></li>
             </ul>
           </div>
           <div class="col-xs-6 col-md-3">
             <h6>Quick Links</h6>
             <ul class="footer-links">
-              <li><router-link to="/about">About</router-link></li>
-              <li><router-link to="/contact">Contact Us</router-link></li>
+              <li><router-link to="/about" @click="scrollToTop">About</router-link></li>
+              <li><router-link to="/contact" @click="scrollToTop">Contact Us</router-link></li>
               <li><a href="https://buy.stripe.com/cN22bo61Dfhk5i04gg">Contribute</a></li>
-              <li><router-link to="/privacy">Privacy Policy</router-link></li>
+              <li><router-link to="/privacy" @click="scrollToTop">Privacy Policy</router-link></li>
               <li><a href="/sitemap.xml">Sitemap</a></li>
             </ul>
           </div>
@@ -71,3 +71,14 @@
       </div>
 </footer>
 </template>
+
+<script>
+export default {
+    name: 'App',
+    methods: {
+        scrollToTop() {
+            window.scrollTo(0, 0);
+        }
+    }
+}
+</script>
