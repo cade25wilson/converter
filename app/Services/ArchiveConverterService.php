@@ -8,6 +8,7 @@ use App\Services\ConversionService;
 use App\Models\ArchiveConversion;
 use App\Models\ArchiveFormat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArchiveConverterService 
 {
@@ -42,6 +43,29 @@ class ArchiveConverterService
 
     public function MultipleArchiveConvert(): string
     {
-        // code to convert multiple archives
+        $guid = Str::uuid();
+        $archiveFiles = $this->request->file('archive');
+        $archiveConversion = [];
+
+        foreach ($archiveFiles as $archive) {
+            $originalName = $archive->getClientOriginalName();
+            $archive->storeAs('archive/' . $guid . '/', $originalName);
+            $fileSize = $archive->getSize();
+
+            $format = ArchiveFormat::where('id', $this->request->input('format'))->first();
+            $convertedFormat = $format->extension;
+
+            $archiveConversion[] = ArchiveConversion::create([
+                'original_name' => $archive->getClientOriginalName(),
+                'converted_format' => $format->id,
+                'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
+                'status' => 'pending',
+                'guid' => $guid,
+                'file_size' => $fileSize,
+            ]);
+        }
+
+        ConvertMultipleArchive::dispatch($guid, $convertedFormat);
+        return $guid;
     }
 }
