@@ -19,6 +19,7 @@ Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadshe
 Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
 
 Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
+Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);
 Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
 Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
 Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);

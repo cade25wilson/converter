@@ -44,4 +44,9 @@ class FileSizeController extends Controller
     {
         return $this->fileSizeService->createResponse($this->fileSizeService->totalVideoSize());
     }
+
+    public function totalTransferredArchiveSize(): JsonResponse
+    {
+        return $this->fileSizeService->createResponse($this->fileSizeService->totalArchiveSize());
+    }
 }

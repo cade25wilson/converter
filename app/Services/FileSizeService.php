@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ArchiveConversion;
 use App\Models\Audioconversion;
 use App\Models\Imageconversion;
 use App\Models\SpreadsheetConversion;
@@ -11,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 class FileSizeService 
 {
     private const CACHE_KEYS = [
+        'archive' => 'total_archive_size',
         'audio' => 'total_audio_size',
         'image' => 'total_image_size',
         'spreadsheet' => 'total_spreadsheet_size',
@@ -22,6 +24,11 @@ class FileSizeService
     private function totalInGB(int $totalSize): float
     {
         return round($totalSize / 1073741824, 2);
+    }
+
+    public function totalArchiveSize(): array
+    {
+        return $this->getTotalSize(self::CACHE_KEYS['archive'], ArchiveConversion::class);
     }
 
     public function totalAudioSize(): array
