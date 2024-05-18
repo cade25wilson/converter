@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ConversionTypes;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,10 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(FormatSeeder::class);
-        $this->call(AudioSeeder::class);
-        $this->call(VideoSeeder::class);
-        $this->call(SpreadsheetSeeder::class);
         $this->call(ArchiveSeeder::class);
+        $this->call(AudioSeeder::class);
+        $this->call(ConversionTypesSeeder::class);
+        $this->call(FormatSeeder::class);
+        $this->call(SpreadsheetSeeder::class);
+        $this->call(VideoSeeder::class);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\FileSizeController;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\MessagesController;
+use App\Models\ConversionTypes;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,7 @@ Route::post('/auth/signup', [AuthController::class, 'create']);
 Route::post('/auth/signin', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-$directories = ['audio', 'image', 'spreadsheet', 'video', 'archive'];
+$directories = ConversionTypes::all()->pluck('name')->toArray();
 foreach($directories as $directory){
     Route::get('/' . $directory . '/{filename}', function ($filename) use ($directory) {
         $path = storage_path('app/' . $directory . '/' . $filename);
