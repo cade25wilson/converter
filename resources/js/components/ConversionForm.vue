@@ -168,10 +168,11 @@ export default {
         setLocalStorage() {
             if(!localStorage.getItem('pastConversions')){
                 localStorage.setItem('pastConversions', JSON.stringify({
-                    'video': [],
+                    'archive': [],
                     'audio': [],
                     'image': [],
-                    'spreadsheet': []
+                    'spreadsheet': [],
+                    'video': [],
                 }));
             }
         },

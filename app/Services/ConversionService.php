@@ -31,7 +31,7 @@ class ConversionService
         rmdir($dir);
     }
 
-    public function SetVariables(Request $request, string $type)
+    public function SetVariables(Request $request, string $type): array
     {
         $guid = Str::uuid();
         $file = $request->file($type)[0];

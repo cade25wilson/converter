@@ -2,8 +2,8 @@
     <div class="mx-auto text-center">
         <h1 clas="mb-3">Previous Conversions</h1>
         <div v-if="hasPastConversions" class="mt-4">
-            <div v-if="pastConversions.video.length > 0">
-                <PastConversionList :pastConversions="pastConversions.video" name="video" @update="handleUpdate()"/>
+            <div v-if="pastConversions.archive.length > 0">
+                <PastConversionList :pastConversions="pastConversions.archive" name="archive" @update="handleUpdate()"/>
             </div>
             <div v-if="pastConversions.audio.length > 0">
                 <PastConversionList :pastConversions="pastConversions.audio" name="audio" @update="handleUpdate()" />
@@ -13,6 +13,9 @@
             </div>
             <div v-if="pastConversions.spreadsheet.length > 0">
                 <PastConversionList :pastConversions="pastConversions.spreadsheet" name="spreadsheet" @update="handleUpdate()"/>
+            </div>
+            <div v-if="pastConversions.video.length > 0">
+                <PastConversionList :pastConversions="pastConversions.video" name="video" @update="handleUpdate()"/>
             </div>
 
         </div>
@@ -48,10 +51,11 @@ export default {
 
             // Filter out conversions that are older than three days
             const recentConversions = {
-                video: pastConversions.video ? pastConversions.video.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                archive: pastConversions.archive ? pastConversions.archive.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 audio: pastConversions.audio ? pastConversions.audio.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 image: pastConversions.image ? pastConversions.image.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
-                spreadsheet: pastConversions.spreadsheet ? pastConversions.spreadsheet.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : []
+                spreadsheet: pastConversions.spreadsheet ? pastConversions.spreadsheet.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                video: pastConversions.video ? pastConversions.video.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
             };
 
             // Update localStorage with recent conversions

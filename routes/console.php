@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ConversionTypes;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -8,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Artisan::command('clearoldfiles', function() {
-    $directories = ['audio', 'image', 'spreadsheet', 'video'];
+    $directories = ConversionTypes::all()->pluck('name')->toArray();
     $now = time();
 
     foreach($directories as $directory){

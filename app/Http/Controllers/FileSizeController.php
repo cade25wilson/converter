@@ -30,12 +30,12 @@ class FileSizeController extends Controller
         return $this->fileSizeService->createResponse($this->fileSizeService->totalAudioSize());
     }
 
-    public function totalTransferredImageSize()
+    public function totalTransferredImageSize(): JsonResponse
     {
         return $this->fileSizeService->createResponse($this->fileSizeService->totalImageSize());
     }
 
-    public function totalTransferredSpreadsheetSize()
+    public function totalTransferredSpreadsheetSize(): JsonResponse
     {
         return $this->fileSizeService->createResponse($this->fileSizeService->totalSpreadsheetSize());
     }
@@ -43,5 +43,10 @@ class FileSizeController extends Controller
     public function totalTransferredVideoSize(): JsonResponse
     {
         return $this->fileSizeService->createResponse($this->fileSizeService->totalVideoSize());
+    }
+
+    public function totalTransferredArchiveSize(): JsonResponse
+    {
+        return $this->fileSizeService->createResponse($this->fileSizeService->totalArchiveSize());
     }
 }

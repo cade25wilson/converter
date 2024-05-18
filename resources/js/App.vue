@@ -8,16 +8,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <router-link to="/images" class="nav-link text-default" aria-current="page">Images</router-link>
+                        <router-link to="/archives" class="nav-link text-default">Archive</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/audios" class="nav-link text-default">Audio</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to='/videos' class="nav-link text-default" href="#">Video</router-link>
+                        <router-link to="/images" class="nav-link text-default" aria-current="page">Images</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/spreadsheets" class="nav-link text-default" aria-disabled="true">Spreadsheet</router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to='/videos' class="nav-link text-default" href="#">Video</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/previousconversions" class="nav-link text-default" aria-disabled="true">Previous Conversions</router-link>

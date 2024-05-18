@@ -87,14 +87,16 @@ export default {
     computed: {
       page(){
         switch (this.$route.path) {
-          case '/images':
-            return 'image'
+          case '/archives':
+            return 'archive'
           case '/audios':
             return 'audio'
-          case '/videos':
-            return 'video'
+          case '/images':
+            return 'image'
           case '/spreadsheets':
             return 'spreadsheet'
+          case '/videos':
+            return 'video'
           default:
             return 'image'
         }
