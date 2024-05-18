@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArchiveFormat;
+use App\Rules\Folder;
 use App\Services\AudioConverterService;
+use App\Services\ArchiveConverterService;
 use App\Services\ImageConverterService;
 use App\Services\SpreadsheetConverterService;
 use App\Services\VideoConverterService;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Spiral\RoadRunner\Console\Archive\Archive;
 
 class ConversionController extends Controller
 {
@@ -98,11 +102,32 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
+    public function archiveconvert(Request $request)
+    {
+        try {
+            $request->validate([
+                'archive.*' => ['required', new Folder],
+                'format' => 'required|exists:archive_formats,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+
+        $archiveService = new ArchiveConverterService($request);
+        if(count($request->archive) > 1) {
+            $guid = $archiveService->MultipleArchiveConvert();
+        } else {
+            $guid = $archiveService->SingleArchiveConvert();
+        }
+
+        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
+    }
+
     public function delete(Request $request)
     {
         $request->validate([
-            'guid' => 'required',
-            'type' => 'required|in:audio,image,spreadsheet,video'
+            'guid' => 'required|string',
+            'type' => 'required|in:archive,audio,image,spreadsheet,video'
         ]);
         
         $guid = $request->guid;

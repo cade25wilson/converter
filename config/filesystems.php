@@ -75,6 +75,7 @@ return [
         public_path('audio') => storage_path('app/audio'),
         public_path('video') => storage_path('app/video'),
         public_path('spreadsheet') => storage_path('app/spreadsheet'),
+        public_path('archive') => storage_path('app/archive'),
     ],
 
 ];

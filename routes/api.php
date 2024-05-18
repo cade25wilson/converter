@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 Route::delete('/conversions/delete', [ConversionController::class, 'delete']);
+Route::post('/conversions/archive', [ConversionController::class, 'archiveconvert']);
 Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
 Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
 Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);
@@ -22,6 +23,7 @@ Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImage
 Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
 Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
 
+Route::get('/formats/archive', [FormatController::class, 'archive']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
 Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
@@ -36,7 +38,7 @@ Route::post('/auth/signup', [AuthController::class, 'create']);
 Route::post('/auth/signin', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-$directories = ['audio', 'image', 'spreadsheet', 'video'];
+$directories = ['audio', 'image', 'spreadsheet', 'video', 'archive'];
 foreach($directories as $directory){
     Route::get('/' . $directory . '/{filename}', function ($filename) use ($directory) {
         $path = storage_path('app/' . $directory . '/' . $filename);

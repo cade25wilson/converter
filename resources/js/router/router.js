@@ -10,6 +10,10 @@ const routes = [
         component: () => import("../Pages/IndexRoute.vue"),
     },
     {
+        path: "/archives",
+        component: () => import("../Pages/ArchiveRoute.vue"),
+    },
+    {
         path: "/audios",
         component: () => import("../Pages/AudioRoute.vue"),
     },
@@ -41,10 +45,6 @@ const routes = [
         path: "/contact",
         component: () => import("../Pages/ContactRoute.vue"),
     },
-    {
-        path: '/donate',
-        component: () => import("../Pages/DonateRoute.vue"),
-    }
 ];
 
 export default createRouter({
