@@ -18,6 +18,13 @@ class ConvertMultipleArchive implements ShouldQueue
 
     protected string $guid;
     protected string $format;
+
+                 /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 800; // 5 minutes
     /**
      * Create a new job instance.
      */

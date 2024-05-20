@@ -121,3 +121,10 @@ footer {
     margin-right:0;
   }
 }
+
+a {
+  cursor: pointer;
+}
+.noconversions {
+  height: 90vh;
+}

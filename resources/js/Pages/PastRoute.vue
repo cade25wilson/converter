@@ -19,7 +19,7 @@
             </div>
 
         </div>
-        <div v-else class="mt-4">
+        <div v-else class="mt-4 noconversions">
             <p>No previous conversions</p>
         </div>
     </div>   
@@ -62,33 +62,28 @@ export default {
             localStorage.setItem('pastConversions', JSON.stringify(recentConversions));
         },
         handleUpdate() {
-            console.log('udposaujfoiads');
             this.pastConversions = JSON.parse(localStorage.getItem('pastConversions'));
 
         }
     },
     computed: {
-hasPastConversions() {
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        hasPastConversions() {
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    const hasRecentConversion = (conversions) => {
-        return Array.isArray(conversions) && conversions.some(conversion => 
-            new Date(conversion.time) >= threeDaysAgo
-        );
-    };
+            const hasRecentConversion = (conversions) => {
+                return Array.isArray(conversions) && conversions.some(conversion => 
+                    new Date(conversion.time) >= threeDaysAgo
+                );
+            };
 
-    return hasRecentConversion(this.pastConversions) || 
-        hasRecentConversion(this.pastConversions && this.pastConversions.audio) || 
-        hasRecentConversion(this.pastConversions && this.pastConversions.image) || 
-        hasRecentConversion(this.pastConversions && this.pastConversions.spreadsheet);
-}
+            return hasRecentConversion(this.pastConversions) || 
+                hasRecentConversion(this.pastConversions && this.pastConversions.archive) ||
+                hasRecentConversion(this.pastConversions && this.pastConversions.audio) || 
+                hasRecentConversion(this.pastConversions && this.pastConversions.image) || 
+                hasRecentConversion(this.pastConversions && this.pastConversions.spreadsheet)||
+                hasRecentConversion(this.pastConversions && this.pastConversions.video);
+        }
     },
 }
 </script>
-
-<style>
-    a {
-        cursor: pointer;
-    }
-</style>

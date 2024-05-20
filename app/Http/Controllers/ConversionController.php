@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ArchiveFormat;
 use App\Rules\Folder;
 use App\Services\AudioConverterService;
 use App\Services\ArchiveConverterService;
 use App\Services\ImageConverterService;
 use App\Services\SpreadsheetConverterService;
 use App\Services\VideoConverterService;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spiral\RoadRunner\Console\Archive\Archive;
+use Illuminate\Validation\ValidationException;
 
 class ConversionController extends Controller
 {
-    public function imageconvert(Request $request)
+    public function imageconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -40,7 +39,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);     
     }
 
-    public function audioconvert(Request $request)
+    public function audioconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -60,7 +59,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function videoconvert(Request $request)
+    public function videoconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -81,7 +80,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function spreadsheetconvert(Request $request)
+    public function spreadsheetconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -102,7 +101,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function archiveconvert(Request $request)
+    public function archiveconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -123,7 +122,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): JsonResponse
     {
         $request->validate([
             'guid' => 'required|string',
