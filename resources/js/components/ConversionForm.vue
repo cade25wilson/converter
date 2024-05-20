@@ -25,7 +25,7 @@
                         <span class="text-default" @click="triggerFileSelection">Click to upload image</span>
                         <span class="arrow-down" @mouseover="showList = true">&#x25BC;</span>
                         <ul class="dropdown-list" v-show="showList">
-                            <li @click.prevent="console.log('test');">Dropbox</li>                            
+                            <li @click.prevent="dropboxIconClicked()">Dropbox</li>                            
                             <li @click.prevent="console.log('test');">Google Drive</li>
                             <li @click.prevent="console.log('test');">Onedrive</li>
                         </ul>
@@ -159,6 +159,16 @@ export default {
             showList: false,
         }
     },
+    mounted() {
+        let dropBox = document.createElement("script");
+        dropBox.setAttribute(
+        "src",
+        "https://www.dropbox.com/static/api/2/dropins.js"
+        );
+        dropBox.setAttribute("id", "dropboxjs");
+        dropBox.setAttribute("data-app-key", "02vuzr3fulb6gy0");
+        document.head.appendChild(dropBox);
+    },
     created() {
         if(!localStorage.getItem(`${this.page}Formats`)){
             this.getFormats();
@@ -183,6 +193,40 @@ export default {
                     'video': [],
                 }));
             }
+        },
+        dropboxIconClicked() {
+            let options = {
+                success: async files => {
+                    let attachments = [];
+                    for (let i = 0; i < files.length; i++) {
+                        let attachment = {};
+                        attachment._id = files[i].id;
+                        attachment.title = files[i].name;
+                        attachment.size = files[i].bytes;
+                        attachment.iconURL = files[i].icon;
+                        attachment.link = files[i].link;
+                        attachment.extension = `. ${files[i].name.split(".")[1]}`;
+                        attachments.push(attachment);
+                    }
+                    this.tempAttachments = attachments;
+                    // loop through tempAttachments and add to files
+                    for (let i = 0; i < this.tempAttachments.length; i++) {
+                        this.files.push(this.tempAttachments[i].link);
+                    }
+                    console.log(this.tempAttachments);
+                },
+
+                cancel: function() {},
+
+                linkType: "preview",
+
+                multiselect: true,
+
+                folderselect: false,
+
+                sizeLimit: 102400000
+            };
+            Dropbox.choose(options);
         },
         triggerFileSelection() {
             console.log('triggerfileselection called');
