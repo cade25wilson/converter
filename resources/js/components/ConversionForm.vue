@@ -44,6 +44,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(file, index) in files" :key="index">
+                            <!-- {{file}} -->
                             <td>{{ file.name }}</td>
                             <td class="ms-2">
                                 <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(index)" 
@@ -200,20 +201,13 @@ export default {
                     let attachments = [];
                     for (let i = 0; i < files.length; i++) {
                         let attachment = {};
-                        attachment._id = files[i].id;
+                        attachment.name = files[i].link;
                         attachment.title = files[i].name;
-                        attachment.size = files[i].bytes;
-                        attachment.iconURL = files[i].icon;
-                        attachment.link = files[i].link;
-                        attachment.extension = `. ${files[i].name.split(".")[1]}`;
                         attachments.push(attachment);
                     }
-                    this.tempAttachments = attachments;
-                    // loop through tempAttachments and add to files
-                    for (let i = 0; i < this.tempAttachments.length; i++) {
-                        this.files.push(this.tempAttachments[i].link);
-                    }
-                    console.log(this.tempAttachments);
+                    this.files = attachments;
+                    
+                    console.log(this.files);
                 },
 
                 cancel: function() {},
@@ -229,7 +223,6 @@ export default {
             Dropbox.choose(options);
         },
         triggerFileSelection() {
-            console.log('triggerfileselection called');
             this.$refs.fileInput.click();
         },
         removeFile(index){
@@ -258,7 +251,44 @@ export default {
                 localStorage.setItem(`${this.page}Formats`, JSON.stringify(formatData));
             }
         },
+        convertUrlFile(){
+            console.log('convert url file function');
+            console.log(this.files);
+            let formData = new FormData();
+            let selectedFormat = this.selectedFormat;
+            let firstFileName = this.files[0].title;
+            for (let i = 0; i < this.files.length; i++) {
+                let file = JSON.stringify(this.files[i]);
+                formData.append(`${this.page}[]`, file);
+            }
+            if (this.width && this.height){
+                formData.append('width', this.width);
+                formData.append('height', this.height);
+            }
+            formData.append('format', selectedFormat);
+            api.post(`/conversions/url/${this.page}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                this.isConverting = true;
+                this.conversionStatus = 'started';
+                let guid = response.data.guid;
+                this.subscribeToChannel(guid, firstFileName);
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        },
         convertFile() {
+            //check if an item in this.files is a url
+            for (let i = 0; i < this.files.length; i++) {
+                if (this.files[i].name.startsWith('http')) {
+                    this.convertUrlFile();
+                    return;
+                }
+            }
+            console.log(this.files);
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
             let firstFileName = this.files[0].name;

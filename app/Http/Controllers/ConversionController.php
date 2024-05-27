@@ -10,6 +10,8 @@ use App\Services\SpreadsheetConverterService;
 use App\Services\VideoConverterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ConversionController extends Controller
@@ -142,5 +144,66 @@ class ConversionController extends Controller
         unlink($file);
 
         return response()->json(['success' => 'File deleted'], 200);
+    }
+
+    public function urlconvert(Request $request)
+    {
+        // $lastSegment = last($request->segments());
+
+        // $data = json_decode($request->getContent(), true);
+        // $format = (int)$data['format'];
+        // $files = $data[$lastSegment];
+
+        // $downloadedFiles = [];
+        // foreach($files as $file) {
+        //     $filePath = $this->downloadFile(json_decode($file, true), $lastSegment);
+        //     $downloadedFiles[] = new \Illuminate\Http\UploadedFile($filePath, basename($filePath));
+        // }
+
+        // // Create a new request for the imageconvert function
+        // $newRequest = new Request();
+        // $newRequest->merge([
+        //     'image' => $downloadedFiles,
+        //     'format' => $format,
+        // ]);
+        // // Log::info(print_r($newRequest->all(), true) . ' newRequest');
+        // // Log::info(' format ' . $format);
+    
+        // // Call the imageconvert function
+        // return $this->imageconvert($newRequest);
+        
+        $lastSegment = last($request->segments());
+
+        $data = json_decode($request->getContent(), true);
+        $format = (int)$data['format'];
+        $files = $data[$lastSegment];
+    
+        $downloadedFiles = [];
+        foreach($files as $file) {
+            $filePath = $this->downloadFile(json_decode($file, true), $lastSegment);
+            $downloadedFiles[] = new \Illuminate\Http\UploadedFile($filePath, basename($filePath));
+        }
+    
+        // Create a new request for the imageconvert function
+        $newRequest = new Request();
+        $newRequest->merge(['format' => $format]);
+        $newRequest->files->set('image', $downloadedFiles);
+    
+        // Call the imageconvert function
+        return $this->imageconvert($newRequest);
+    }
+    
+    private function downloadFile(array $file, string $type)
+    {
+        $fileUrl = str_replace('dl=0', 'dl=1', $file['name']);
+    
+        $downloadFile = file_get_contents($fileUrl);
+    
+        $fileName = basename(parse_url($fileUrl, PHP_URL_PATH));
+    
+        $filePath = 'test/' . $fileName;
+        Storage::put($filePath, $downloadFile);
+        // Log::info($filePath . ' filePath');
+        return Storage::path($filePath);
     }
 }

@@ -18,6 +18,12 @@ Route::post('/conversions/image', [ConversionController::class, 'imageconvert'])
 Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);
 Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
 
+Route::post('/conversions/url/archive', [ConversionController::class, 'urlconvert']);
+Route::post('/conversions/url/audio', [ConversionController::class, 'urlconvert']);
+Route::post('/conversions/url/image', [ConversionController::class, 'urlconvert']);
+Route::post('/conversions/url/spreadsheet', [ConversionController::class, 'urlconvert']);
+Route::post('/conversions/url/video', [ConversionController::class, 'urlconvert']);
+
 Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
 Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);
 Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
