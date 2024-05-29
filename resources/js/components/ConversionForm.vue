@@ -8,22 +8,29 @@
                     @drop="dropFiles"
                     v-if="files.length === 0"
                 >
-                <label for="file" class="custum-file-upload mr-3" >
-                    <div class="icon">
+                <label class="custum-file-upload mr-3">
+                    <div class="icon" @click="triggerFileSelection">
                         <svg viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                             <g id="SVGRepo_iconCarrier">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                     d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
-                                    fill=""></path>
+                                    fill="">
+                                </path>
                             </g>
                         </svg>
                     </div>
-                    <div class="text">
-                        <span class="text-default">Click to upload image</span>
+                    <div class="text" @mouseleave="showList = false">
+                        <span class="text-default" @click="triggerFileSelection">Click to upload image</span>
+                        <span class="arrow-down" @mouseover="showList = true">&#x25BC;</span>
+                        <ul class="dropdown-list" v-show="showList">
+                            <li @click.prevent="dropboxIconClicked()"><DropboxSvg />Dropbox</li>                            
+                            <!-- <li @click.prevent="driveIconClicked();">Google Drive</li>
+                            <li @click.prevent="oneDriveIconClicked();">Onedrive</li> -->
+                        </ul>
                     </div>
-                    <input type="file" id="file" v-on:change="files = Array.from($event.target.files)" multiple>
+                    <input type="file" ref="fileInput" v-on:change="files = Array.from($event.target.files)" multiple>
                 </label>
                 </div>
                 <div style="height: 300px; overflow-y: auto;" v-else>
@@ -37,6 +44,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(file, index) in files" :key="index">
+                            <!-- {{file}} -->
                             <td>{{ file.name }}</td>
                             <td class="ms-2">
                                 <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(index)" 
@@ -127,11 +135,15 @@
 </template>
 
 <script>
+import DropboxSvg from './DropboxSvg.vue';
 import api from '../axios'
 import vClickOutside from 'v-click-outside'
 
 export default {
     name: 'ConversionForm',
+    components: {
+        DropboxSvg
+    },
     props: {
         page: {
             type: String,
@@ -149,7 +161,27 @@ export default {
             conversionStatus: '',
             resize: false,
             showFormats: false,
+            showList: false,
+            pickerApiLoaded: false,
+            developerKey: "AIzaSyDDMide2ReC7teirBYymeZxGbMsaC9Ip7U",
+            clientId: "332837587267-uecej53nd36sd3v5lbrsb21m8m9np3so.apps.googleusercontent.com",
+            scope: "https://www.googleapis.com/auth/drive.readonly",
+            oauthToken: null
         }
+    },
+    mounted() {
+        let dropBox = document.createElement("script");
+        dropBox.setAttribute(
+            "src",
+            "https://www.dropbox.com/static/api/2/dropins.js"
+        );
+        dropBox.setAttribute("id", "dropboxjs");
+        dropBox.setAttribute("data-app-key", "02vuzr3fulb6gy0");
+        document.head.appendChild(dropBox);
+        let gDrive = document.createElement("script");
+        gDrive.setAttribute("type", "text/javascript");
+        gDrive.setAttribute("src", "https://apis.google.com/js/api.js");
+        document.head.appendChild(gDrive);
     },
     created() {
         if(!localStorage.getItem(`${this.page}Formats`)){
@@ -175,6 +207,97 @@ export default {
                     'video': [],
                 }));
             }
+        },
+        oneDriveIconClicked() {
+            console.log('onedrive clicked')
+            var odOptions = {
+                clientId: "2fc6cae4-4bea-4427-a7f5-29c60e5c42c3",
+                action: "query",
+                multiSelect: true,
+                advanced: {},
+                success: function(files) { /* success handler */ },
+                cancel: function() { /* cancel handler */ },
+                error: function(error) { /* error handler */ }
+            };
+            OneDrive.open(odOptions);
+        },
+        async driveIconClicked() {
+            console.log("Clicked");
+            await gapi.load("auth2", () => {
+                console.log("Auth2 Loaded");
+                gapi.auth2.authorize(
+                {
+                    client_id: this.clientId,
+                    scope: this.scope,
+                    immediate: false
+                },
+                this.handleAuthResult
+                );
+            });
+            gapi.load("picker", () => {
+                console.log("Picker Loaded");
+                this.pickerApiLoaded = true;
+                this.createPicker();
+            });
+        },
+        handleAuthResult(authResult) {
+            console.log("Handle Auth result", authResult);
+            if (authResult && !authResult.error) {
+                this.oauthToken = authResult.access_token;
+                this.createPicker();
+            }
+        },
+        createPicker() {
+            console.log("Create Picker", google.picker);
+            if (this.pickerApiLoaded && this.oauthToken) {
+                var picker = new google.picker.PickerBuilder()
+                .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                .addView(google.picker.ViewId.DOCS)
+                .setOAuthToken(this.oauthToken)
+                .setDeveloperKey("AIzaSyBaQZlYTmndQYCcdlkHoVtBzpZYandwaaA")
+                .setCallback(this.pickerCallback)
+                .build();
+                picker.setVisible(true);
+            }
+        },
+        async pickerCallback(data) {
+            console.log("PickerCallback", data);
+            var url = "nothing";
+            var name = "nothing";
+            if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
+                // Array of Picked Files
+                console.log(docs);   
+            }
+        },
+        async dropboxIconClicked() {
+            let options = {
+                success: async files => {
+                    let attachments = [];
+                    for (let i = 0; i < files.length; i++) {
+                        let attachment = {};
+                        attachment.name = files[i].link;
+                        attachment.title = files[i].name;
+                        attachments.push(attachment);
+                    }
+                    this.files = attachments;
+                    
+                    console.log(this.files);
+                },
+
+                cancel: function() {},
+
+                linkType: "preview",
+
+                multiselect: true,
+
+                folderselect: false,
+
+                sizeLimit: 102400000
+            };
+            Dropbox.choose(options);
+        },
+        triggerFileSelection() {
+            this.$refs.fileInput.click();
         },
         removeFile(index){
             this.files.splice(index, 1);
@@ -202,7 +325,44 @@ export default {
                 localStorage.setItem(`${this.page}Formats`, JSON.stringify(formatData));
             }
         },
+        convertUrlFile(){
+            console.log('convert url file function');
+            console.log(this.files);
+            let formData = new FormData();
+            let selectedFormat = this.selectedFormat;
+            let firstFileName = this.files[0].title;
+            for (let i = 0; i < this.files.length; i++) {
+                let file = JSON.stringify(this.files[i]);
+                formData.append(`${this.page}[]`, file);
+            }
+            if (this.width && this.height){
+                formData.append('width', this.width);
+                formData.append('height', this.height);
+            }
+            formData.append('format', selectedFormat);
+            api.post(`/conversions/url/${this.page}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                this.isConverting = true;
+                this.conversionStatus = 'started';
+                let guid = response.data.guid;
+                this.subscribeToChannel(guid, firstFileName);
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        },
         convertFile() {
+            //check if an item in this.files is a url
+            for (let i = 0; i < this.files.length; i++) {
+                if (this.files[i].name.startsWith('http')) {
+                    this.convertUrlFile();
+                    return;
+                }
+            }
+            console.log(this.files);
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
             let firstFileName = this.files[0].name;
@@ -370,7 +530,31 @@ export default {
   transition: 300ms ease;
 }
 
-/* Inspired by twitter.com/marina_uiux */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.arrow-down {
+  margin-left: 5px;
+}
+
+.dropdown-list {
+  /* display: none; */
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown-list li {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
 
 .button {
   font-size: 17px;

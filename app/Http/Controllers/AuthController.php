@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 
 {
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         try{
             $request->validate([
@@ -52,7 +53,7 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         try{
             $request->validate([
@@ -84,7 +85,7 @@ class AuthController extends Controller
         return response($response, 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out'], 200);

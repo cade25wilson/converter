@@ -8,12 +8,14 @@ use App\Jobs\ConvertSingleImage;
 use App\Models\Format;
 use App\Models\Imageconversion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class ImageConverterService
 {
     public function SingleImageConvert(Request $request)
     {
+        Log::info(print_r($request->file(), true));
         $guid = Str::uuid();
         ImageConverted::dispatch($guid, 'pending');
         $formatId = $request->input('format');

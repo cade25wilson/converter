@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ConversionService 
 {
@@ -48,6 +49,21 @@ class ConversionService
 
     private function StoreFile($file, $guid, $type): void
     {
+        if ($this->isUrl($file)){
+            $this->downloadFile($file);
+        }
         $file->storeAs($type . '/' . $guid . '/', $file->getClientOriginalName());
+    }
+
+    private function isUrl($file): bool
+    {
+        return filter_var($file, FILTER_VALIDATE_URL) !== false;   
+    }
+
+    private function downloadFile($file): void
+    {
+        // $file = file_get_contents($file);
+        // $file->storeAs($type . '/' . $guid . '/', $file->getClientOriginalName());
+        Log::info('Downloaded file from URL' . $file);
     }
 }

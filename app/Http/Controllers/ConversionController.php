@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ArchiveFormat;
 use App\Rules\Folder;
 use App\Services\AudioConverterService;
 use App\Services\ArchiveConverterService;
 use App\Services\ImageConverterService;
 use App\Services\SpreadsheetConverterService;
 use App\Services\VideoConverterService;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spiral\RoadRunner\Console\Archive\Archive;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ConversionController extends Controller
 {
-    public function imageconvert(Request $request)
+    public function imageconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -40,7 +41,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);     
     }
 
-    public function audioconvert(Request $request)
+    public function audioconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -60,7 +61,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function videoconvert(Request $request)
+    public function videoconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -81,7 +82,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function spreadsheetconvert(Request $request)
+    public function spreadsheetconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -102,7 +103,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function archiveconvert(Request $request)
+    public function archiveconvert(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -123,7 +124,7 @@ class ConversionController extends Controller
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): JsonResponse
     {
         $request->validate([
             'guid' => 'required|string',
@@ -143,5 +144,43 @@ class ConversionController extends Controller
         unlink($file);
 
         return response()->json(['success' => 'File deleted'], 200);
+    }
+
+    public function urlconvert(Request $request)
+    {        
+        $lastSegment = last($request->segments());
+        Log::info($lastSegment . ' lastSegment');
+
+        $data = json_decode($request->getContent(), true);
+        $format = (int)$data['format'];
+        $files = $data[$lastSegment];
+    
+        $downloadedFiles = [];
+        foreach($files as $file) {
+            $filePath = $this->downloadFile(json_decode($file, true));
+            $downloadedFiles[] = new \Illuminate\Http\UploadedFile($filePath, basename($filePath));
+        }
+    
+        // Create a new request for the imageconvert function
+        $newRequest = new Request();
+        $newRequest->merge(['format' => $format]);
+        $newRequest->files->set($lastSegment, $downloadedFiles);
+    
+        // Call the imageconvert function
+        return $this->imageconvert($newRequest);
+    }
+    
+    private function downloadFile(array $file)
+    {
+        $fileUrl = str_replace('dl=0', 'dl=1', $file['name']);
+    
+        $downloadFile = file_get_contents($fileUrl);
+    
+        $fileName = basename(parse_url($fileUrl, PHP_URL_PATH));
+    
+        $filePath = 'test/' . $fileName;
+        Storage::put($filePath, $downloadFile);
+        // Log::info($filePath . ' filePath');
+        return Storage::path($filePath);
     }
 }

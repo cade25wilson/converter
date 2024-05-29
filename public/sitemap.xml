@@ -6,7 +6,13 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/images</loc>
+        <loc>https://fileconverter.services/about</loc>
+        <lastmod>2024-05-04</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://fileconverter.services/archives</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
@@ -18,13 +24,13 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/videos</loc>
+        <loc>https://fileconverter.services/contact</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/spreadsheets</loc>
+        <loc>https://fileconverter.services/images</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
@@ -36,31 +42,25 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/signup</loc>
-        <lastmod>2024-05-04</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
         <loc>https://fileconverter.services/signin</loc>
         <lastmod>2024-05-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/about</loc>
+        <loc>https://fileconverter.services/signup</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://fileconverter.services/contact</loc>
+        <loc>https://fileconverter.services/spreadsheets</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
-    <url>
-        <loc>https://fileconverter.services/privacy</loc>
+        <url>
+        <loc>https://fileconverter.services/videos</loc>
         <lastmod>2024-05-04</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>

@@ -86,6 +86,10 @@ return [
             ],
         ],
 
+        'resend' => [
+            'transport' => 'resend',
+        ],        
+
     ],
 
     /*
