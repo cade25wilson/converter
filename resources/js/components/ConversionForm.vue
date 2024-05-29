@@ -25,9 +25,9 @@
                         <span class="text-default" @click="triggerFileSelection">Click to upload image</span>
                         <span class="arrow-down" @mouseover="showList = true">&#x25BC;</span>
                         <ul class="dropdown-list" v-show="showList">
-                            <li @click.prevent="dropboxIconClicked()">Dropbox</li>                            
-                            <li @click.prevent="console.log('test');">Google Drive</li>
-                            <li @click.prevent="console.log('test');">Onedrive</li>
+                            <li @click.prevent="dropboxIconClicked()"><DropboxSvg />Dropbox</li>                            
+                            <!-- <li @click.prevent="driveIconClicked();">Google Drive</li>
+                            <li @click.prevent="oneDriveIconClicked();">Onedrive</li> -->
                         </ul>
                     </div>
                     <input type="file" ref="fileInput" v-on:change="files = Array.from($event.target.files)" multiple>
@@ -135,11 +135,15 @@
 </template>
 
 <script>
+import DropboxSvg from './DropboxSvg.vue';
 import api from '../axios'
 import vClickOutside from 'v-click-outside'
 
 export default {
     name: 'ConversionForm',
+    components: {
+        DropboxSvg
+    },
     props: {
         page: {
             type: String,
@@ -158,17 +162,26 @@ export default {
             resize: false,
             showFormats: false,
             showList: false,
+            pickerApiLoaded: false,
+            developerKey: "AIzaSyDDMide2ReC7teirBYymeZxGbMsaC9Ip7U",
+            clientId: "332837587267-uecej53nd36sd3v5lbrsb21m8m9np3so.apps.googleusercontent.com",
+            scope: "https://www.googleapis.com/auth/drive.readonly",
+            oauthToken: null
         }
     },
     mounted() {
         let dropBox = document.createElement("script");
         dropBox.setAttribute(
-        "src",
-        "https://www.dropbox.com/static/api/2/dropins.js"
+            "src",
+            "https://www.dropbox.com/static/api/2/dropins.js"
         );
         dropBox.setAttribute("id", "dropboxjs");
         dropBox.setAttribute("data-app-key", "02vuzr3fulb6gy0");
         document.head.appendChild(dropBox);
+        let gDrive = document.createElement("script");
+        gDrive.setAttribute("type", "text/javascript");
+        gDrive.setAttribute("src", "https://apis.google.com/js/api.js");
+        document.head.appendChild(gDrive);
     },
     created() {
         if(!localStorage.getItem(`${this.page}Formats`)){
@@ -195,7 +208,68 @@ export default {
                 }));
             }
         },
-        dropboxIconClicked() {
+        oneDriveIconClicked() {
+            console.log('onedrive clicked')
+            var odOptions = {
+                clientId: "2fc6cae4-4bea-4427-a7f5-29c60e5c42c3",
+                action: "query",
+                multiSelect: true,
+                advanced: {},
+                success: function(files) { /* success handler */ },
+                cancel: function() { /* cancel handler */ },
+                error: function(error) { /* error handler */ }
+            };
+            OneDrive.open(odOptions);
+        },
+        async driveIconClicked() {
+            console.log("Clicked");
+            await gapi.load("auth2", () => {
+                console.log("Auth2 Loaded");
+                gapi.auth2.authorize(
+                {
+                    client_id: this.clientId,
+                    scope: this.scope,
+                    immediate: false
+                },
+                this.handleAuthResult
+                );
+            });
+            gapi.load("picker", () => {
+                console.log("Picker Loaded");
+                this.pickerApiLoaded = true;
+                this.createPicker();
+            });
+        },
+        handleAuthResult(authResult) {
+            console.log("Handle Auth result", authResult);
+            if (authResult && !authResult.error) {
+                this.oauthToken = authResult.access_token;
+                this.createPicker();
+            }
+        },
+        createPicker() {
+            console.log("Create Picker", google.picker);
+            if (this.pickerApiLoaded && this.oauthToken) {
+                var picker = new google.picker.PickerBuilder()
+                .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                .addView(google.picker.ViewId.DOCS)
+                .setOAuthToken(this.oauthToken)
+                .setDeveloperKey("AIzaSyBaQZlYTmndQYCcdlkHoVtBzpZYandwaaA")
+                .setCallback(this.pickerCallback)
+                .build();
+                picker.setVisible(true);
+            }
+        },
+        async pickerCallback(data) {
+            console.log("PickerCallback", data);
+            var url = "nothing";
+            var name = "nothing";
+            if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
+                // Array of Picked Files
+                console.log(docs);   
+            }
+        },
+        async dropboxIconClicked() {
             let options = {
                 success: async files => {
                     let attachments = [];
