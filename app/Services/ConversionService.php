@@ -19,7 +19,23 @@ class ConversionService
             $zip->close();
         }
     }
-    
+
+    public static function AddFilesToFolder(array $files, string $type): string
+    {
+        $guid = Str::uuid();
+        self::MakeFolder($guid, $type);
+        foreach ($files as $file) {
+            Log::info('Copying file ' . $file);
+            copy($file, storage_path('app/' . $type . '/' . $guid . '/' . basename($file)));
+        }
+        return $guid;
+    }
+
+    private static function MakeFolder(string $guid, string $type): void
+    {
+        mkdir(storage_path('app/' . $type . '/' . $guid));
+    }
+
     public static function DeleteDirectory($dir): void
     {
         if (!file_exists($dir)) {
