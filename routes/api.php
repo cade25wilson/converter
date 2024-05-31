@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ConversionController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FileSizeController;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\MessagesController;
@@ -23,6 +24,8 @@ Route::post('/conversions/url/audio', [ConversionController::class, 'urlconvert'
 Route::post('/conversions/url/image', [ConversionController::class, 'urlconvert']);
 Route::post('/conversions/url/spreadsheet', [ConversionController::class, 'urlconvert']);
 Route::post('/conversions/url/video', [ConversionController::class, 'urlconvert']);
+
+Route::post('/email/{type}', [EmailController::class, 'download']);
 
 Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
 Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);

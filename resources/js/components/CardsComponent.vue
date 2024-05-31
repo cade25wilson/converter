@@ -25,7 +25,7 @@
                           <div class="bottom"></div>
                         </div>
                       </div>
-                      <p class="text-light pt-2">We delete all files after 3 days to give you time to redownload your files, however there is always the option to delete your files immediately earlier <router-link to="/previousconversions" class="text-light" title="Go to the Previous Conversions Page">click here to do so</router-link></p>
+                      <p class="text-light pt-2">We delete all files after 3 days to give you time to redownload your files, however there is always the option to delete your files immediately <router-link to="/previousconversions" class="text-light" title="Go to the Previous Conversions Page">click here to do so</router-link></p>
                     </div>
                 </div>
             </div>

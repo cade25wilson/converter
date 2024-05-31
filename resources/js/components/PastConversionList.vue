@@ -1,5 +1,8 @@
 <template>
-    <h2>{{ capitalizedName }} Conversions</h2>
+    <h2>{{ capitalizedName }} Conversions <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" @click="emailFiles(name)">
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path fill="currentColor" d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+      </svg></h2>
     <div v-for="conversions in pastConversions" :key="conversions.guid">
         <a @click="downloadConversion(conversions.guid)" class="text-left me-3">{{ conversions.filename }}</a>
         <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" @click="removeFile(conversions.guid, this.name)"
@@ -10,10 +13,8 @@
                                     <defs>
                                         <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
                                             <stop stop-color="#FC4343" offset="0%">
-
                                             </stop>
                                             <stop stop-color="#F82020" offset="100%">
-
                                             </stop>
                                         </linearGradient>
                                     </defs>
@@ -51,6 +52,10 @@ export default {
         }
     },
     methods: {
+        emailFiles(name){
+            console.log('emmiting item');
+            this.$emit('email', name);
+        },
         downloadConversion(conversion) {
             api.get(`/${this.name}/${conversion}.zip`, {responseType: 'blob'})
                 .then(response => {
@@ -91,3 +96,9 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+    svg {
+        cursor: pointer;
+    }
+</style>

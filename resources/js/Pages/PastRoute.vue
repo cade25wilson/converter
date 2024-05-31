@@ -3,21 +3,21 @@
         <h1 clas="mb-3">Previous Conversions</h1>
         <div v-if="hasPastConversions" class="mt-4">
             <div v-if="pastConversions.archive.length > 0">
-                <PastConversionList :pastConversions="pastConversions.archive" name="archive" @update="handleUpdate()"/>
+                <PastConversionList :pastConversions="pastConversions.archive" name="archive" @update="handleUpdate()" @email="handleEmail"/>
             </div>
             <div v-if="pastConversions.audio.length > 0">
-                <PastConversionList :pastConversions="pastConversions.audio" name="audio" @update="handleUpdate()" />
+                <PastConversionList :pastConversions="pastConversions.audio" name="audio" @update="handleUpdate()" @email="handleEmail"/>
             </div>
             <div v-if="pastConversions.image.length > 0">
-                <PastConversionList :pastConversions="pastConversions.image" name="image" @update="handleUpdate()"/>
+                <PastConversionList :pastConversions="pastConversions.image" name="image" @update="handleUpdate()" @email="handleEmail"/>
             </div>
             <div v-if="pastConversions.spreadsheet.length > 0">
-                <PastConversionList :pastConversions="pastConversions.spreadsheet" name="spreadsheet" @update="handleUpdate()"/>
+                <PastConversionList :pastConversions="pastConversions.spreadsheet" name="spreadsheet" @update="handleUpdate()" @email="handleEmail"/>
             </div>
             <div v-if="pastConversions.video.length > 0">
-                <PastConversionList :pastConversions="pastConversions.video" name="video" @update="handleUpdate()"/>
+                <PastConversionList :pastConversions="pastConversions.video" name="video" @update="handleUpdate()" @email="handleEmail"/>
             </div>
-
+            <EmailFiles :type="emailType"/>
         </div>
         <div v-else class="mt-4 noconversions">
             <p>No previous conversions</p>
@@ -26,22 +26,34 @@
 </template>
 
 <script>
+import EmailFiles from "../components/EmailFiles.vue";
 import PastConversionList from "../components/PastConversionList.vue";
+import * as bootstrap from 'bootstrap'
 
 export default {
     name: 'PastRoute',
     components: {
-        PastConversionList
+        PastConversionList,
+        EmailFiles
     },
     data() {
         return {
-            pastConversions: JSON.parse(localStorage.getItem('pastConversions'))
+            pastConversions: JSON.parse(localStorage.getItem('pastConversions')),
+            emailType: ''
         }
     },
     created() {
         this.removeOldConversions();
     },
     methods: {
+        handleEmail(type) {
+            console.log(type);
+            this.emailType = type;
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+                keyboard: false
+            });
+            myModal.show();
+        },
         removeOldConversions() {
             const threeDaysAgo = new Date();
             threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
