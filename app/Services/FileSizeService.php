@@ -50,23 +50,6 @@ class FileSizeService
     {
         return $this->getTotalSize(self::CACHE_KEYS['video'], VideoConversion::class);
     }
-    
-    private function getTotalSize(string $key, string $modelClass): array
-    {
-        if ($this->checkCache($key)) {
-            return $this->getCache($key);
-        } 
-
-        $totalFiles = $modelClass::count();
-        $totalSize = $modelClass::where('status', 'completed')->sum('file_size');
-        $data = [
-            'total_files' => $totalFiles,
-            'total_size' => $totalSize,
-        ];
-        $this->setCache($key, $data);
-
-        return $data;
-    }
 
     public function createResponse(array $totalSize): JsonResponse
     {
@@ -86,5 +69,22 @@ class FileSizeService
     private function setCache(string $key, array $value): void
     {
         cache()->put($key, $value, 30);
+    }
+
+    private function getTotalSize(string $key, string $modelClass): array
+    {
+        if ($this->checkCache($key)) {
+            return $this->getCache($key);
+        } 
+
+        $totalFiles = $modelClass::count();
+        $totalSize = $modelClass::where('status', 'completed')->sum('file_size');
+        $data = [
+            'total_files' => $totalFiles,
+            'total_size' => $totalSize,
+        ];
+        $this->setCache($key, $data);
+
+        return $data;
     }
 }

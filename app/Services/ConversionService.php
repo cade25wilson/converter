@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Rules\Folder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ConversionService 
 {
@@ -81,5 +83,60 @@ class ConversionService
         // $file = file_get_contents($file);
         // $file->storeAs($type . '/' . $guid . '/', $file->getClientOriginalName());
         Log::info('Downloaded file from URL' . $file);
+    }
+
+    public function getValidationRules(string $type): array
+    {
+        $rules = [
+            'archive' => [
+                $type.'.*' => ['required', new Folder],
+                'format' => 'required|exists:archive_formats,id',
+            ],
+            'audio' => [
+                $type.'.*' => 'required|file',
+                'format' => 'required|exists:audio_formats,id',
+            ],
+            'image' => [
+                $type.'.*' => 'required',
+                'format' => 'required|exists:image_formats,id',
+                'email' => 'email',
+                'width' => 'numeric|integer|required_with:height',
+                'height' => 'numeric|integer|required_with:width',
+                'watermark' => 'image'
+            ],
+            'spreadsheet' => [
+                $type.'.*' => 'required|file',
+                'format' => 'required|exists:spreadsheet_formats,id',
+            ],
+            'video' => [
+                $type.'.*' => 'required|file',
+                'format' => 'required|exists:video_formats,id',
+            ]
+        ];
+
+        return $rules[$type];
+    }
+
+    public function getService(Request $request, string $type): mixed
+    {
+        $services = [
+            'archive' => ArchiveConverterService::class,
+            'audio' => AudioConverterService::class,
+            'image' => ImageConverterService::class,
+            'spreadsheet' => SpreadsheetConverterService::class,
+            'video' => VideoConverterService::class
+        ];
+
+        return new $services[$type]($request);
+    }
+
+    public function validate(Request $request, mixed $validationRules):bool
+    {
+        try {
+            $request->validate($validationRules);
+        } catch(ValidationException) {
+            return false;
+        }
+        return true;
     }
 }

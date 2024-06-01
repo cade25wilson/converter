@@ -13,13 +13,19 @@ use Illuminate\Support\Str;
 
 class ImageConverterService
 {
-    public function SingleImageConvert(Request $request)
+    protected Request $request;
+    public function __construct(Request $request)
     {
-        Log::info(print_r($request->file(), true));
+        $this->request = $request;
+    }   
+
+    public function SingleConvert()
+    {
+        Log::info(print_r($this->request->file(), true));
         $guid = Str::uuid();
         ImageConverted::dispatch($guid, 'pending');
-        $formatId = $request->input('format');
-        $image = $request->file('image')[0];
+        $formatId = $this->request->input('format');
+        $image = $this->request->file('image')[0];
         $sizeInBytes = $image->getSize();
         $image->storeAs('image/' . $guid . '/', $image->getClientOriginalName());
 
@@ -27,11 +33,11 @@ class ImageConverterService
         $convertedFormat = Format::where('id', $formatId)->value('extension');
         // $originalFormatId = Format::where('extension', strtolower($image->getClientOriginalExtension()))->value('id');
 
-        if ($request->file('watermark')) {
-            $request->file('watermark')->storeAs('image/' . $guid, $request->file('watermark')->getClientOriginalName());
+        if ($this->request->file('watermark')) {
+            $this->request->file('watermark')->storeAs('image/' . $guid, $this->request->file('watermark')->getClientOriginalName());
         } 
 
-        [$width, $height, $watermark] = $this->SetNullableVariables($request);
+        [$width, $height, $watermark] = $this->SetNullableVariables($this->request);
 
         $imageConversion = Imageconversion::create([
             'original_name' => $image->getClientOriginalName(),
@@ -50,22 +56,22 @@ class ImageConverterService
         return $guid;
     }
 
-    public function MultipleImageConvert(Request $request)
+    public function MultipleConvert()
     {
         $guid = str::uuid();
         ImageConverted::dispatch($guid, 'processing');
 
-        $images = $request->file('image');
-        $formatId = $request->input('format');
+        $images = $this->request->file('image');
+        $formatId = $this->request->input('format');
         mkdir(storage_path('app/image/' . $guid));
 
         $convertedFormat = Format::where('id', $formatId)->value('extension');
 
-        if($request->file('watermark')) {
-            $request->file('watermark')->storeAs('image/' . $guid, $request->file('watermark')->getClientOriginalName());
+        if($this->request->file('watermark')) {
+            $this->request->file('watermark')->storeAs('image/' . $guid, $this->request->file('watermark')->getClientOriginalName());
         }
 
-        [$width, $height, $watermark] = $this->SetNullableVariables($request);
+        [$width, $height, $watermark] = $this->SetNullableVariables($this->request);
 
         $imageConversions = [];
         foreach ($images as $image) {
@@ -90,11 +96,11 @@ class ImageConverterService
         return $guid;
     }
 
-    private function SetNullableVariables($request)
+    private function SetNullableVariables()
     {
-        $width = $request->input('width', null);
-        $height = $request->input('height', null);
-        $watermark = $request->file('watermark') ? $request->file('watermark')->getClientOriginalName() : null;
+        $width = $this->request->input('width', null);
+        $height = $this->request->input('height', null);
+        $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
         return [$width, $height, $watermark];
     }
 }

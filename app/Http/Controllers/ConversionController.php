@@ -2,123 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Rules\Folder;
-use App\Services\AudioConverterService;
-use App\Services\ArchiveConverterService;
-use App\Services\ImageConverterService;
-use App\Services\SpreadsheetConverterService;
-use App\Services\VideoConverterService;
+use App\Services\ConversionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class ConversionController extends Controller
 {
-    public function imageconvert(Request $request): JsonResponse
+    private $conversionService;
+
+    public function __construct(ConversionService $conversionService)
     {
-        try {
-            $request->validate([
-                'image.*' => 'required',
-                'format' => 'required|exists:image_formats,id',
-                'email' => 'email',
-                'width' => 'numeric|integer|required_with:height',
-                'height' => 'numeric|integer|required_with:width',
-                'watermark' => 'image'
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-        $imageService = new ImageConverterService();
+        $this->conversionService = $conversionService;
+    }
+
+    public function convert(Request $request, string $type): JsonResponse
+    {
+        $validationRules = $this->conversionService->getValidationRules($type);
         
-        if(count($request->image) > 1) {
-            $guid = $imageService->MultipleImageConvert($request);
+        if($this->conversionService->validate($request, $validationRules) === false) {
+            return response()->json(['errors' => 'The given data was invalid.'], 422);
+        }
+
+        $service = $this->conversionService->getService($request, $type);
+        if(count($request->$type) > 1) {
+            $guid = $service->MultipleConvert();
         } else {
-            $guid = $imageService->SingleImageConvert($request);
-        }
-
-        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);     
-    }
-
-    public function audioconvert(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'audio.*' => 'required|file',
-                'format' => 'required|exists:audio_formats,id',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-        $audioService = new AudioConverterService();
-        if(count($request->audio) > 1) {
-            $guid = $audioService->MultipleAudioConvert($request);
-        } else {
-            $guid = $audioService->SingleAudioConvert($request);
-        }
-
-        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
-    }
-
-    public function videoconvert(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'video.*' => 'required|file',
-                'format' => 'required|exists:video_formats,id',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-
-        $videoService = new VideoConverterService();
-        if(count($request->video) > 1) {
-            $guid = $videoService->MultipleVideoConvert($request);
-        } else {
-            $guid = $videoService->SingleVideoConvert($request);
-        }
-
-        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
-    }
-
-    public function spreadsheetconvert(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'spreadsheet.*' => 'required|file',
-                'format' => 'required|exists:spreadsheet_formats,id',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-
-        $spreadsheetService = new SpreadsheetConverterService($request);
-        if(count($request->spreadsheet) > 1) {
-            $guid = $spreadsheetService->MultipleSpreadsheetConvert();
-        } else {
-            $guid = $spreadsheetService->SingleSpreadsheetConvert();
-        }
-
-        return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
-    }
-
-    public function archiveconvert(Request $request): JsonResponse
-    {
-        try {
-            $request->validate([
-                'archive.*' => ['required', new Folder],
-                'format' => 'required|exists:archive_formats,id',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        }
-
-        $archiveService = new ArchiveConverterService($request);
-        if(count($request->archive) > 1) {
-            $guid = $archiveService->MultipleArchiveConvert();
-        } else {
-            $guid = $archiveService->SingleArchiveConvert();
+            $guid = $service->SingleConvert();
         }
 
         return response()->json(['message' => 'Conversion Started', 'guid' => $guid]);
@@ -146,41 +56,36 @@ class ConversionController extends Controller
         return response()->json(['success' => 'File deleted'], 200);
     }
 
-    public function urlconvert(Request $request)
+    public function urlconvert(Request $request, string $type)
     {        
-        $lastSegment = last($request->segments());
-        Log::info($lastSegment . ' lastSegment');
-
+        // $lastSegment = last($request->segments());
         $data = json_decode($request->getContent(), true);
         $format = (int)$data['format'];
-        $files = $data[$lastSegment];
+        $files = $data[$type];
     
         $downloadedFiles = [];
         foreach($files as $file) {
-            $filePath = $this->downloadFile(json_decode($file, true));
+            $filePath = $this->dropboxdownload(json_decode($file, true));
             $downloadedFiles[] = new \Illuminate\Http\UploadedFile($filePath, basename($filePath));
         }
     
         // Create a new request for the imageconvert function
         $newRequest = new Request();
         $newRequest->merge(['format' => $format]);
-        $newRequest->files->set($lastSegment, $downloadedFiles);
+        $newRequest->files->set($type, $downloadedFiles);
     
         // Call the imageconvert function
-        return $this->imageconvert($newRequest);
+        return $this->convert($newRequest, $type);
     }
     
-    private function downloadFile(array $file)
+    private function dropboxdownload(array $file): string
     {
         $fileUrl = str_replace('dl=0', 'dl=1', $file['name']);
-    
         $downloadFile = file_get_contents($fileUrl);
-    
         $fileName = basename(parse_url($fileUrl, PHP_URL_PATH));
     
         $filePath = 'test/' . $fileName;
         Storage::put($filePath, $downloadFile);
-        // Log::info($filePath . ' filePath');
         return Storage::path($filePath);
     }
 }
