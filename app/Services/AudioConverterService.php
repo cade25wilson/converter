@@ -11,14 +11,20 @@ use Illuminate\Support\Str;
 
 class AudioConverterService
 {
-    public function SingleAudioConvert(Request $request)
+    protected Request $request;
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+    
+    public function SingleConvert()
     {
         $conversionService = new ConversionService();
-        $data = $conversionService->SetVariables($request, 'audio');
+        $data = $conversionService->SetVariables($this->request, 'audio');
 
         // $originalFormat = AudioFormats::where('extension', $data['originalFormat'])->value('id');
 
-        $format = AudioFormats::where('id', $request->input('format'))->first();
+        $format = AudioFormats::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $audioConversion = Audioconversion::create([
@@ -36,10 +42,10 @@ class AudioConverterService
         return $data['guid'];
     }
 
-    public function MultipleAudioConvert(Request $request)
+    public function MultipleConvert()
     {
         $guid = Str::uuid();
-        $audioFiles = $request->file('audio');
+        $audioFiles = $this->request->file('audio');
         $audioConversion = [];
 
         foreach ($audioFiles as $audio) {
@@ -48,7 +54,7 @@ class AudioConverterService
             $fileSize = $audio->getSize();
             // $originalFormat = AudioFormats::where('extension', $audio->getClientOriginalExtension())->value('id');
 
-            $format = AudioFormats::where('id', $request->input('format'))->first();
+            $format = AudioFormats::where('id', $this->request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $audioConversion[] = Audioconversion::create([

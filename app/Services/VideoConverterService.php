@@ -11,15 +11,20 @@ use Illuminate\Support\Str;
 
 class VideoConverterService
 {
+    protected Request $request;
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
 
-    public function SingleVideoConvert(Request $request)
+    public function SingleConvert()
     {
         $conversionService = new ConversionService();
-        $data = $conversionService->SetVariables($request, 'video');
+        $data = $conversionService->SetVariables($this->request, 'video');
 
         // $originalFormat = VideoFormat::where('extension', $data['originalFormat'])->value('id');
 
-        $format = VideoFormat::where('id', $request->input('format'))->first();
+        $format = VideoFormat::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $videoConversion = VideoConversion::create([
@@ -37,10 +42,10 @@ class VideoConverterService
         return $data['guid'];
     }
 
-    public function MultipleVideoConvert(Request $request)
+    public function MultipleConvert()
     {
         $guid = Str::uuid();
-        $videoFiles = $request->file('video');
+        $videoFiles = $this->request->file('video');
         $videoConversion = [];
 
         foreach ($videoFiles as $video) {
@@ -49,7 +54,7 @@ class VideoConverterService
             $fileSize = $video->getSize();
             // $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
             
-            $format = VideoFormat::where('id', $request->input('format'))->first();
+            $format = VideoFormat::where('id', $this->request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $videoConversion[] = VideoConversion::create([

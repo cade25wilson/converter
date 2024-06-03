@@ -30,7 +30,8 @@
                             <li @click.prevent="oneDriveIconClicked();">Onedrive</li> -->
                         </ul>
                     </div>
-                    <input type="file" ref="fileInput" v-on:change="files = Array.from($event.target.files)" multiple>
+                    <!-- <input type="file" ref="fileInput" v-on:change="files = Array.from($event.target.files)" multiple> -->
+                        <input type="file" ref="fileInput" v-on:change="addFiles($event)" multiple>
                 </label>
                 </div>
                 <div style="height: 300px; overflow-y: auto;" v-else>
@@ -268,6 +269,9 @@ export default {
                 // Array of Picked Files
                 console.log(docs);   
             }
+        },
+        async addFiles(event) {
+            this.files = Array.from(event.target.files);
         },
         async dropboxIconClicked() {
             let options = {
@@ -702,6 +706,10 @@ input[type=number] {
 .position-absolute {
     position: absolute;
     z-index: 1;
+}
+
+svg {
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 767px) {

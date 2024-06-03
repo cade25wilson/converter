@@ -13,13 +13,12 @@ use Illuminate\Support\Str;
 class SpreadsheetConverterService
 {
     protected Request $request;
-
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
-    public function SingleSpreadsheetConvert()
+    public function SingleConvert()
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'spreadsheet');
@@ -44,7 +43,7 @@ class SpreadsheetConverterService
         return $data['guid'];
     }
 
-    public function MultipleSpreadsheetConvert() 
+    public function MultipleConvert() 
     {
         $guid = Str::uuid();
         $spreadsheetFiles = $this->request->file('spreadsheet');

@@ -74,9 +74,8 @@ export default {
                 'guids': this.guids,
                 'email': this.email
             })
-            .then(response => {
-                console.log(response);
-                this.closeModal();
+            .then(() => {
+                window.location.reload();
             })
             .catch(error => {
                 console.log(error);

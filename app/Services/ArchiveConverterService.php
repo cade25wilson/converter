@@ -19,7 +19,7 @@ class ArchiveConverterService
         $this->request = $request;
     }
 
-    public function SingleArchiveConvert(): string
+    public function SingleConvert(): string
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'archive');
@@ -41,7 +41,7 @@ class ArchiveConverterService
         return $data['guid'];
     }
 
-    public function MultipleArchiveConvert(): string
+    public function MultipleConvert(): string
     {
         $guid = Str::uuid();
         $archiveFiles = $this->request->file('archive');

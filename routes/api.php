@@ -13,17 +13,9 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 Route::delete('/conversions/delete', [ConversionController::class, 'delete']);
-Route::post('/conversions/archive', [ConversionController::class, 'archiveconvert']);
-Route::post('/conversions/audio', [ConversionController::class, 'audioconvert']);
-Route::post('/conversions/image', [ConversionController::class, 'imageconvert']);
-Route::post('/conversions/spreadsheet', [ConversionController::class, 'spreadsheetconvert']);
-Route::post('/conversions/video', [ConversionController::class, 'videoconvert']);
+Route::post('/conversions/{type}', [ConversionController::class, 'convert']);
 
-Route::post('/conversions/url/archive', [ConversionController::class, 'urlconvert']);
-Route::post('/conversions/url/audio', [ConversionController::class, 'urlconvert']);
-Route::post('/conversions/url/image', [ConversionController::class, 'urlconvert']);
-Route::post('/conversions/url/spreadsheet', [ConversionController::class, 'urlconvert']);
-Route::post('/conversions/url/video', [ConversionController::class, 'urlconvert']);
+Route::post('/conversions/url/{type}', [ConversionController::class, 'urlconvert']);
 
 Route::post('/email/{type}', [EmailController::class, 'download']);
 

@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class EmailController extends Controller
 {
-    public function download(Request $request, $type)
+    public function download(Request $request, string $type)
     {
         $validTypes = ConversionTypes::pluck('name')->toArray();
         if (!in_array($type, $validTypes)) {
@@ -34,7 +34,6 @@ class EmailController extends Controller
             if (!empty($filePaths)) {
                 $files[] = $filePaths[0];
             }
-            Log::info(print_r($files, true));
         }
 
         $conversionService = new ConversionService();
