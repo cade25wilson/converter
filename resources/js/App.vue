@@ -14,6 +14,9 @@
                         <router-link to="/audios" class="nav-link text-default">Audio</router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/ebooks" class="nav-link text-default">Ebook</router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/images" class="nav-link text-default" aria-current="page">Images</router-link>
                     </li>
                     <li class="nav-item">
