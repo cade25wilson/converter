@@ -14,7 +14,7 @@
                         <router-link to="/audios" class="nav-link text-default">Audio</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/ebooks" class="nav-link text-default">Ebook</router-link>
+                        <router-link to="/ebooks" class="nav-link text-default">E-book</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/images" class="nav-link text-default" aria-current="page">Images</router-link>
@@ -48,8 +48,10 @@
           <div class="col-xs-6 col-md-3">
             <h6>Converters</h6>
             <ul class="footer-links">
-              <li><router-link to="/images" @click="scrollToTop">Images</router-link></li>
+              <li><router-link to="/archives" @click="scrollToTop">Archive</router-link></li>
               <li><router-link to="/audios" @click="scrollToTop">Audio</router-link></li>
+              <li><router-link to="ebooks" @click="scrollToTop">E-book</router-link></li>
+              <li><router-link to="/images" @click="scrollToTop">Images</router-link></li>
               <li><router-link to="/videos" @click="scrollToTop">Video</router-link></li>
               <li><router-link to="/spreadsheets" @click="scrollToTop">Spreadsheets</router-link></li>
             </ul>

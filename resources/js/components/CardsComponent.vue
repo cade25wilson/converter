@@ -91,6 +91,8 @@ export default {
             return 'archive'
           case '/audios':
             return 'audio'
+          case '/ebooks':
+            return 'ebook'
           case '/images':
             return 'image'
           case '/spreadsheets':

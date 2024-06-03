@@ -203,6 +203,7 @@ export default {
                 localStorage.setItem('pastConversions', JSON.stringify({
                     'archive': [],
                     'audio': [],
+                    'ebook': [],
                     'image': [],
                     'spreadsheet': [],
                     'video': [],
