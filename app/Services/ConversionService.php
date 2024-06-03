@@ -96,6 +96,10 @@ class ConversionService
                 $type.'.*' => 'required|file',
                 'format' => 'required|exists:audio_formats,id',
             ],
+            'ebook' => [
+                $type.'.*' => 'required|file',
+                'format' => 'required|exists:ebook_formats,id',
+            ],
             'image' => [
                 $type.'.*' => 'required',
                 'format' => 'required|exists:image_formats,id',
@@ -123,6 +127,7 @@ class ConversionService
             'archive' => ArchiveConverterService::class,
             'audio' => AudioConverterService::class,
             'image' => ImageConverterService::class,
+            'ebook' => EbookConverterService::class,
             'spreadsheet' => SpreadsheetConverterService::class,
             'video' => VideoConverterService::class
         ];

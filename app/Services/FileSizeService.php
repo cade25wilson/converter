@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ArchiveConversion;
 use App\Models\Audioconversion;
+use App\Models\EbookConversion;
 use App\Models\Imageconversion;
 use App\Models\SpreadsheetConversion;
 use App\Models\VideoConversion;
@@ -14,6 +15,7 @@ class FileSizeService
     private const CACHE_KEYS = [
         'archive' => 'total_archive_size',
         'audio' => 'total_audio_size',
+        'ebook' => 'total_ebook_size',
         'image' => 'total_image_size',
         'spreadsheet' => 'total_spreadsheet_size',
         'video' => 'total_video_size',
@@ -34,6 +36,11 @@ class FileSizeService
     public function totalAudioSize(): array
     {
         return $this->getTotalSize(self::CACHE_KEYS['audio'], Audioconversion::class);
+    }
+
+    public function totalEbookSize(): array
+    {
+        return $this->getTotalSize(self::CACHE_KEYS['ebook'], EbookConversion::class);
     }
 
     public function totalImageSize(): array
