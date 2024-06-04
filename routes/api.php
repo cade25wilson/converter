@@ -22,12 +22,6 @@ Route::post('/email/{type}', [EmailController::class, 'download']);
 Route::get('/filesize/{type}', [FileSizeController::class, 'totalTransferredSize']);
 
 Route::get('/formats/{type}', [FormatController::class, 'format']);
-Route::get('/formats/archive', [FormatController::class, 'archive']);
-Route::get('/formats/audio', [FormatController::class, 'audio']);
-Route::get('/formats/ebook', [FormatController::class, 'ebook']);
-Route::get('/formats/image', [FormatController::class, 'image']);
-Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
-Route::get('/formats/video', [FormatController::class, 'video']);
 
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:2,1');
 
