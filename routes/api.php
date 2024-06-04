@@ -19,13 +19,7 @@ Route::post('/conversions/url/{type}', [ConversionController::class, 'urlconvert
 
 Route::post('/email/{type}', [EmailController::class, 'download']);
 
-Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
-Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);
-Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
-Route::get('/filesize/ebook', [FileSizeController::class, 'totalTransferredEbookSize']);
-Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
-Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
-Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
+Route::get('/filesize/{type}', [FileSizeController::class, 'totalTransferredSize']);
 
 Route::get('/formats/archive', [FormatController::class, 'archive']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
