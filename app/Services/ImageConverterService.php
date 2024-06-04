@@ -19,7 +19,7 @@ class ImageConverterService
         $this->request = $request;
     }   
 
-    public function SingleConvert()
+    public function SingleConvert(): string
     {
         Log::info(print_r($this->request->file(), true));
         $guid = Str::uuid();
@@ -56,7 +56,7 @@ class ImageConverterService
         return $guid;
     }
 
-    public function MultipleConvert()
+    public function MultipleConvert(): string
     {
         $guid = str::uuid();
         ImageConverted::dispatch($guid, 'processing');

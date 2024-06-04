@@ -6,10 +6,6 @@ const routes = [
         component: () => import("../Pages/IndexRoute.vue"),
     },
     {
-        path: "/images",
-        component: () => import("../Pages/IndexRoute.vue"),
-    },
-    {
         path: "/archives",
         component: () => import("../Pages/ArchiveRoute.vue"),
     },
@@ -18,8 +14,24 @@ const routes = [
         component: () => import("../Pages/AudioRoute.vue"),
     },
     {
-        path: "/videos",
-        component: () => import("../Pages/VideoRoute.vue"),
+        path: "/contact",
+        component: () => import("../Pages/ContactRoute.vue"),
+    },
+    {
+        path: "/ebooks",
+        component: () => import("../Pages/EbookRoute.vue"),
+    },
+    {
+        path: "/images",
+        component: () => import("../Pages/IndexRoute.vue"),
+    },
+    {
+        path: "/signin",
+        component: () => import("../Pages/SigninRoute.vue"),
+    },
+    {
+        path: "/signup",
+        component: () => import("../Pages/SignupRoute.vue"),
     },
     {
         path: "/spreadsheets",
@@ -34,16 +46,8 @@ const routes = [
         component: () => import("../Pages/PrivacyRoute.vue"),
     },
     {
-        path: "/signup",
-        component: () => import("../Pages/SignupRoute.vue"),
-    },
-    {
-        path: "/signin",
-        component: () => import("../Pages/SigninRoute.vue"),
-    },
-    {
-        path: "/contact",
-        component: () => import("../Pages/ContactRoute.vue"),
+        path: "/videos",
+        component: () => import("../Pages/VideoRoute.vue"),
     },
 ];
 

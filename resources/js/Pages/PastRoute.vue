@@ -8,6 +8,9 @@
             <div v-if="pastConversions.audio.length > 0">
                 <PastConversionList :pastConversions="pastConversions.audio" name="audio" @update="handleUpdate()" @email="handleEmail"/>
             </div>
+            <div v-if="pastConversions.ebook.length > 0">
+                <PastConversionList :pastConversions="pastConversions.ebook" name="ebook" @update="handleUpdate()" @email="handleEmail"/>
+            </div>
             <div v-if="pastConversions.image.length > 0">
                 <PastConversionList :pastConversions="pastConversions.image" name="image" @update="handleUpdate()" @email="handleEmail"/>
             </div>
@@ -65,6 +68,7 @@ export default {
             const recentConversions = {
                 archive: pastConversions.archive ? pastConversions.archive.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 audio: pastConversions.audio ? pastConversions.audio.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
+                ebook: pastConversions.ebook ? pastConversions.ebook.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 image: pastConversions.image ? pastConversions.image.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 spreadsheet: pastConversions.spreadsheet ? pastConversions.spreadsheet.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
                 video: pastConversions.video ? pastConversions.video.filter(conversion => new Date(conversion.time) >= threeDaysAgo) : [],
@@ -92,6 +96,7 @@ export default {
             return hasRecentConversion(this.pastConversions) || 
                 hasRecentConversion(this.pastConversions && this.pastConversions.archive) ||
                 hasRecentConversion(this.pastConversions && this.pastConversions.audio) || 
+                hasRecentConversion(this.pastConversions && this.pastConversions.ebook) ||
                 hasRecentConversion(this.pastConversions && this.pastConversions.image) || 
                 hasRecentConversion(this.pastConversions && this.pastConversions.spreadsheet)||
                 hasRecentConversion(this.pastConversions && this.pastConversions.video);

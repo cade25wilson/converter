@@ -22,12 +22,14 @@ Route::post('/email/{type}', [EmailController::class, 'download']);
 Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
 Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);
 Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
+Route::get('/filesize/ebook', [FileSizeController::class, 'totalTransferredEbookSize']);
 Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
 Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
 Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
 
 Route::get('/formats/archive', [FormatController::class, 'archive']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
+Route::get('/formats/ebook', [FormatController::class, 'ebook']);
 Route::get('/formats/image', [FormatController::class, 'image']);
 Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
 Route::get('/formats/video', [FormatController::class, 'video']);
