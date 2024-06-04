@@ -21,6 +21,7 @@ Route::post('/email/{type}', [EmailController::class, 'download']);
 
 Route::get('/filesize/{type}', [FileSizeController::class, 'totalTransferredSize']);
 
+Route::get('/formats/{type}', [FormatController::class, 'format']);
 Route::get('/formats/archive', [FormatController::class, 'archive']);
 Route::get('/formats/audio', [FormatController::class, 'audio']);
 Route::get('/formats/ebook', [FormatController::class, 'ebook']);
