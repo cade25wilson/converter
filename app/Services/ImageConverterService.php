@@ -21,7 +21,6 @@ class ImageConverterService
 
     public function SingleConvert(): string
     {
-        Log::info(print_r($this->request->file(), true));
         $guid = Str::uuid();
         ImageConverted::dispatch($guid, 'pending');
         $formatId = $this->request->input('format');

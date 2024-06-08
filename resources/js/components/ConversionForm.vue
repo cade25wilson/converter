@@ -25,7 +25,8 @@
                         <span class="text-default" @click="triggerFileSelection">Click to upload image</span>
                         <span class="arrow-down" @mouseover="showList = true">&#x25BC;</span>
                         <ul class="dropdown-list" v-show="showList">
-                            <li @click.prevent="dropboxIconClicked()"><DropboxSvg />Dropbox</li>                            
+                            <li @click.prevent="dropboxIconClicked()"><DropboxSvg />Dropbox</li>    
+                            <li @click.prevent="addFileUrl()">Download from url</li>                        
                             <!-- <li @click.prevent="driveIconClicked();">Google Drive</li>
                             <li @click.prevent="oneDriveIconClicked();">Onedrive</li> -->
                         </ul>
@@ -274,6 +275,25 @@ export default {
         async addFiles(event) {
             this.files = Array.from(event.target.files);
         },
+        async addFileUrl() {
+            let url = prompt('Enter the url of the files (sepereated by comma)');
+            if(url.includes(',')){
+                let urls = url.split(',');
+                for (let i = 0; i < urls.length; i++) {
+                    //trim the url
+                    urls[i] = urls[i].trim();
+                    let attachment = {};
+                    attachment.name = urls[i];
+                    attachment.title = urls[i];
+                    this.files.push(attachment);
+                }
+            } else { 
+                let attachment = {};
+                attachment.name = url;
+                attachment.title = url;
+                this.files.push(attachment);
+            }
+        },
         async dropboxIconClicked() {
             let options = {
                 success: async files => {
@@ -290,13 +310,10 @@ export default {
                 },
 
                 cancel: function() {},
-
+                
                 linkType: "preview",
-
                 multiselect: true,
-
                 folderselect: false,
-
                 sizeLimit: 102400000
             };
             Dropbox.choose(options);

@@ -14,6 +14,27 @@ class FormatController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function format($type)
+    {
+        switch($type){
+            case 'archive':
+                return $this->archive();
+            case 'audio':
+                return $this->audio();
+            case 'ebook':
+                return $this->ebook();
+            case 'image':
+                return $this->image();
+            case 'spreadsheet':
+                return $this->spreadsheet();
+            case 'video': 
+                return $this->video();
+
+            default:
+                return response()->json(['error' => 'Invalid type'], 400);
+        }
+    }
+    
     public function archive()
     {
         return ArchiveFormat::select('id', 'name')->get();
