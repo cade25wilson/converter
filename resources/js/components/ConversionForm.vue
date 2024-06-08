@@ -276,11 +276,23 @@ export default {
             this.files = Array.from(event.target.files);
         },
         async addFileUrl() {
-            let url = prompt('Enter the url of the file');
-            let attachment = {};
-            attachment.name = url;
-            attachment.title = url;
-            this.files.push(attachment);
+            let url = prompt('Enter the url of the files (sepereated by comma)');
+            if(url.includes(',')){
+                let urls = url.split(',');
+                for (let i = 0; i < urls.length; i++) {
+                    //trim the url
+                    urls[i] = urls[i].trim();
+                    let attachment = {};
+                    attachment.name = urls[i];
+                    attachment.title = urls[i];
+                    this.files.push(attachment);
+                }
+            } else { 
+                let attachment = {};
+                attachment.name = url;
+                attachment.title = url;
+                this.files.push(attachment);
+            }
         },
         async dropboxIconClicked() {
             let options = {
