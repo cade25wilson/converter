@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 rr
 .rr.yaml
+resources/js/axios.js
+/public/FileConverter.exe

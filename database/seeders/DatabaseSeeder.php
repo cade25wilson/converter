@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ArchiveSeeder::class);
         $this->call(AudioSeeder::class);
         $this->call(ConversionTypesSeeder::class);
+        $this->call(EbookSeeder::class);
         $this->call(FormatSeeder::class);
         $this->call(SpreadsheetSeeder::class);
         $this->call(VideoSeeder::class);

@@ -14,25 +14,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::delete('/conversions/delete', [ConversionController::class, 'delete']);
 Route::post('/conversions/{type}', [ConversionController::class, 'convert']);
-
 Route::post('/conversions/url/{type}', [ConversionController::class, 'urlconvert']);
+
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:2,1');
 
 Route::post('/email/{type}', [EmailController::class, 'download']);
 
-Route::get('/filesize/all', [FileSizeController::class, 'totalTransferredSize']);
-Route::get('/filesize/archive', [FileSizeController::class, 'totalTransferredArchiveSize']);
-Route::get('/filesize/audio', [FileSizeController::class, 'totalTransferredAudioSize']);
-Route::get('/filesize/image', [FileSizeController::class, 'totalTransferredImageSize']);
-Route::get('/filesize/spreadsheet', [FileSizeController::class, 'totalTransferredSpreadsheetSize']);
-Route::get('/filesize/video', [FileSizeController::class, 'totalTransferredVideoSize']);
+Route::get('/filesize/{type}', [FileSizeController::class, 'totalTransferredSize']);
 
-Route::get('/formats/archive', [FormatController::class, 'archive']);
-Route::get('/formats/audio', [FormatController::class, 'audio']);
-Route::get('/formats/image', [FormatController::class, 'image']);
-Route::get('/formats/spreadsheet', [FormatController::class, 'spreadsheet']);
-Route::get('/formats/video', [FormatController::class, 'video']);
-
-Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:2,1');
+Route::get('/formats/{type}', [FormatController::class, 'format']);
 
 Route::get('/messages', [MessagesController::class, 'show']);
 Route::post('/messages', [MessagesController::class, 'store']);

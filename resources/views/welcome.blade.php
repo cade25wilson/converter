@@ -17,6 +17,4 @@
     <body>
         <div id="app"></div>
     </body>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3451170617343565"crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://js.live.net/v7.2/OneDrive.js"></script>
 </html>

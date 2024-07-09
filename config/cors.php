@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://status.poshpim.online'],
+    'allowed_origins' => ['https://status.poshpim.online', '*'],
 
     'allowed_origins_patterns' => [],
 

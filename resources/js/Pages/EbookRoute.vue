@@ -1,7 +1,7 @@
 <template>
     <div class="mx-auto text-center">
-        <h1>Video Converter</h1>
-        <ConversionForm page="video" />
+        <h1>Ebook Converter</h1>
+        <ConversionForm page="ebook" />
         <CardsComponent />
     </div>
 </template>

@@ -16,6 +16,7 @@ class ConversionTypesSeeder extends Seeder
         $types = [
             'archive',
             'audio',
+            'ebook',
             'image',
             'spreadsheet',
             'video',

@@ -19,6 +19,7 @@
         "pbmedia/laravel-ffmpeg": "^8.5",
         "phpoffice/phpspreadsheet": "^1.29",
         "resend/resend-laravel": "^0.11.0",
+        "resend/resend-php": "^0.12.0",
         "spiral/roadrunner-cli": "^2.6.0",
         "spiral/roadrunner-http": "^3.3.0"
     },

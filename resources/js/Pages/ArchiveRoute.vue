@@ -7,12 +7,13 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import ConversionForm from '../components/ConversionForm.vue';
-import CardsComponent from '../components/CardsComponent.vue';
+
 export default {
     components: {
         ConversionForm,
-        CardsComponent
+        CardsComponent: defineAsyncComponent(() => import('../components/CardsComponent.vue'))        
     }
 }
 </script>

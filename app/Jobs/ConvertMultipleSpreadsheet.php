@@ -19,6 +19,15 @@ class ConvertMultipleSpreadsheet implements ShouldQueue
 
     protected string $guid;
     protected string $format;
+
+        /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600; // 5 minutes
+
+
     /**
      * Create a new job instance.
      */
