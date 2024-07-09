@@ -31,8 +31,6 @@
     </div>
     <input type="file" ref="fileInput" @change="addFiles($event)" multiple style="display: none;">
 </label>
-
-
                 </div>
                 <div style="height: 300px; overflow-y: auto;" v-else>
                 <table >
