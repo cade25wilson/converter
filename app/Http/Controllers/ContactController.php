@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewContactReceivedEmail;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
@@ -30,7 +32,7 @@ class ContactController extends Controller
         DB::beginTransaction();
 
         try {
-            Contact::create([
+            $contact = Contact::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
@@ -38,6 +40,7 @@ class ContactController extends Controller
             ]);
 
             DB::commit();
+            Mail::send(new NewContactReceivedEmail($contact));
             return response()->json(['message' => 'Message received, we will get back to you asap!'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
