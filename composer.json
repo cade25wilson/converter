@@ -10,6 +10,7 @@
         "intervention/image-laravel": "^1.2",
         "laravel/cashier": "^15.3",
         "laravel/framework": "^11.0",
+        "laravel/installer": "^5.8",
         "laravel/octane": "^2.3",
         "laravel/pulse": "^1.0@beta",
         "laravel/reverb": "@beta",

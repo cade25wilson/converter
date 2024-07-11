@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8dd1442390a2e47f825e2fd20596aa56",
+    "content-hash": "0509c4b557bf04b2839eea16543b5e56",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2169,6 +2169,61 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2024-04-02T14:01:33+00:00"
+        },
+        {
+            "name": "laravel/installer",
+            "version": "v5.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/installer.git",
+                "reference": "34852d5deed3bd1933d22321eb7c1c7a3257b545"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/installer/zipball/34852d5deed3bd1933d22321eb7c1c7a3257b545",
+                "reference": "34852d5deed3bd1933d22321eb7c1c7a3257b545",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/filesystem": "^10.20|^11.0",
+                "illuminate/support": "^10.20|^11.0",
+                "laravel/prompts": "^0.1",
+                "php": "^8.2",
+                "symfony/console": "^6.2|^7.0",
+                "symfony/process": "^6.2|^7.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.4"
+            },
+            "bin": [
+                "bin/laravel"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Installer\\Console\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel application installer.",
+            "keywords": [
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/installer/issues",
+                "source": "https://github.com/laravel/installer/tree/v5.8.3"
+            },
+            "time": "2024-06-18T16:43:24+00:00"
         },
         {
             "name": "laravel/octane",
