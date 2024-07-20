@@ -36,7 +36,7 @@ class ImageConverterService
             $this->request->file('watermark')->storeAs('image/' . $guid, $this->request->file('watermark')->getClientOriginalName());
         } 
 
-        [$width, $height, $watermark] = $this->SetNullableVariables($this->request);
+        [$width, $height, $watermark, $stripMetaData] = $this->SetNullableVariables($this->request);
 
         $imageConversion = Imageconversion::create([
             'original_name' => $image->getClientOriginalName(),
@@ -49,6 +49,7 @@ class ImageConverterService
             'guid' => $guid,
             'watermark' => $watermark,
             'file_size' => $sizeInBytes,
+            'strip_metadata' => $stripMetaData,
         ]);        
         ConvertSingleImage::dispatch($imageConversion);
    
@@ -70,7 +71,7 @@ class ImageConverterService
             $this->request->file('watermark')->storeAs('image/' . $guid, $this->request->file('watermark')->getClientOriginalName());
         }
 
-        [$width, $height, $watermark] = $this->SetNullableVariables($this->request);
+        [$width, $height, $watermark, $stripMetaData] = $this->SetNullableVariables($this->request);
 
         $imageConversions = [];
         foreach ($images as $image) {
@@ -88,10 +89,11 @@ class ImageConverterService
                 'height' => $height,
                 'watermark' => $watermark,
                 'file_size' => $sizeInBytes,
+                'strip_metadata' => $stripMetaData,
             ];
         }
         Imageconversion::insert($imageConversions);
-        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark);
+        ConvertMultipleImage::dispatch($guid, $convertedFormat, $width, $height, $watermark, $stripMetaData);
         return $guid;
     }
 
@@ -100,6 +102,7 @@ class ImageConverterService
         $width = $this->request->input('width', null);
         $height = $this->request->input('height', null);
         $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
-        return [$width, $height, $watermark];
+        $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
+        return [$width, $height, $watermark, $stripMetaData];
     }
 }

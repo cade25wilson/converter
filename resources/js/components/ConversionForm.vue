@@ -113,6 +113,13 @@
                         <input type="number" class="input" v-model="height">
                         <label class="label">Height(px)</label>
                     </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <p class="mb-0">Strip Metadata</p>
+                        <label class="checkBox ms-4">
+                            <input id="ch1" type="checkbox" @change="stripMetadata = !stripMetadata">
+                            <div class="transition"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,8 +164,10 @@ export default {
             isConverting: false,
             conversionStatus: '',
             resize: false,
+            stripMetadata: false,
             showFormats: false,
             showList: false,
+            
             // pickerApiLoaded: false,
             // developerKey: "AIzaSyDDMide2ReC7teirBYymeZxGbMsaC9Ip7U",
             // clientId: "332837587267-uecej53nd36sd3v5lbrsb21m8m9np3so.apps.googleusercontent.com",
@@ -293,6 +302,10 @@ export default {
                 formData.append('width', this.width);
                 formData.append('height', this.height);
             }
+            if (this.stripMetadata) {
+                formData.append('strip_metadata', 1);
+            }
+            
             formData.append('format', selectedFormat);
             api.post(`/conversions/url/${this.page}`, formData, {
                 headers: {
@@ -326,6 +339,9 @@ export default {
             if (this.width && this.height) {
                 formData.append('width', this.width);
                 formData.append('height', this.height);
+            }
+            if (this.stripMetadata) {
+                formData.append('strip_metadata', 1);
             }
             formData.append('format', selectedFormat);
             api.post(`/conversions/${this.page}`, formData, {

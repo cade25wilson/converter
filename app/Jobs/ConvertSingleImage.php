@@ -45,7 +45,7 @@ class ConvertSingleImage implements ShouldQueue
             $image = new Imagick(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             // Resize the image if width and height are set
-            if ($this->imageConversion->width && $this->imageConversion->height) {
+            if($this->imageConversion->width && $this->imageConversion->height) {
                 $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 
@@ -54,6 +54,10 @@ class ConvertSingleImage implements ShouldQueue
                 $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
             }
 
+            if($this->imageConversion->strip_metadata) {
+                $image->stripImage();
+            }
+            
             $image->writeImage(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 

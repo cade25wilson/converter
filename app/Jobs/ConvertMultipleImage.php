@@ -23,6 +23,7 @@ class ConvertMultipleImage implements ShouldQueue
     protected $width;   
     protected $height;
     protected $watermark;
+    protected bool $stripMetaData;
 
          /**
      * The maximum number of seconds the job can run before timing out.
@@ -34,13 +35,14 @@ class ConvertMultipleImage implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null)
+    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null, bool $stripMetaData = false)
     {
         $this->guid = $guid;
         $this->format = $format;
         $this->width = $width;
         $this->height = $height;
         $this->watermark = $watermark;
+        $this->stripMetaData = $stripMetaData;
     }
 
     /**
@@ -60,8 +62,9 @@ class ConvertMultipleImage implements ShouldQueue
             ImageConverted::dispatch($this->guid, 'processing');
 
             foreach ($images as $image) {
-                $this->processImage($imagePath, $image, $this->watermark);
+                $this->processImage($imagePath, $image, $this->watermark, $this->stripMetaData);
             }
+
             if($this->watermark) {
                 unlink($imagePath . '/' . $this->watermark);
             }
@@ -77,7 +80,7 @@ class ConvertMultipleImage implements ShouldQueue
         }
     }
 
-    private function processImage($imagePath, $image, $watermark): void
+    private function processImage($imagePath, $image, $watermark, $stripMetaData): void
     {
         // Skip if the image is the watermark
         if ($image === $watermark) {
@@ -93,6 +96,10 @@ class ConvertMultipleImage implements ShouldQueue
         if($watermark) {
             $watermark = new Imagick($imagePath . '/' . $watermark);
             $imagick->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
+        }
+
+        if($stripMetaData) {
+            $imagick->stripImage();
         }
 
         $imagick->writeImage($imagePath . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format);

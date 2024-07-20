@@ -21,6 +21,7 @@ class Imageconversion extends Model
         'watermark',
         'guid',
         'file_size',
+        'strip_metadata',
     ];
 
 }
