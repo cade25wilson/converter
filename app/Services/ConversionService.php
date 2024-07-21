@@ -106,7 +106,9 @@ class ConversionService
                 'email' => 'email',
                 'width' => 'numeric|integer|required_with:height',
                 'height' => 'numeric|integer|required_with:width',
-                'watermark' => 'image'
+                'watermark' => 'image',
+                'strip_metadata' => 'boolean',
+                'quality' => 'numeric|min:0|max:100'
             ],
             'spreadsheet' => [
                 $type.'.*' => 'required|file',

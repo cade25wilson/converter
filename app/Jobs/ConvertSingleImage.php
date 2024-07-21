@@ -40,12 +40,12 @@ class ConvertSingleImage implements ShouldQueue
     public function handle(): void
     {
         try {
-            Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'processing']);
+            // Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'processing']);
+            $this->imageConversion->update(['status' => 'processing']);
             ImageConverted::dispatch($this->imageConversion->guid, 'processing');
             $image = new Imagick(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
-            // Resize the image if width and height are set
-            if ($this->imageConversion->width && $this->imageConversion->height) {
+            if($this->imageConversion->width && $this->imageConversion->height) {
                 $image->resizeImage($this->imageConversion->width, $this->imageConversion->height, Imagick::FILTER_LANCZOS, 1);
             }
 
@@ -54,17 +54,21 @@ class ConvertSingleImage implements ShouldQueue
                 $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, 0, 0);
             }
 
+            if($this->imageConversion->strip_metadata) {
+                $image->stripImage();
+            }
+            $image->setImageCompressionQuality($this->imageConversion->quality);
             $image->writeImage(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->converted_name));
             unlink(storage_path('app/image/' . $this->imageConversion->guid . '/' . $this->imageConversion->original_name));
 
             ConversionService::ZipFiles($this->imageConversion->guid, 'image');
             ConversionService::DeleteDirectory(storage_path('app/image/' . $this->imageConversion->guid));
-            Imageconversion::where('guid', $this->imageConversion->guid)->update(['status' => 'completed']);
+            $this->imageConversion->update(['status' => 'completed']);
             ImageConverted::dispatch($this->imageConversion->guid, 'completed');        
         } catch (\Exception $e) {
             ImageConverted::dispatch($this->imageConversion->guid, 'failed');
+            $this->imageConversion->update(['status' => 'failed']);
             Log::error('Image conversion failed: ' . $e->getMessage());
-            throw $e;
         }
     }
 }
