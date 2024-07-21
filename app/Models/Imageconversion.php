@@ -22,6 +22,7 @@ class Imageconversion extends Model
         'guid',
         'file_size',
         'strip_metadata',
+        'quality',
     ];
 
 }

@@ -24,6 +24,7 @@ class ConvertMultipleImage implements ShouldQueue
     protected $height;
     protected $watermark;
     protected bool $stripMetaData;
+    protected int $quality;
 
          /**
      * The maximum number of seconds the job can run before timing out.
@@ -35,7 +36,7 @@ class ConvertMultipleImage implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null, bool $stripMetaData = false)
+    public function __construct(string $guid, string $format, $width = null, $height = null, $watermark = null, bool $stripMetaData = false, int $quality = 100)
     {
         $this->guid = $guid;
         $this->format = $format;
@@ -43,6 +44,7 @@ class ConvertMultipleImage implements ShouldQueue
         $this->height = $height;
         $this->watermark = $watermark;
         $this->stripMetaData = $stripMetaData;
+        $this->quality = $quality;
     }
 
     /**
@@ -101,6 +103,8 @@ class ConvertMultipleImage implements ShouldQueue
         if($stripMetaData) {
             $imagick->stripImage();
         }
+
+        $imagick->setImageCompressionQuality($this->quality);
 
         $imagick->writeImage($imagePath . '/' . pathinfo($image, PATHINFO_FILENAME) . '.' . $this->format);
         unlink($imagePath . '/' . $image);

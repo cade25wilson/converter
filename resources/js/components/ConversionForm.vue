@@ -105,11 +105,11 @@
                             <div class="transition"></div>
                         </label>
                     </div>
-                    <div v-if="resize" class="container1 mt-5 mb-3">
+                    <div v-if="resize" class="container1 mt-4 mb-3">
                         <input type="number" class="input" v-model="width">
                         <label class="label">Width(px)</label>
                     </div>
-                    <div v-if="resize" class="container1 mt-4">
+                    <div v-if="resize" class="container1 mt-4 mb-3">
                         <input type="number" class="input" v-model="height">
                         <label class="label">Height(px)</label>
                     </div>

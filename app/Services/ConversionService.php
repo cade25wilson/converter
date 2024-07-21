@@ -108,6 +108,7 @@ class ConversionService
                 'height' => 'numeric|integer|required_with:width',
                 'watermark' => 'image',
                 'strip_metadata' => 'boolean',
+                'quality' => 'numeric|min:0|max:100'
             ],
             'spreadsheet' => [
                 $type.'.*' => 'required|file',

@@ -11,6 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
+
 
 class ConvertSingleVideo implements ShouldQueue
 {
@@ -18,6 +20,12 @@ class ConvertSingleVideo implements ShouldQueue
 
     protected VideoConversion $videoConversion;
 
+    /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 3000; // 5 minutes
     /**
      * Create a new job instance.
      */
@@ -34,16 +42,15 @@ class ConvertSingleVideo implements ShouldQueue
         try {
             $this->videoConversion->update(['status' => 'processing']);
             ImageConverted::dispatch($this->videoConversion->guid, 'processing');
-            // add this to service as well(redundant code)
-            $sourceFile = '/var/www/converter/storage/app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->original_name;
-            $destinationFile = '/var/www/converter/storage/app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->converted_name;
+
+            $sourceFile = storage_path('app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->original_name);
+            $destinationFile = storage_path('app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->converted_name);            
             
             $command = "ffmpeg -i $sourceFile $destinationFile";
             $output = array();
             $return_var = null;
-
             exec($command . " 2>&1", $output, $return_var);
-            Log::info('command' . $command);
+
             unlink(storage_path('app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->original_name));
             ConversionService::ZipFiles($this->videoConversion->guid, 'video');
             ConversionService::DeleteDirectory(storage_path('app/video/' . $this->videoConversion->guid));
@@ -51,7 +58,15 @@ class ConvertSingleVideo implements ShouldQueue
             ImageConverted::dispatch($this->videoConversion->guid, 'completed');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
+            ImageConverted::dispatch($this->videoConversion->guid, 'failed');
             $this->videoConversion->update(['status' => 'failed']);
         }
+    }
+
+    public function failed(?Throwable $e): void
+    {
+        Log::error($e->getMessage());
+        ImageConverted::dispatch($this->videoConversion->guid, 'failed');
+        $this->videoConversion->update(['status' => 'failed']);
     }
 }
