@@ -17,24 +17,23 @@ class VideoConverterService
         $this->request = $request;
     }
 
-    public function SingleConvert()
+    public function SingleConvert(): string
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'video');
-
-        // $originalFormat = VideoFormat::where('extension', $data['originalFormat'])->value('id');
-
+        [$width, $height] = $this->SetNullableVariables();
         $format = VideoFormat::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $videoConversion = VideoConversion::create([
             'original_name' => $data['originalName'],
-            // 'original_format' => $originalFormat,
             'converted_format' => $format->id,
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
             'guid' => $data['guid'],
             'file_size' => $data['file_size'],
+            'width' => $width,
+            'height' => $height,
         ]);
 
         ConvertSingleVideo::dispatch($videoConversion);
@@ -42,34 +41,45 @@ class VideoConverterService
         return $data['guid'];
     }
 
-    public function MultipleConvert()
+    public function MultipleConvert(): string
     {
         $guid = Str::uuid();
         $videoFiles = $this->request->file('video');
         $videoConversion = [];
+        [$width, $height] = $this->SetNullableVariables();
 
         foreach ($videoFiles as $video) {
             $originalName = $video->getClientOriginalName();
             $video->storeAs('video/' . $guid . '/', $originalName);
             $fileSize = $video->getSize();
-            // $originalFormat = VideoFormat::where('extension', $video->getClientOriginalExtension())->value('id');
             
             $format = VideoFormat::where('id', $this->request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $videoConversion[] = VideoConversion::create([
                 'original_name' => $video->getClientOriginalName(),
-                // 'original_format' => $originalFormat,
                 'converted_format' => $format->id,
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
                 'file_size' => $fileSize,
+                'width' => $width,
+                'height' => $height,
             ]);
         }
 
-        ConvertMultipleVideo::dispatch($guid, $convertedFormat);
+        ConvertMultipleVideo::dispatch($guid, $convertedFormat, $width, $height);
 
         return $guid;
+    }
+
+    private function SetNullableVariables(): array
+    {
+        $width = $this->request->input('width', null);
+        $height = $this->request->input('height', null);
+        // $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
+        // $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
+        // $quality = $this->request->input('quality') ? $this->request->input('quality') : 100;
+        return [$width, $height];
     }
 }

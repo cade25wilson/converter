@@ -117,6 +117,8 @@ class ConversionService
             'video' => [
                 $type.'.*' => 'required|file',
                 'format' => 'required|exists:video_formats,id',
+                'width' => 'numeric|integer|required_with:height',
+                'height' => 'numeric|integer|required_with:width',
             ]
         ];
 

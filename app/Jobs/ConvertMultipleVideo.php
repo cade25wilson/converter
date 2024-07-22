@@ -19,13 +19,24 @@ class ConvertMultipleVideo implements ShouldQueue
 
     protected string $guid;
     protected string $format;
+    protected ?int $width;
+    protected ?int $height;
+
+    /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 3000; // 5 minutes
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format)
+    public function __construct(string $guid, string $format, ?int $width, ?int $height)
     {
         $this->guid = $guid;
         $this->format = $format;
+        $this->width = $width;
+        $this->height = $height;
     }
 
     /**
@@ -69,7 +80,15 @@ class ConvertMultipleVideo implements ShouldQueue
         $escapedSourceFile = escapeshellarg($sourceFile);
         $escapedDestinationFile = escapeshellarg($destinationFile);
 
-        $command = "ffmpeg -i $escapedSourceFile $escapedDestinationFile";
+        // Build the FFmpeg command with optional width and height
+        $command = "ffmpeg -i $escapedSourceFile";
+
+        if ($this->width && $this->height) {
+            $command .= " -vf scale={$this->width}:{$this->height}";
+        }
+
+        $command .= " $escapedDestinationFile";
+
         $output = array();
         $return_var = null;
 
