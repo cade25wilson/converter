@@ -9,7 +9,7 @@ class VideoConversion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['original_name', 'original_format', 'converted_format', 'status', 'guid', 'converted_name', 'file_size'];
+    protected $fillable = ['original_name', 'original_format', 'converted_format', 'status', 'guid', 'converted_name', 'file_size', 'width', 'height', 'frame_rate', 'rotation_angle', 'flip', 'audio'];
 
     public function originalFormat()
     {

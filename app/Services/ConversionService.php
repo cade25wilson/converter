@@ -117,6 +117,12 @@ class ConversionService
             'video' => [
                 $type.'.*' => 'required|file',
                 'format' => 'required|exists:video_formats,id',
+                'width' => 'numeric|integer|required_with:height',
+                'height' => 'numeric|integer|required_with:width',
+                'frame_rate' => 'nullable|numeric|between:0,99.99',
+                'rotation_angle' => 'nullable|in:0,90,180,270',
+                'flip' => 'nullable|in:h,v,b',
+                'audio' => 'nullable|min:0|max:300'
             ]
         ];
 
