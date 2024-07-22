@@ -119,6 +119,7 @@ class ConversionService
                 'format' => 'required|exists:video_formats,id',
                 'width' => 'numeric|integer|required_with:height',
                 'height' => 'numeric|integer|required_with:width',
+                'frame_rate' => 'nullable|numeric|between:0,99.99',
             ]
         ];
 

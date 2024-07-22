@@ -21,6 +21,7 @@ class ConvertMultipleVideo implements ShouldQueue
     protected string $format;
     protected ?int $width;
     protected ?int $height;
+    protected ?int $frameRate;
 
     /**
      * The maximum number of seconds the job can run before timing out.
@@ -31,12 +32,13 @@ class ConvertMultipleVideo implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format, ?int $width, ?int $height)
+    public function __construct(string $guid, string $format, ?int $width, ?int $height, ?int $frameRate)
     {
         $this->guid = $guid;
         $this->format = $format;
         $this->width = $width;
         $this->height = $height;
+        $this->frameRate = $frameRate;
     }
 
     /**
@@ -85,6 +87,10 @@ class ConvertMultipleVideo implements ShouldQueue
 
         if ($this->width && $this->height) {
             $command .= " -vf scale={$this->width}:{$this->height}";
+        }
+
+        if ($this->frameRate) {
+            $command .= " -r {$this->frameRate}";
         }
 
         $command .= " $escapedDestinationFile";

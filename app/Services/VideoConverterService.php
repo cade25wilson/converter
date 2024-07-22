@@ -21,7 +21,7 @@ class VideoConverterService
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'video');
-        [$width, $height] = $this->SetNullableVariables();
+        [$width, $height, $frameRate] = $this->SetNullableVariables();
         $format = VideoFormat::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
@@ -34,6 +34,7 @@ class VideoConverterService
             'file_size' => $data['file_size'],
             'width' => $width,
             'height' => $height,
+            'frame_rate' => $frameRate,
         ]);
 
         ConvertSingleVideo::dispatch($videoConversion);
@@ -46,7 +47,7 @@ class VideoConverterService
         $guid = Str::uuid();
         $videoFiles = $this->request->file('video');
         $videoConversion = [];
-        [$width, $height] = $this->SetNullableVariables();
+        [$width, $height, $frameRate] = $this->SetNullableVariables();
 
         foreach ($videoFiles as $video) {
             $originalName = $video->getClientOriginalName();
@@ -65,10 +66,11 @@ class VideoConverterService
                 'file_size' => $fileSize,
                 'width' => $width,
                 'height' => $height,
+                'frame_rate' => $frameRate,
             ]);
         }
 
-        ConvertMultipleVideo::dispatch($guid, $convertedFormat, $width, $height);
+        ConvertMultipleVideo::dispatch($guid, $convertedFormat, $width, $height, $frameRate);
 
         return $guid;
     }
@@ -77,9 +79,10 @@ class VideoConverterService
     {
         $width = $this->request->input('width', null);
         $height = $this->request->input('height', null);
+        $frameRate = $this->request->input('frame_rate', null);
         // $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
         // $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
         // $quality = $this->request->input('quality') ? $this->request->input('quality') : 100;
-        return [$width, $height];
+        return [$width, $height, $frameRate];
     }
 }
