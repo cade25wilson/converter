@@ -54,9 +54,21 @@ class ConvertSingleVideo implements ShouldQueue
                 $command .= " -vf scale={$this->videoConversion->width}:{$this->videoConversion->height}";
             }
 
+            if ($this->videoConversion->rotation_angle) {
+                $command .= " -vf transpose=" . $this->getFFmpegTransposeValue($this->videoConversion->rotation_angle);
+            }
+
+            if ($this->videoConversion->flip) {
+                $command .= " -vf " . $this->getFlip($this->videoConversion->flip);
+            }
+
             // Check if frame_rate is available and append it to the command
             if ($this->videoConversion->frame_rate) {
                 $command .= " -r {$this->videoConversion->frame_rate}";
+            }
+
+            if ($this->videoConversion->audio) {
+                $command .= " -af volume=" . $this->videoConversion->audio;
             }
 
             // Append destination file to the command
@@ -86,5 +98,33 @@ class ConvertSingleVideo implements ShouldQueue
         Log::error($e->getMessage());
         ImageConverted::dispatch($this->videoConversion->guid, 'failed');
         $this->videoConversion->update(['status' => 'failed']);
+    }
+
+    private function getFFmpegTransposeValue(int $rotationAngle): int
+    {
+        switch ($rotationAngle) {
+            case 90:
+                return 1;
+            case 180:
+                return 2;
+            case 270:
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
+    private function getFlip(): string
+    {
+        switch ($this->videoConversion->flip) {
+            case "h":
+                return "hflip";
+            case "v":
+                return "vflip";
+            case "b":
+                return "vflip,hflip";
+            default:
+                return "";
+        }
     }
 }

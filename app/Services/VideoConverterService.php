@@ -21,7 +21,7 @@ class VideoConverterService
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'video');
-        [$width, $height, $frameRate] = $this->SetNullableVariables();
+        [$width, $height, $frameRate, $rotationAngle, $flip, $audio] = $this->SetNullableVariables();
         $format = VideoFormat::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
@@ -35,6 +35,9 @@ class VideoConverterService
             'width' => $width,
             'height' => $height,
             'frame_rate' => $frameRate,
+            'rotation_angle' => $rotationAngle,
+            'flip' => $flip,
+            'audio' => $audio,
         ]);
 
         ConvertSingleVideo::dispatch($videoConversion);
@@ -47,7 +50,7 @@ class VideoConverterService
         $guid = Str::uuid();
         $videoFiles = $this->request->file('video');
         $videoConversion = [];
-        [$width, $height, $frameRate] = $this->SetNullableVariables();
+        [$width, $height, $frameRate, $rotationAngle, $flip, $audio] = $this->SetNullableVariables();
 
         foreach ($videoFiles as $video) {
             $originalName = $video->getClientOriginalName();
@@ -67,10 +70,13 @@ class VideoConverterService
                 'width' => $width,
                 'height' => $height,
                 'frame_rate' => $frameRate,
+                'rotation_angle' => $rotationAngle,
+                'flip' => $flip,
+                'audio' => $audio,
             ]);
         }
 
-        ConvertMultipleVideo::dispatch($guid, $convertedFormat, $width, $height, $frameRate);
+        ConvertMultipleVideo::dispatch($guid, $convertedFormat, $width, $height, $frameRate, $rotationAngle, $flip, $audio);
 
         return $guid;
     }
@@ -80,9 +86,12 @@ class VideoConverterService
         $width = $this->request->input('width', null);
         $height = $this->request->input('height', null);
         $frameRate = $this->request->input('frame_rate', null);
+        $rotationAngle = $this->request->input('rotation_angle', null);
+        $flip = $this->request->input('flip', null);
+        $audio = $this->request->input('audio') / 100 ?? null;
         // $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
         // $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
         // $quality = $this->request->input('quality') ? $this->request->input('quality') : 100;
-        return [$width, $height, $frameRate];
+        return [$width, $height, $frameRate, $rotationAngle, $flip, $audio];
     }
 }
