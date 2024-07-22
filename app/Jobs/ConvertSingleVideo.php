@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Events\ImageConverted;
 use App\Models\VideoConversion;
 use App\Services\ConversionService;
+use App\Services\VideoConversionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,7 +16,7 @@ use Throwable;
 
 class ConvertSingleVideo implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, VideoConversionService;
 
     protected VideoConversion $videoConversion;
 
@@ -43,41 +44,10 @@ class ConvertSingleVideo implements ShouldQueue
             $this->videoConversion->update(['status' => 'processing']);
             ImageConverted::dispatch($this->videoConversion->guid, 'processing');
 
-            $sourceFile = storage_path('app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->original_name);
-            $destinationFile = storage_path('app/video/' . $this->videoConversion->guid . '/' . $this->videoConversion->converted_name);
-
-            // Build the basic FFmpeg command
-            $command = "ffmpeg -i $sourceFile";
-
-            // Check if width and height are available and append them to the command
-            if ($this->videoConversion->width && $this->videoConversion->height) {
-                $command .= " -vf scale={$this->videoConversion->width}:{$this->videoConversion->height}";
-            }
-
-            if ($this->videoConversion->rotation_angle) {
-                $command .= " -vf transpose=" . $this->getFFmpegTransposeValue($this->videoConversion->rotation_angle);
-            }
-
-            if ($this->videoConversion->flip) {
-                $command .= " -vf " . $this->getFlip($this->videoConversion->flip);
-            }
-
-            // Check if frame_rate is available and append it to the command
-            if ($this->videoConversion->frame_rate) {
-                $command .= " -r {$this->videoConversion->frame_rate}";
-            }
-
-            if ($this->videoConversion->audio) {
-                $command .= " -af volume=" . $this->videoConversion->audio;
-            }
-
-            // Append destination file to the command
-            $command .= " $destinationFile";
-
+            $command = $this->buildFFmpegCommand($this->videoConversion->guid, $this->videoConversion->original_name, $this->videoConversion->converted_name, $this->videoConversion->width, $this->videoConversion->height, $this->videoConversion->rotation_angle, $this->videoConversion->flip, $this->videoConversion->frame_rate, $this->videoConversion->audio);
             $output = [];
             $return_var = null;
 
-            // Execute the FFmpeg command
             exec($command . " 2>&1", $output, $return_var);
 
             // Perform post-processing actions

@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Events\ImageConverted;
 use App\Models\VideoConversion;
 use App\Services\ConversionService;
+use App\Services\VideoConversionService; // Import the VideoConversionService trait
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,6 +17,7 @@ use Throwable;
 class ConvertMultipleVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use VideoConversionService; // Use the VideoConversionService trait
 
     protected string $guid;
     protected string $format;
@@ -65,7 +67,7 @@ class ConvertMultipleVideo implements ShouldQueue
             ImageConverted::dispatch($this->guid, 'processing');
 
             foreach ($videos as $video) {
-                $this->processVideo($videoPath, $video);
+                $this->processVideo($this->guid, $video);
             }
 
             ConversionService::ZipFiles($this->guid, 'video');
@@ -81,39 +83,20 @@ class ConvertMultipleVideo implements ShouldQueue
 
     private function processVideo(string $guid, string $video): void
     {
-        $sourceFile = $guid . '/' . $video;
-        $destinationFile = $guid . '/' . pathinfo($video, PATHINFO_FILENAME) . '.' . $this->format;
+        $sourceFile = storage_path('app/video/' . $guid . '/' . $video);
+        $command = $this->buildFFmpegCommand(
+            $guid,
+            $video,
+            pathinfo($video, PATHINFO_FILENAME) . '.' . $this->format,
+            $this->width,
+            $this->height,
+            $this->rotationAngle,
+            $this->flip,
+            $this->frameRate,
+            $this->audio
+        );
 
-        // Use escapeshellarg to escape the file paths
-        $escapedSourceFile = escapeshellarg($sourceFile);
-        $escapedDestinationFile = escapeshellarg($destinationFile);
-
-        // Build the FFmpeg command with optional width and height
-        $command = "ffmpeg -i $escapedSourceFile";
-
-        if ($this->width && $this->height) {
-            $command .= " -vf scale={$this->width}:{$this->height}";
-        }
-
-        if ($this->rotationAngle) {
-            $command .= " -vf transpose=" . $this->getFFmpegTransposeValue($this->rotationAngle);
-        }
-
-        if ($this->flip) {
-            $command .= " -vf " . $this->getFlip($this->flip);
-        }
-
-        if ($this->frameRate) {
-            $command .= " -r {$this->frameRate}";
-        }
-
-        if ($this->audio) {
-            $command .= " -af volume=" . $this->audio;
-        }
-
-        $command .= " $escapedDestinationFile";
-
-        $output = array();
+        $output = [];
         $return_var = null;
 
         exec($command . " 2>&1", $output, $return_var);
@@ -125,33 +108,5 @@ class ConvertMultipleVideo implements ShouldQueue
         Log::error($e->getMessage());
         VideoConversion::where('guid', $this->guid)->update(['status' => 'failed']);
         ImageConverted::dispatch($this->guid, 'failed');
-    }
-
-    private function getFFmpegTransposeValue(int $rotationAngle): int
-    {
-        switch ($rotationAngle) {
-            case 90:
-                return 1;
-            case 180:
-                return 2;
-            case 270:
-                return 3;
-            default:
-                return 0;
-        }
-    }
-
-    private function getFlip(string $flip): string
-    {
-        switch ($flip) {
-            case "h":
-                return "hflip";
-            case "v":
-                return "vflip";
-            case "b":
-                return "vflip,hflip";
-            default:
-                return "";
-        }
     }
 }
