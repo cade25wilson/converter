@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ConvertMultipleVideo implements ShouldQueue
 {
@@ -59,16 +60,27 @@ class ConvertMultipleVideo implements ShouldQueue
     }
 
     //this may need to be removed for to consolidate with processAudio
-    private function processVideo(string $guid, string $video)
+    private function processVideo(string $guid, string $video): void
     {
         $sourceFile = $guid . '/' . $video;
         $destinationFile = $guid . '/' . pathinfo($video, PATHINFO_FILENAME) . '.' . $this->format;
 
-        $command = "ffmpeg -i $sourceFile $destinationFile";
+        // Use escapeshellarg to escape the file paths
+        $escapedSourceFile = escapeshellarg($sourceFile);
+        $escapedDestinationFile = escapeshellarg($destinationFile);
+
+        $command = "ffmpeg -i $escapedSourceFile $escapedDestinationFile";
         $output = array();
         $return_var = null;
 
         exec($command . " 2>&1", $output, $return_var);
         unlink($sourceFile);
+    }
+
+    public function failed(?Throwable $e): void
+    {
+        Log::error($e->getMessage());
+        VideoConversion::where('guid', $this->guid)->update(['status' => 'failed']);
+        ImageConverted::dispatch($this->guid, 'failed');
     }
 }
