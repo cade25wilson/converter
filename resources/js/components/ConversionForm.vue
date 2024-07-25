@@ -98,27 +98,66 @@
                     </div>
                 </div>
                 <div v-if="this.page === 'image'">
-                    <div class="d-flex align-items-center mb-3">
-                        <p class="mb-0">Resize</p>
-                        <label class="checkBox ms-4">
-                            <input id="ch1" type="checkbox" @change="resize = !resize">
-                            <div class="transition"></div>
-                        </label>
+                    <div class="spinner-container">
+                        <label class="advanced-features">Advanced Features</label>
+                        <div class="spinner-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <div class="spinner"></div>
+                        </div>
                     </div>
-                    <div v-if="resize" class="container1 mt-4 mb-3">
-                        <input type="number" class="input" v-model="width">
-                        <label class="label">Width(px)</label>
-                    </div>
-                    <div v-if="resize" class="container1 mt-4 mb-3">
-                        <input type="number" class="input" v-model="height">
-                        <label class="label">Height(px)</label>
-                    </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <p class="mb-0">Strip Metadata</p>
-                        <label class="checkBox ms-4">
-                            <input id="ch1" type="checkbox" @change="stripMetadata = !stripMetadata">
-                            <div class="transition"></div>
-                        </label>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-md">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Advanced Features</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="modal-title">Sizing</h5>
+                                <hr>
+                                <div class="row my-3">
+                                    <div class="col-4">
+                                        <label class="label">Width(px)</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input type="number" class="input" v-model="width">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label class="label">Height(px)</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input type="number" class="input" v-model="height">
+                                    </div>
+                                </div>
+                                <div class="row my-3 align-items-center">
+                                    <div class="col-4">
+                                        <label class="label">Quality (%)</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="range" class="input-range" min="0" max="100" v-model="quality">
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="number" class="input" min="0" max="100" v-model="quality">
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="col-4">
+                                        <label class="label">Strip Metadata</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <label class="checkBox">
+                                            <input id="ch1" type="checkbox" @change="stripMetadata = !stripMetadata">
+                                            <div class="transition"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply changes</button>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,6 +206,7 @@ export default {
             stripMetadata: false,
             showFormats: false,
             showList: false,
+            quality: 100,
             
             // pickerApiLoaded: false,
             // developerKey: "AIzaSyDDMide2ReC7teirBYymeZxGbMsaC9Ip7U",
@@ -305,8 +345,10 @@ export default {
             if (this.stripMetadata) {
                 formData.append('strip_metadata', 1);
             }
+            formData.append('quality', this.quality);
             
             formData.append('format', selectedFormat);
+            console.log(formData);
             api.post(`/conversions/url/${this.page}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -329,7 +371,6 @@ export default {
                     return;
                 }
             }
-            console.log(this.files);
             let formData = new FormData();
             let selectedFormat = this.selectedFormat;
             let firstFileName = this.files[0].name;
@@ -343,7 +384,10 @@ export default {
             if (this.stripMetadata) {
                 formData.append('strip_metadata', 1);
             }
+            formData.append('quality', this.quality);
             formData.append('format', selectedFormat);
+            console.log(formData);
+
             api.post(`/conversions/${this.page}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -572,25 +616,31 @@ export default {
     height: 15px;
 }
 
-.container1 {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    position: relative;
-    color: white;
+/* .input {
+    width: 200px;
+    height: 45px;
+    border: none;
+    outline: none;
+    padding: 0px 7px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 15px;
+    background-color: transparent;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
+        -1px -1px 6px rgba(255, 255, 255, 0.4);
 }
 
-.container1 .label {
-    font-size: 15px;
-    padding-left: 10px;
-    position: absolute;
-    top: 13px;
-    transition: 0.3s;
-    pointer-events: none;
-}
+.input:focus {
+    border: 2px solid transparent;
+    color: #fff;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
+        -1px -1px 6px rgba(255, 255, 255, 0.4),
+        inset 3px 3px 10px rgba(0, 0, 0, 1),
+        inset -1px -1px 6px rgba(255, 255, 255, 0.4);
+} */
 
 .input {
-    width: 200px;
+    width: 100%; /* Ensure the input takes full width of its container */
     height: 45px;
     border: none;
     outline: none;
@@ -612,20 +662,6 @@ export default {
         inset -1px -1px 6px rgba(255, 255, 255, 0.4);
 }
 
-.container1 .input:valid~.label,
-.container1 .input:focus~.label {
-    transition: 0.3s;
-    padding-left: 2px;
-    transform: translateY(-35px);
-}
-
-.container1 .input:valid,
-.container1 .input:focus {
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
-        -1px -1px 6px rgba(255, 255, 255, 0.4),
-        inset 3px 3px 10px rgba(0, 0, 0, 1),
-        inset -1px -1px 6px rgba(255, 255, 255, 0.4);
-}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,

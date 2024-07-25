@@ -91,6 +91,22 @@ footer {
   border-radius:100%;
   background-color:#33353d
 }
+
+.modal-content
+{
+  background-color: #33353d;
+}
+
+.modal-header
+{
+  border-bottom: none;
+}
+
+.modal-footer
+{
+  border-top: none;
+}
+
 .copyright-text
 {
   margin:0
@@ -122,4 +138,50 @@ a {
 .noconversions {
   height: auto; /* Use auto height instead of viewport height */
   max-height: 90vh; /* Use max-height to prevent the element from becoming too tall */
+}
+.spinner-container {
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+.advanced-features {
+  margin-right: 10px; /* Adjust margin as needed */
+}
+
+.spinner-wrapper {
+  position: relative; /* Ensure the wrapper maintains positioning */
+}
+
+.spinner {
+  width: 32px; /* Adjusted width */
+  height: 32px; /* Adjusted height */
+  display: grid;
+  color: #e5e7eb;
+  background: radial-gradient(farthest-side, currentColor calc(100% - 5px), #0000 calc(100% - 4px) 0);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 10px), #000 calc(100% - 8px));
+  border-radius: 50%;
+}
+
+.spinner::before,
+.spinner::after {
+  content: "";
+  grid-area: 1/1;
+  background: linear-gradient(currentColor 0 0) center, linear-gradient(currentColor 0 0) center;
+  background-size: 100% 8px, 8px 100%; /* Adjusted background size */
+  background-repeat: no-repeat;
+}
+
+.spinner::after {
+  transform: rotate(45deg);
+}
+
+.spinner:hover {
+  animation: spinner-rotate 2s infinite linear;
+  cursor: pointer;
+}
+
+@keyframes spinner-rotate {
+  100% {
+    transform: rotate(1turn);
+  }
 }

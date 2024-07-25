@@ -100,7 +100,7 @@ class ImageConverterService
         $height = $this->request->input('height', null);
         $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
         $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
-        $quality = $this->request->input('quality') ? $this->request->input('quality') : 100;
+        $quality = $this->request->input('quality', 100); // Default to 100 if not provided
         return [$width, $height, $watermark, $stripMetaData, $quality];
     }
 }
