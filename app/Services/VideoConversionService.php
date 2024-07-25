@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\VideoConversion;
-use Illuminate\Support\Facades\Log;
-
 trait VideoConversionService
 {
     protected function buildFFmpegCommand(string $guid, string $originalName, string $convertedName, ?int $width, ?int $height, ?int $rotationAngle, ?string $flip, ?int $frameRate, ?int $audio): string
