@@ -97,7 +97,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="this.page === 'image'">
+                <div v-if="this.page === 'image' || this.page === 'video' || this.page === 'audio'">
                     <div class="spinner-container">
                         <label class="advanced-features">Advanced Features</label>
                         <div class="spinner-wrapper" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -114,7 +114,7 @@
                             <div class="modal-body">
                                 <h5 class="modal-title">Sizing</h5>
                                 <hr>
-                                <div class="row my-3">
+                                <div class="row my-3" v-if="this.page != 'audio'">
                                     <div class="col-4">
                                         <label class="label">Width(px)</label>
                                     </div>
@@ -122,7 +122,7 @@
                                         <input type="number" class="input" v-model="width">
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" v-if="this.page != 'audio'">
                                     <div class="col-4">
                                         <label class="label">Height(px)</label>
                                     </div>
@@ -130,18 +130,18 @@
                                         <input type="number" class="input" v-model="height">
                                     </div>
                                 </div>
-                                <div class="row my-3 align-items-center">
+                                <div class="row my-3 align-items-center" v-if="this.page === 'image'">
                                     <div class="col-4">
                                         <label class="label">Quality (%)</label>
                                     </div>
                                     <div class="col-6">
-                                        <input type="range" class="input-range" min="0" max="100" v-model="quality">
+                                        <input type="range" class="input-range" min="1" max="100" v-model="quality">
                                     </div>
                                     <div class="col-2">
-                                        <input type="number" class="input" min="0" max="100" v-model="quality">
+                                        <input type="number" class="input" min="1" max="100" v-model="quality">
                                     </div>
                                 </div>
-                                <div class="row my-3">
+                                <div class="row my-3" v-if="this.page === 'image'">
                                     <div class="col-4">
                                         <label class="label">Strip Metadata</label>
                                     </div>
@@ -152,9 +152,80 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div class="row my-3" v-if="this.page === 'video'">
+                                    <div class="col-4">
+                                        <label class="label">Frame Rate</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input type="number" class="input" v-model="frame_rate" min="1" max="300" placeholder="Frames per second">
+                                    </div>
+                                </div>
+                                <div class="row" v-if="this.page === 'video'">
+                                    <div class="col-4">
+                                        <label class="label">Rotate</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <select class="input" v-model="rotate">
+                                            <option value="0">None</option>
+                                            <option value="90">90 degrees</option>
+                                            <option value="180">180 degrees</option>
+                                            <option value="270">270 degrees</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row my-3" v-if="this.page === 'video'">
+                                    <div class="col-4">
+                                        <label class="label">Flip</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <select class="input" v-model="flip">
+                                            <option></option>
+                                            <option value="h">Horizontal</option>
+                                            <option value="v">Vertical</option>
+                                            <option value="b">Both</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row my-3 align-items-center" v-if="this.page === 'video' || this.page === 'audio'">
+                                    <div class="col-4">
+                                        <label class="label">Audio (%)</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="range" class="input-range" min="1" max="300" v-model="audio">
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="number" class="input" min="1" max="300" v-model="audio">
+                                    </div>
+                                </div>
+                                <div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
+                                    <div class="col-4">
+                                        <label class="label">Fade In Audio</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <label class="checkBox">
+                                            <input id="ch1" type="checkbox" @change="fadeIn = !fadeIn">
+                                            <div class="transition"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
+                                    <div class="col-4">
+                                        <label class="label">Fade Out Audio</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <label class="checkBox">
+                                            <input id="ch1" type="checkbox" @change="fadeOut = !fadeOut">
+                                            <div class="transition"></div>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply changes</button>
+                                <!-- <button type="button" class="button" data-bs-dismiss="modal">Apply changes</button> -->
+                                <button class="button" data-bs-dismiss="modal">
+                                    <div class="button-overlay"></div>
+                                    <span>Apply changes</span>
+                                </button>
                             </div>
                             </div>
                         </div>
@@ -207,6 +278,15 @@ export default {
             showFormats: false,
             showList: false,
             quality: 100,
+            flip: null,
+            rotate: null,
+            audio: 100,
+            frame_rate: null,
+            width: null,
+            height: null,
+            fadeIn: false,
+            fadeOut: false,
+            reverseAudio: false,
             
             // pickerApiLoaded: false,
             // developerKey: "AIzaSyDDMide2ReC7teirBYymeZxGbMsaC9Ip7U",
@@ -345,9 +425,23 @@ export default {
             if (this.stripMetadata) {
                 formData.append('strip_metadata', 1);
             }
-            formData.append('quality', this.quality);
-            
+            if(this.frame_rate) {
+                formData.append('frame_rate', this.frame_rate);
+            }
+            if(this.rotate){
+                formData.append('rotation_angle', this.rotate);
+            }
+            if(this.flip){
+                formData.append('flip', this.flip);
+            }
+            if(this.page === 'video' || this.page === 'audio'){
+                formData.append('audio_volume', this.audio);
+            }
+            if(this.page === 'image'){
+                formData.append('quality', this.quality);
+            }
             formData.append('format', selectedFormat);
+
             console.log(formData);
             api.post(`/conversions/url/${this.page}`, formData, {
                 headers: {
@@ -384,9 +478,27 @@ export default {
             if (this.stripMetadata) {
                 formData.append('strip_metadata', 1);
             }
-            formData.append('quality', this.quality);
+            if(this.frame_rate) {
+                formData.append('frame_rate', this.frame_rate);
+            }
+            if(this.rotate){
+                formData.append('rotation_angle', this.rotate);
+            }
+            if(this.flip){
+                formData.append('flip', this.flip);
+            }
+            if(this.page === 'video' || this.page === 'audio'){
+                formData.append('audio_volume', this.audio);
+                formData.append('fade_in', this.fadeIn ? true : false);
+                formData.append('fade_out', this.fadeOut ? true : false);
+            }
+            if (this.page === 'audio'){
+                formData.append('reverse_audio', this.reverseAudio ? true : false);
+            }
+            if(this.page === 'image'){
+                formData.append('quality', this.quality);
+            }
             formData.append('format', selectedFormat);
-            console.log(formData);
 
             api.post(`/conversions/${this.page}`, formData, {
                 headers: {

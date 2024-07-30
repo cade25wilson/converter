@@ -95,6 +95,10 @@ class ConversionService
             'audio' => [
                 $type.'.*' => 'required|file',
                 'format' => 'required|exists:audio_formats,id',
+                'reverse_audio' => 'nullable|in:true,false',
+                'audio_volume' => 'nullable|min:0|max:300',
+                'fade_in' => 'nullable|in:true,false',
+                'fade_out' => 'nullable|in:true,false',
             ],
             'ebook' => [
                 $type.'.*' => 'required|file',
@@ -119,10 +123,10 @@ class ConversionService
                 'format' => 'required|exists:video_formats,id',
                 'width' => 'numeric|integer|required_with:height',
                 'height' => 'numeric|integer|required_with:width',
-                'frame_rate' => 'nullable|numeric|between:0,99.99',
+                'frame_rate' => 'nullable|numeric|between:0,300.00',
                 'rotation_angle' => 'nullable|in:0,90,180,270',
                 'flip' => 'nullable|in:h,v,b',
-                'audio' => 'nullable|min:0|max:300'
+                'audio_volume' => 'nullable|min:0|max:300'
             ]
         ];
 

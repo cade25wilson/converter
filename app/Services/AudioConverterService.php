@@ -21,20 +21,20 @@ class AudioConverterService
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'audio');
-
-        // $originalFormat = AudioFormats::where('extension', $data['originalFormat'])->value('id');
-
+        [$audio, $fadeIn, $fadeOut] = $this->setNullableVariables();
         $format = AudioFormats::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
         $audioConversion = Audioconversion::create([
             'original_name' => $data['originalName'],
-            // 'original_format' => $originalFormat,
             'converted_format' => $format->id,
             'converted_name' => pathinfo($data['originalName'], PATHINFO_FILENAME) . '.' . $convertedFormat,
             'status' => 'pending',
             'guid' => $data['guid'],
             'file_size' => $data['file_size'],
+            'audio' => $audio,
+            'fade_in' => $fadeIn,
+            'fade_out' => $fadeOut
         ]);
 
         ConvertSingleAudio::dispatch($audioConversion);
@@ -46,30 +46,40 @@ class AudioConverterService
     {
         $guid = Str::uuid();
         $audioFiles = $this->request->file('audio');
+        [$audio, $fadeIn, $fadeOut] = $this->setNullableVariables();
         $audioConversion = [];
 
-        foreach ($audioFiles as $audio) {
+        foreach ($audioFiles as $audios) {
             $originalName = $audio->getClientOriginalName();
-            $audio->storeAs('audio/' . $guid . '/', $originalName);
-            $fileSize = $audio->getSize();
-            // $originalFormat = AudioFormats::where('extension', $audio->getClientOriginalExtension())->value('id');
-
+            $audios->storeAs('audio/' . $guid . '/', $originalName);
+            $fileSize = $audios->getSize();
+            
             $format = AudioFormats::where('id', $this->request->input('format'))->first();
             $convertedFormat = $format->extension;
 
             $audioConversion[] = Audioconversion::create([
-                'original_name' => $audio->getClientOriginalName(),
-                // 'original_format' => $originalFormat,
+                'original_name' => $audios->getClientOriginalName(),
                 'converted_format' => $format->id,
                 'converted_name' => pathinfo($originalName, PATHINFO_FILENAME) . '.' . $convertedFormat,
                 'status' => 'pending',
                 'guid' => $guid,
                 'file_size' => $fileSize,
+                'audio' => $audio,
+                'fade_in' => $fadeIn,
+                'fade_out' => $fadeOut
             ]);
         }
 
         ConvertMultipleAudio::dispatch($guid, $convertedFormat);
 
         return $guid;
+    }
+
+    private function setNullableVariables(): array
+    {
+        $audio = $this->request->input('audio_volume') / 100 ?? null;
+        $fadeIn = $this->request->input('fade_in', false);
+        $fadeOut = $this->request->input('fade_out', false);
+        return [$audio, $fadeIn, $fadeOut];
     }
 }

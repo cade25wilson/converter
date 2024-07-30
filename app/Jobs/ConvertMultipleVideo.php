@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Events\ImageConverted;
 use App\Models\VideoConversion;
 use App\Services\ConversionService;
-use App\Services\VideoConversionService; // Import the VideoConversionService trait
+use App\Services\FfmpegService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,8 +16,7 @@ use Throwable;
 
 class ConvertMultipleVideo implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    use VideoConversionService; // Use the VideoConversionService trait
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, FfmpegService;
 
     protected string $guid;
     protected string $format;
@@ -33,7 +32,7 @@ class ConvertMultipleVideo implements ShouldQueue
      *
      * @var int
      */
-    public $timeout = 3000; // 5 minutes
+    public $timeout = 180; // 5 minutes
 
     /**
      * Create a new job instance.
@@ -84,21 +83,30 @@ class ConvertMultipleVideo implements ShouldQueue
     private function processVideo(string $guid, string $video): void
     {
         $sourceFile = storage_path('app/video/' . $guid . '/' . $video);
+        $filenameWithoutExtension = pathinfo($video, PATHINFO_FILENAME);
+        $fileExtension = pathinfo($video, PATHINFO_EXTENSION);
+        $desiredFormat = $this->format;
+        if ($fileExtension === $desiredFormat) {
+            return;
+        }
         $command = $this->buildFFmpegCommand(
             $guid,
             $video,
-            pathinfo($video, PATHINFO_FILENAME) . '.' . $this->format,
+            $filenameWithoutExtension . '.' . $desiredFormat,
             $this->width,
             $this->height,
             $this->rotationAngle,
             $this->flip,
             $this->frameRate,
-            $this->audio
+            $this->audio,
+            false,
+            false,
+            null,
+            'video'
         );
 
         $output = [];
         $return_var = null;
-
         exec($command . " 2>&1", $output, $return_var);
         unlink($sourceFile);
     }

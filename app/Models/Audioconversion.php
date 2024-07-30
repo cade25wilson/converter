@@ -17,6 +17,9 @@ class Audioconversion extends Model
         'status',
         'guid',
         'file_size',
+        'audio',
+        'fade_in',
+        'fade_out',
     ];
    
 

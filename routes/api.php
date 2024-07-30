@@ -19,9 +19,7 @@ Route::post('/conversions/url/{type}', [ConversionController::class, 'urlconvert
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:2,1');
 
 Route::post('/email/{type}', [EmailController::class, 'download']);
-
 Route::get('/filesize/{type}', [FileSizeController::class, 'totalTransferredSize']);
-
 Route::get('/formats/{type}', [FormatController::class, 'format']);
 
 Route::get('/messages', [MessagesController::class, 'show']);

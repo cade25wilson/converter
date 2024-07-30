@@ -6,6 +6,9 @@ use App\Services\ConversionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
 
 class ConversionController extends Controller
 {
@@ -18,8 +21,14 @@ class ConversionController extends Controller
 
     public function convert(Request $request, string $type): JsonResponse
     {
+        Log::info($request);
         $validationRules = $this->conversionService->getValidationRules($type);
-        
+        $validator = Validator::make($request->all(), $validationRules);
+        if ($validator->fails()) {
+            Log::info('Validation Errors: ', $validator->errors()->toArray());
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+                
         if($this->conversionService->validate($request, $validationRules) === false) {
             return response()->json(['errors' => 'The given data was invalid.'], 422);
         }
@@ -60,7 +69,6 @@ class ConversionController extends Controller
     {        
         // $lastSegment = last($request->segments());
         $data = json_decode($request->getContent(), true);
-        $format = (int)$data['format'];
         $files = $data[$type];
     
         $downloadedFiles = [];
@@ -71,7 +79,7 @@ class ConversionController extends Controller
     
         // Create a new request for the imageconvert function
         $newRequest = new Request();
-        $newRequest->merge(['format' => $format]);
+        $newRequest->merge($data);
         $newRequest->files->set($type, $downloadedFiles);
     
         // Call the imageconvert function

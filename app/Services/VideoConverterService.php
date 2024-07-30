@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Events\ImageConverted;
 use App\Jobs\ConvertSingleVideo;
 use App\Jobs\ConvertMultipleVideo;
 use App\Models\VideoConversion;
 use App\Models\VideoFormat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
+use function Laravel\Prompts\error;
 
 class VideoConverterService
 {
@@ -88,10 +91,7 @@ class VideoConverterService
         $frameRate = $this->request->input('frame_rate', null);
         $rotationAngle = $this->request->input('rotation_angle', null);
         $flip = $this->request->input('flip', null);
-        $audio = $this->request->input('audio') / 100 ?? null;
-        // $watermark = $this->request->file('watermark') ? $this->request->file('watermark')->getClientOriginalName() : null;
-        // $stripMetaData = $this->request->input('strip_metadata') ? 1 : 0;
-        // $quality = $this->request->input('quality') ? $this->request->input('quality') : 100;
+        $audio = $this->request->input('audio_volume') / 100 ?? null;
         return [$width, $height, $frameRate, $rotationAngle, $flip, $audio];
     }
 }
