@@ -4,21 +4,26 @@ namespace App\Jobs;
 
 use App\Events\ImageConverted;
 use App\Models\Audioconversion;
-use App\Services\AudioConverterService;
 use App\Services\ConversionService;
+use App\Services\FfmpegService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ConvertMultipleAudio implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, FfmpegService;
 
     protected string $guid;
     protected string $format;
+    protected ?int $audioVolume;
+    protected ?bool $fadeIn;
+    protected ?bool $fadeOut;
+    protected ?bool $reverseAudio;
 
              /**
      * The maximum number of seconds the job can run before timing out.
@@ -31,10 +36,14 @@ class ConvertMultipleAudio implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $guid, string $format)
+    public function __construct(string $guid, string $format, ?int $audioVolume, ?bool $fadeIn, ?bool $fadeOut, ?bool $reverseAudio)
     {
         $this->guid = $guid;
         $this->format = $format;
+        $this->audioVolume = $audioVolume;
+        $this->fadeIn = $fadeIn;
+        $this->fadeOut = $fadeOut;
+        $this->reverseAudio = $reverseAudio;
     }
 
     /**
@@ -54,7 +63,7 @@ class ConvertMultipleAudio implements ShouldQueue
             ImageConverted::dispatch($this->guid, 'processing');
 
             foreach ($audios as $audio) {
-                $this->processAudio($audioPath, $audio);
+                $this->processAudio($this->guid, $audio);
             }
 
             ConversionService::ZipFiles($this->guid, 'audio');
@@ -68,21 +77,42 @@ class ConvertMultipleAudio implements ShouldQueue
         }
     }
 
-    private function processAudio(string $guid, string $audio)
+    private function processAudio(string $guid, string $audio): void
     {
-        $sourceFile =  $guid . '/' . $audio;
-        if ($audio === pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format) {
+        $sourceFile = storage_path('app/audio/' . $guid . '/' . $audio);
+        $filenameWithoutExtension = pathinfo($audio, PATHINFO_FILENAME);
+        $fileExtension = pathinfo($audio, PATHINFO_EXTENSION);
+        $desiredFormat = $this->format;
+        if ($fileExtension === $desiredFormat) {
             return;
         }
-        $destinationFile = $guid . '/' . pathinfo($audio, PATHINFO_FILENAME) . '.' . $this->format;
-
-        $sourceFileEscaped = escapeshellarg($sourceFile);
-        $destinationFileEscaped = escapeshellarg($destinationFile);
-        $command = "ffmpeg -i $sourceFileEscaped $destinationFileEscaped";
-        $output = array();
+        log::info("guid " . $guid. " audio " . $audio . " volume " . $this->audioVolume . " fade in " . $this->fadeIn . " Fade out " . $this->fadeOut);
+        $command = $this->buildFfmpegCommand(
+            $guid,
+            $audio,
+            $filenameWithoutExtension . '.' . $desiredFormat,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $this->audioVolume,
+            $this->fadeIn,
+            $this->fadeOut,
+            $this->reverseAudio,
+            'audio'
+        );
+        $output = [];
         $return_var = null;
-
         exec($command . " 2>&1", $output, $return_var);
+        log::info($command);
         unlink($sourceFile);
+    }
+
+    public function failed(?Throwable $e): void
+    {
+        Log::error($e->getMessage());
+        Audioconversion::where('guid', $this->guid)->update(['status' => 'failed']);
+        ImageConverted::dispatch($this->guid, 'failed');
     }
 }

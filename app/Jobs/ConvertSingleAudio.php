@@ -34,14 +34,8 @@ class ConvertSingleAudio implements ShouldQueue
         try {
             $this->audioConversion->update(['status' => 'processing']);
             ImageConverted::dispatch($this->audioConversion->guid, 'processing');
-            // add this to service as well(redundant code)
-            // $sourceFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->original_name;
-            // $destinationFile = '/var/www/converter/storage/app/audio/' . $this->audioConversion->guid . '/' . $this->audioConversion->converted_name;
-
-            // $sourceFileEscaped = escapeshellarg($sourceFile);
-            // $destinationFileEscaped = escapeshellarg($destinationFile);
-            // $command = "ffmpeg -i $sourceFileEscaped $destinationFileEscaped";
-            $command = $this->buildFFmpegCommand($this->audioConversion->guid, $this->audioConversion->original_name, $this->audioConversion->converted_name, null, null, null, null, null, $this->audioConversion->audio, $this->audioConversion->fade_in, $this->audioConversion->fade_out, null, 'audio');
+            
+            $command = $this->buildFFmpegCommand($this->audioConversion->guid, $this->audioConversion->original_name, $this->audioConversion->converted_name, null, null, null, null, null, $this->audioConversion->audio, $this->audioConversion->fade_in, $this->audioConversion->fade_out, $this->audioConversion->reverse_audio, 'audio');
             $output = [];
             $return_var = null;
 

@@ -101,9 +101,10 @@ class ConvertMultipleVideo implements ShouldQueue
             $this->audio,
             false,
             false,
-            null,
+            false,
             'video'
         );
+        log::info($command);
 
         $output = [];
         $return_var = null;

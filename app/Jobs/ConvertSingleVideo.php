@@ -47,7 +47,7 @@ class ConvertSingleVideo implements ShouldQueue
                 $this->updateAndComplete();
                 return;
             }
-            $command = $this->buildFFmpegCommand($this->videoConversion->guid, $this->videoConversion->original_name, $this->videoConversion->converted_name, $this->videoConversion->width, $this->videoConversion->height, $this->videoConversion->rotation_angle, $this->videoConversion->flip, $this->videoConversion->frame_rate, $this->videoConversion->audio, false, false, null, );
+            $command = $this->buildFFmpegCommand($this->videoConversion->guid, $this->videoConversion->original_name, $this->videoConversion->converted_name, $this->videoConversion->width, $this->videoConversion->height, $this->videoConversion->rotation_angle, $this->videoConversion->flip, $this->videoConversion->frame_rate, $this->videoConversion->audio, false, false, false, 'video');
             $output = [];
             $return_var = null;
 

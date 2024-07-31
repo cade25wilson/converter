@@ -95,10 +95,10 @@ class ConversionService
             'audio' => [
                 $type.'.*' => 'required|file',
                 'format' => 'required|exists:audio_formats,id',
-                'reverse_audio' => 'nullable|in:true,false',
+                'reverse_audio' => 'nullable|boolean',
                 'audio_volume' => 'nullable|min:0|max:300',
-                'fade_in' => 'nullable|in:true,false',
-                'fade_out' => 'nullable|in:true,false',
+                'fade_in' => 'nullable|boolean',
+                'fade_out' => 'nullable|boolean',
             ],
             'ebook' => [
                 $type.'.*' => 'required|file',

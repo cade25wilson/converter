@@ -20,6 +20,7 @@ class Audioconversion extends Model
         'audio',
         'fade_in',
         'fade_out',
+        'reverse_audio',
     ];
    
 

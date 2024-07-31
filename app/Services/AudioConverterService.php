@@ -21,7 +21,7 @@ class AudioConverterService
     {
         $conversionService = new ConversionService();
         $data = $conversionService->SetVariables($this->request, 'audio');
-        [$audio, $fadeIn, $fadeOut] = $this->setNullableVariables();
+        [$audio, $fadeIn, $fadeOut, $reverseAudio] = $this->setNullableVariables();
         $format = AudioFormats::where('id', $this->request->input('format'))->first();
         $convertedFormat = $format->extension;
 
@@ -34,7 +34,8 @@ class AudioConverterService
             'file_size' => $data['file_size'],
             'audio' => $audio,
             'fade_in' => $fadeIn,
-            'fade_out' => $fadeOut
+            'fade_out' => $fadeOut,
+            'reverse_audio' => $reverseAudio,
         ]);
 
         ConvertSingleAudio::dispatch($audioConversion);
@@ -46,11 +47,11 @@ class AudioConverterService
     {
         $guid = Str::uuid();
         $audioFiles = $this->request->file('audio');
-        [$audio, $fadeIn, $fadeOut] = $this->setNullableVariables();
+        [$audio, $fadeIn, $fadeOut, $reverseAudio] = $this->setNullableVariables();
         $audioConversion = [];
 
         foreach ($audioFiles as $audios) {
-            $originalName = $audio->getClientOriginalName();
+            $originalName = $audios->getClientOriginalName();
             $audios->storeAs('audio/' . $guid . '/', $originalName);
             $fileSize = $audios->getSize();
             
@@ -66,11 +67,12 @@ class AudioConverterService
                 'file_size' => $fileSize,
                 'audio' => $audio,
                 'fade_in' => $fadeIn,
-                'fade_out' => $fadeOut
+                'fade_out' => $fadeOut,
+                'reverse_audio' => $reverseAudio,
             ]);
         }
 
-        ConvertMultipleAudio::dispatch($guid, $convertedFormat);
+        ConvertMultipleAudio::dispatch($guid, $convertedFormat, $audio, $fadeIn, $fadeOut, $reverseAudio);
 
         return $guid;
     }
@@ -80,6 +82,7 @@ class AudioConverterService
         $audio = $this->request->input('audio_volume') / 100 ?? null;
         $fadeIn = $this->request->input('fade_in', false);
         $fadeOut = $this->request->input('fade_out', false);
-        return [$audio, $fadeIn, $fadeOut];
+        $reverseAudio = $this->request->input('reverse_audio', false);
+        return [$audio, $fadeIn, $fadeOut, $reverseAudio];
     }
 }

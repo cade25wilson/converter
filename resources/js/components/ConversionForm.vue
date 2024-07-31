@@ -197,7 +197,7 @@
                                         <input type="number" class="input" min="1" max="300" v-model="audio">
                                     </div>
                                 </div>
-                                <div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
+                                <!-- <div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
                                     <div class="col-4">
                                         <label class="label">Fade In Audio</label>
                                     </div>
@@ -215,6 +215,57 @@
                                     <div class="col-8">
                                         <label class="checkBox">
                                             <input id="ch1" type="checkbox" @change="fadeOut = !fadeOut">
+                                            <div class="transition"></div>
+                                        </label>
+                                    </div>
+                                </div> -->
+                                <div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
+    <div class="col-4">
+        <label class="label">Fade In Audio</label>
+    </div>
+    <div class="col-8">
+        <label class="checkBox">
+            <input
+                id="ch1"
+                type="checkbox"
+                :checked="fadeIn === 1"
+                @change="fadeIn = $event.target.checked ? 1 : 0"
+            >
+            <div class="transition"></div>
+        </label>
+    </div>
+</div>
+
+<div class="row my-3" v-if="this.page === 'video' || this.page === 'audio'">
+    <div class="col-4">
+        <label class="label">Fade Out Audio</label>
+    </div>
+    <div class="col-8">
+        <label class="checkBox">
+            <input
+                id="ch2" 
+                type="checkbox"
+                :checked="fadeOut === 1"
+                @change="fadeOut = $event.target.checked ? 1 : 0"
+            >
+            <div class="transition"></div>
+        </label>
+    </div>
+</div>
+
+                                <div class="row my-3" v-if="this.page === 'audio'">
+                                    <div class="col-4">
+                                        <label class="label">Reverse Audio</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <label class="checkBox">
+                                            <!-- <input id="ch1" type="checkbox" @change="reverseAudio = !reverseAudio"> -->
+                                            <input
+                                                id="ch1"
+                                                type="checkbox"
+                                                :checked="reverseAudio === 1"
+                                                @change="reverseAudio = $event.target.checked ? 1 : 0"
+                                            >
                                             <div class="transition"></div>
                                         </label>
                                     </div>
@@ -246,6 +297,7 @@
         </div>
         <button class="btn btn-primary" @click="resetConversion()">Convert Another</button>
     </div>
+    {{fadeIn}} {{fadeOut}} {{reverseAudio}}
 </template>
 
 <script>
@@ -489,11 +541,11 @@ export default {
             }
             if(this.page === 'video' || this.page === 'audio'){
                 formData.append('audio_volume', this.audio);
-                formData.append('fade_in', this.fadeIn ? true : false);
-                formData.append('fade_out', this.fadeOut ? true : false);
+                formData.append('fade_in', this.fadeIn);
+                formData.append('fade_out', this.fadeOut);
             }
             if (this.page === 'audio'){
-                formData.append('reverse_audio', this.reverseAudio ? true : false);
+                formData.append('reverse_audio', this.reverseAudio);
             }
             if(this.page === 'image'){
                 formData.append('quality', this.quality);

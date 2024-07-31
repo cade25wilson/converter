@@ -21,7 +21,6 @@ class ConversionController extends Controller
 
     public function convert(Request $request, string $type): JsonResponse
     {
-        Log::info($request);
         $validationRules = $this->conversionService->getValidationRules($type);
         $validator = Validator::make($request->all(), $validationRules);
         if ($validator->fails()) {
