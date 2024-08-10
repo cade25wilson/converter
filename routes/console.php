@@ -1,25 +1,7 @@
 <?php
 
-use App\Models\ConversionTypes;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Jobs\IndexWebsite;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
-
-Artisan::command('clearoldfiles', function() {
-    $directories = ConversionTypes::all()->pluck('name')->toArray();
-    $now = time();
-
-    foreach($directories as $directory){
-        $files = glob(storage_path('app/' . $directory . '/*'));
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                if ($now - filemtime($file) >= 60 * 60 * 24 * 3) {
-                    unlink($file);
-                }
-            }
-        }
-    }
-})->purpose('Clear files older than 72 hours')->everyThirtyMinutes();
+Schedule::command('app:clearoldfiles')->everyFifteenMinutes();
+Schedule::job(new IndexWebsite)->daily();

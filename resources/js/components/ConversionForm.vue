@@ -272,7 +272,6 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <!-- <button type="button" class="button" data-bs-dismiss="modal">Apply changes</button> -->
                                 <button class="button" data-bs-dismiss="modal">
                                     <div class="button-overlay"></div>
                                     <span>Apply changes</span>
@@ -297,7 +296,6 @@
         </div>
         <button class="btn btn-primary" @click="resetConversion()">Convert Another</button>
     </div>
-    {{fadeIn}} {{fadeOut}} {{reverseAudio}}
 </template>
 
 <script>
