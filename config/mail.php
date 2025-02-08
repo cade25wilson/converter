@@ -88,7 +88,7 @@ return [
 
         'resend' => [
             'transport' => 'resend',
-        ],        
+        ],
 
     ],
 

@@ -58,7 +58,6 @@ class ConversionController extends Controller
             return http_response_code(200);
         }
 
-        // Delete the file
         unlink($file);
 
         return response()->json(['success' => 'File deleted'], 200);
